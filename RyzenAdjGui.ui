@@ -163,7 +163,7 @@
           <string>Settings</string>
          </property>
          <property name="checkable">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -363,9 +363,6 @@
        </item>
       </layout>
      </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="settingsWidget" native="true"/>
     </item>
    </layout>
   </widget>

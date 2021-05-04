@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTranslator>
 #include <QSharedMemory>
+#include <QFrame>
 #include "RyzenAdjCfg.h"
 
 QT_BEGIN_NAMESPACE
@@ -29,13 +30,16 @@ private:
     void languageChange();
 
     void savePreset();
-    void tryPreset();
+    void applyPreset();
+    void cancelPreset();
+
     void presetVariableChanged();
     void smuCheckBoxClicked();
     void sendArgs(QByteArray arguments);
 
     void saveSettings();
     void readSettings();
+    void cancelSettings();
 
     void installService();
     void removeService();
@@ -48,6 +52,7 @@ private:
     Ui::RyzenAdjGui *ui;
     Ui::RyzenAdjGuiAPUForm *apuForm[4];
     Ui::RyzenAdjGuiSettings *ui_settings;
+    QFrame *settingFrame;
     QTranslator *qtLanguageTranslator;
     QSharedMemory *bufferToService;
     RyzenAdjCfg *conf;

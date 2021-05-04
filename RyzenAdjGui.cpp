@@ -41,8 +41,9 @@ void RyzenAdjGui::setupUi(){
     apuForm[2]->setupUi(ui->perfomanceTab);
     apuForm[3]->setupUi(ui->extremeTab);
     for(int i = 0;i < 4;i++){
-        apuForm[i]->saveButton->setProperty("idx",i);
-        apuForm[i]->tryButton->setProperty("idx",i);
+        apuForm[i]->savePushButton->setProperty("idx",i);
+        apuForm[i]->applyPushButton->setProperty("idx",i);
+        apuForm[i]->cancelPushButton->setProperty("idx",i);
 
         apuForm[i]->cmdOutputLineEdit->setProperty("idx",i);
 
@@ -93,8 +94,11 @@ void RyzenAdjGui::setupUi(){
         apuForm[i]->smuPowerSavingCheckBox->setProperty("idy",1);
     }
 
-    ui_settings->setupUi(ui->settingsWidget);
-    ui->settingsWidget->setHidden(true);
+    settingFrame = new QFrame(nullptr, Qt::WindowType::Popup);
+    settingFrame->setFrameStyle(QFrame::Panel);
+    settingFrame->setAccessibleName("Settings");
+    settingFrame->resize(1,1);
+    ui_settings->setupUi(settingFrame);
     ui->tabWidget->setHidden(false);
 
     ui->batteryTab->setHidden(true);
@@ -119,8 +123,9 @@ void RyzenAdjGui::setupConnections(){
     connect(ui->optimalPushButton, &QPushButton::clicked, this, &RyzenAdjGui::presetPushButtonClicked);
 
     for(int i = 0;i < 4;i++){
-        connect(apuForm[i]->saveButton, &QPushButton::clicked, this, &RyzenAdjGui::savePreset);
-        connect(apuForm[i]->tryButton, &QPushButton::clicked, this, &RyzenAdjGui::tryPreset);
+        connect(apuForm[i]->savePushButton, &QPushButton::clicked, this, &RyzenAdjGui::savePreset);
+        connect(apuForm[i]->applyPushButton, &QPushButton::clicked, this, &RyzenAdjGui::applyPreset);
+        connect(apuForm[i]->cancelPushButton, &QPushButton::clicked, this, &RyzenAdjGui::cancelPreset);
 
         connect(apuForm[i]->fanComboBox, &QComboBox::currentIndexChanged, this, &RyzenAdjGui::presetVariableChanged);
 
@@ -175,7 +180,7 @@ void RyzenAdjGui::setupConnections(){
     connect(ui_settings->sStopPushButton, &QPushButton::clicked, this, &RyzenAdjGui::stopService);
 
     connect(ui_settings->savePushButton, &QPushButton::clicked, this, &RyzenAdjGui::saveSettings);
-    connect(ui_settings->cancelPushButton, &QPushButton::clicked, this, &RyzenAdjGui::readSettings);
+    connect(ui_settings->cancelPushButton, &QPushButton::clicked, this, &RyzenAdjGui::cancelSettings);
 }
 
 void RyzenAdjGui::loadPresets(){
@@ -239,8 +244,10 @@ void RyzenAdjGui::loadStyleSheet(){
         //
         if (configReader.name() == QString("MainWindow"))
             foreach(const QXmlStreamAttribute &attr, configReader.attributes())
-                if (attr.name().toString() == "value")
+                if (attr.name().toString() == "value") {
                     this->setStyleSheet(attr.value().toString());
+                    settingFrame->setStyleSheet(attr.value().toString());
+                }
 
         if (configReader.name() == QString("TopWidget"))
             foreach(const QXmlStreamAttribute &attr, configReader.attributes())
@@ -309,10 +316,104 @@ void RyzenAdjGui::savePreset(){
     presetsBuffer[i].smuPowerSaving = apuForm[i]->smuPowerSavingCheckBox->isChecked();
 
     conf->savePresets();
+
+    QByteArray data;
+    QXmlStreamWriter argsWriter(&data);
+    argsWriter.setAutoFormatting(true);
+    argsWriter.writeStartDocument();
+    argsWriter.writeStartElement("bufferToService");
+    //
+        argsWriter.writeStartElement("save");
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("id");
+            argsWriter.writeAttribute("value", QString::number(i));
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("ryzenAdjCmdLine");
+            argsWriter.writeAttribute("value", apuForm[i]->cmdOutputLineEdit->text());
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("fanPresetId");
+            argsWriter.writeAttribute("value", QString::number(apuForm[i]->fanComboBox->currentIndex()));
+        argsWriter.writeEndElement();
+    //
+    argsWriter.writeEndElement();
+    argsWriter.writeEndDocument();
+
+    sendArgs(data);
 }
 
-void RyzenAdjGui::tryPreset(){
+void RyzenAdjGui::applyPreset(){
     int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+
+    QByteArray data;
+    QXmlStreamWriter argsWriter(&data);
+    argsWriter.setAutoFormatting(true);
+    argsWriter.writeStartDocument();
+    argsWriter.writeStartElement("bufferToService");
+    //
+        argsWriter.writeStartElement("id");
+            argsWriter.writeAttribute("value", QString::number(i));
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("ryzenAdjCmdLine");
+            argsWriter.writeAttribute("value", apuForm[i]->cmdOutputLineEdit->text());
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("fanPresetId");
+            argsWriter.writeAttribute("value", QString::number(apuForm[i]->fanComboBox->currentIndex()));
+        argsWriter.writeEndElement();
+    //
+    argsWriter.writeEndElement();
+    argsWriter.writeEndDocument();
+
+    sendArgs(data);
+}
+
+void RyzenAdjGui::cancelPreset(){
+    int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+    presetStr *presetsBuffer = conf->getPresets();
+
+    apuForm[i]->cmdOutputLineEdit->setText(presetsBuffer[i].cmdOutputValue);
+
+    apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i].fanPresetId);
+
+    apuForm[i]->tempLimitSpinBox->setValue(presetsBuffer[i].tempLimitValue);
+    apuForm[i]->tempLimitCheckBox->setChecked(presetsBuffer[i].tempLimitChecked);
+    apuForm[i]->apuSkinSpinBox->setValue(presetsBuffer[i].apuSkinValue);
+    apuForm[i]->apuSkinCheckBox->setChecked(presetsBuffer[i].apuSkinChecked);
+    apuForm[i]->stampLimitSpinBox->setValue(presetsBuffer[i].stampLimitValue);
+    apuForm[i]->stampLimitCheckBox->setChecked(presetsBuffer[i].stampLimitChecked);
+    apuForm[i]->fastLimitSpinBox->setValue(presetsBuffer[i].fastLimitValue);
+    apuForm[i]->fastLimitCheckBox->setChecked(presetsBuffer[i].fastLimitChecked);
+    apuForm[i]->fastTimeSpinBox->setValue(presetsBuffer[i].fastTimeValue);
+    apuForm[i]->fastTimeCheckBox->setChecked(presetsBuffer[i].fastTimeChecked);
+    apuForm[i]->slowLimitSpinBox->setValue(presetsBuffer[i].slowLimitValue);
+    apuForm[i]->slowLimitCheckBox->setChecked(presetsBuffer[i].slowLimitChecked);
+    apuForm[i]->slowTimeSpinBox->setValue(presetsBuffer[i].slowTimeValue);
+    apuForm[i]->slowTimeCheckBox->setChecked(presetsBuffer[i].slowTimeChecked);
+
+    apuForm[i]->vrmCurrentSpinBox->setValue(presetsBuffer[i].vrmCurrentValue);
+    apuForm[i]->vrmCurrentCheckBox->setChecked(presetsBuffer[i].vrmCurrentChecked);
+    apuForm[i]->vrmMaxSpinBox->setValue(presetsBuffer[i].vrmMaxValue);
+    apuForm[i]->vrmMaxCheckBox->setChecked(presetsBuffer[i].vrmMaxChecked);
+
+    apuForm[i]->minFclkSpinBox->setValue(presetsBuffer[i].minFclkValue);
+    apuForm[i]->minFclkCheckBox->setChecked(presetsBuffer[i].minFclkChecked);
+    apuForm[i]->maxFclkSpinBox->setValue(presetsBuffer[i].maxFclkValue);
+    apuForm[i]->maxFclkCheckBox->setChecked(presetsBuffer[i].maxFclkChecked);
+
+    apuForm[i]->minGfxclkSpinBox->setValue(presetsBuffer[i].minGfxclkValue);
+    apuForm[i]->minGfxclkCheckBox->setChecked(presetsBuffer[i].minGfxclkChecked);
+    apuForm[i]->maxGfxclkSpinBox->setValue(presetsBuffer[i].maxGfxclkValue);
+    apuForm[i]->maxGfxclkCheckBox->setChecked(presetsBuffer[i].maxGfxclkChecked);
+    apuForm[i]->minSocclkSpinBox->setValue(presetsBuffer[i].minSocclkValue);
+    apuForm[i]->minSocclkCheckBox->setChecked(presetsBuffer[i].minSocclkChecked);
+    apuForm[i]->maxSocclkSpinBox->setValue(presetsBuffer[i].maxSocclkValue);
+    apuForm[i]->maxSocclkCheckBox->setChecked(presetsBuffer[i].maxSocclkChecked);
+    apuForm[i]->minVcnSpinBox->setValue(presetsBuffer[i].minVcnValue);
+    apuForm[i]->minVcnCheckBox->setChecked(presetsBuffer[i].minVcnChecked);
+    apuForm[i]->maxVcnSpinBox->setValue(presetsBuffer[i].maxVcnValue);
+    apuForm[i]->maxVcnCheckBox->setChecked(presetsBuffer[i].maxVcnChecked);
+
+    apuForm[i]->smuMaxPerformanceCheckBox->setChecked(presetsBuffer[i].smuMaxPerfomance);
+    apuForm[i]->smuPowerSavingCheckBox->setChecked(presetsBuffer[i].smuPowerSaving);
 
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
@@ -552,19 +653,6 @@ void RyzenAdjGui::saveSettings(){
         argsWriter.writeEndElement();
     }
 
-    if(settings->settingsReloadDurationChecked != ui_settings->settingsReloadDurationCheckBox->isChecked()){
-        settings->settingsReloadDurationChecked = ui_settings->settingsReloadDurationCheckBox->isChecked();
-        argsWriter.writeStartElement("settingsReloadDurationChecked");
-            argsWriter.writeAttribute("value", QString::number(settings->settingsReloadDurationChecked));
-        argsWriter.writeEndElement();
-    }
-    if(settings->settingsReloadDuration != ui_settings->settingsReloadDurationSpinBox->value()){
-        settings->settingsReloadDuration = ui_settings->settingsReloadDurationSpinBox->value();
-        argsWriter.writeStartElement("settingsReloadDuration");
-            argsWriter.writeAttribute("value", QString::number(settings->settingsReloadDuration));
-        argsWriter.writeEndElement();
-    }
-
     if(settings->autoPresetSwitchAC != ui_settings->autoPresetSwitchCheckBox->isChecked()){
         settings->autoPresetSwitchAC = ui_settings->autoPresetSwitchCheckBox->isChecked();
         argsWriter.writeStartElement("autoPresetSwitchAC");
@@ -601,12 +689,14 @@ void RyzenAdjGui::readSettings(){
     ui_settings->autoPresetApplyDurationCheckBox->setChecked(settings->autoPresetApplyDurationChecked);
     ui_settings->autoPresetApplyDurationSpinBox->setValue(settings->autoPresetApplyDuration);
 
-    ui_settings->settingsReloadDurationCheckBox->setChecked(settings->settingsReloadDurationChecked);
-    ui_settings->settingsReloadDurationSpinBox->setValue(settings->settingsReloadDuration);
-
     ui_settings->autoPresetSwitchCheckBox->setChecked(settings->autoPresetSwitchAC);
     ui_settings->dcStateComboBox->setCurrentIndex(settings->dcStatePresetId);
     ui_settings->acStateComboBox->setCurrentIndex(settings->acStatePresetId);
+}
+
+void RyzenAdjGui::cancelSettings(){
+    settingFrame->hide();
+    readSettings();
 }
 
 void RyzenAdjGui::installService(){}
@@ -649,15 +739,23 @@ void RyzenAdjGui::sendArgs(QByteArray arguments){
 }
 
 void RyzenAdjGui::settingsPushButtonClicked() {
-    if(!ui->settingsWidget->isVisible()){
-        ui->tabWidget->setHidden(true);
-        ui->settingsWidget->setHidden(false);
-        ui->settingsPushButton->setChecked(true);
-    } else {
-        ui->tabWidget->setHidden(false);
-        ui->settingsWidget->setHidden(true);
-        ui->settingsPushButton->setChecked(false);
+    if (settingFrame->geometry().width()<10) {
+        settingFrame->show();
+        settingFrame->hide();
     }
+
+    QRect rect = settingFrame->geometry();
+    const QRect buttonGeometry = ui->settingsPushButton->geometry();
+    const QRect windowGeometry = this->geometry();
+    int height = rect.height();
+    int width = rect.width();
+    rect.setX(buttonGeometry.left()+windowGeometry.left()+buttonGeometry.width()-width);
+    rect.setY(buttonGeometry.top()+windowGeometry.top());
+    rect.setWidth(width);
+    rect.setHeight(height);
+    settingFrame->setGeometry(rect);
+
+    if (settingFrame->isHidden()) settingFrame->show();
 }
 
 void RyzenAdjGui::presetPushButtonClicked(){

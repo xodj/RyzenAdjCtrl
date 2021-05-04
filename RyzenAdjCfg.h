@@ -57,9 +57,9 @@ struct presetStr {
     bool minSocclkChecked = false;
     int maxSocclkValue = 1200;
     bool maxSocclkChecked = false;
-    int minVcnValue = 0;
+    int minVcnValue = 400;
     bool minVcnChecked = false;
-    int maxVcnValue = 0;
+    int maxVcnValue = 1200;
     bool maxVcnChecked = false;
 
     bool smuMaxPerfomance = false;
@@ -71,9 +71,6 @@ struct settingsStr {
 
     bool autoPresetApplyDurationChecked = true;
     int autoPresetApplyDuration = 180;
-
-    bool settingsReloadDurationChecked = true;
-    int settingsReloadDuration = 30;
 
     bool autoPresetSwitchAC = true;
     int dcStatePresetId = 1;

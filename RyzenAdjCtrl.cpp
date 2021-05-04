@@ -70,16 +70,20 @@ void RyzenAdjCtrl::recieveArgs(){
 
 void RyzenAdjCtrl::decodeArgs(QByteArray args){
     qDebug()<<"Recieved args from GUI";
+    bool save = false;
     int id = -1;
     QString ryzenAdjCmdLine;
     int fanPresetId = 0;
     settingsStr* settings = conf->getSettings();
+    presetStr* presets = conf->getPresets();
 
     QXmlStreamReader argsReader(args);
     argsReader.readNext();
     while(!argsReader.atEnd())
     {
         //
+        if (argsReader.name() == QString("save"))
+            save = true;
         if (argsReader.name() == QString("id"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value")
@@ -88,11 +92,16 @@ void RyzenAdjCtrl::decodeArgs(QByteArray args){
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value"){
                     ryzenAdjCmdLine = attr.value().toString();
+                    if(save)
+                        presets[id].cmdOutputValue = ryzenAdjCmdLine;
                 }
         if (argsReader.name() == QString("fanPresetId"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
-                if (attr.name().toString() == "value")
+                if (attr.name().toString() == "value") {
                     fanPresetId = attr.value().toString().toInt();
+                    if(save)
+                        presets[id].fanPresetId = fanPresetId;
+                }
         if (argsReader.name() == QString("exit")){
             qDebug() << "Ricieved exit command";
             qDebug() << "RyzenAdj Service stoped";
@@ -117,19 +126,6 @@ void RyzenAdjCtrl::decodeArgs(QByteArray args){
                         if(conf->getSettings()->autoPresetApplyDurationChecked)
                             autoPresetApplyTimer->start(conf->getSettings()->autoPresetApplyDuration * 1000);
                     }
-
-            if (argsReader.name() == QString("settingsReloadDurationChecked"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
-                    if (attr.name().toString() == "value"){
-                            settings->settingsReloadDurationChecked = attr.value().toString().toInt();
-                            qDebug() << "settingsReloadDurationChecked set to " << settings->settingsReloadDurationChecked;
-                        }
-            if (argsReader.name() == QString("settingsReloadDuration"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
-                    if (attr.name().toString() == "value"){
-                            settings->settingsReloadDuration = attr.value().toString().toInt();
-                            qDebug() << "settingsReloadDuration set to " << settings->settingsReloadDuration;
-                        }
 
             if (argsReader.name() == QString("autoPresetSwitchAC"))
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())

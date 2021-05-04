@@ -51,13 +51,6 @@ bool RyzenAdjCfg::saveSettings() {
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.autoPresetApplyDuration));
         xmlWriter.writeEndElement();
 
-        xmlWriter.writeStartElement("settingsReloadDurationChecked");
-            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.settingsReloadDurationChecked));
-        xmlWriter.writeEndElement();
-        xmlWriter.writeStartElement("settingsReloadDuration");
-            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.settingsReloadDuration));
-        xmlWriter.writeEndElement();
-
         xmlWriter.writeStartElement("autoPresetSwitchAC");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.autoPresetSwitchAC));
         xmlWriter.writeEndElement();
@@ -99,18 +92,6 @@ bool RyzenAdjCfg::openSettings(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
                 if (attr.name().toString() == "value")
                     settingsBuffer.autoPresetApplyDuration =
-                            attr.value().toString().toInt();
-
-        if (xmlReader.name() == QString("settingsReloadDurationChecked"))
-            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
-                if (attr.name().toString() == "value")
-                    settingsBuffer.settingsReloadDurationChecked =
-                            attr.value().toString().toInt();
-
-        if (xmlReader.name() == QString("settingsReloadDuration"))
-            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
-                if (attr.name().toString() == "value")
-                    settingsBuffer.settingsReloadDuration =
                             attr.value().toString().toInt();
 
         if (xmlReader.name() == QString("autoPresetSwitchAC"))
