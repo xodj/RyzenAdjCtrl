@@ -1,3 +1,3 @@
 # RyzenAdjCtrl
-GUI for RyzenAdj
+GUI for RyzenAdj.
 Runing as separeted service from gui.
