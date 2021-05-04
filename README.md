@@ -1,6 +1,9 @@
 # RyzenAdjCtrl
 GUI for RyzenAdj.
 Runing as separeted service from gui.
+To run service use "RyzenAdjCtrl.exe startup" arguments.
+To stop service use "RyzenAdjCtrl.exe exit" arguments.
+!SERVICE MUST RUN WITH ADMINISTRATOR PRIVILEGES!
 
 Distributed by GPL-3 license.
 
