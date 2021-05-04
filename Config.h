@@ -1,0 +1,13 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define sharedMemoryKey \
+"gUUh4HGWsmhUH2n4pDb34CfcPTmV8kLYQs4cXwZ6WLbduKCJwsSMtTC5RQJKXCD5t3WpeLFBC" \
+"cML8NLLQ5SmQcYf8hnwLGyDUKs95NafFUwJGbbpKyd6thqmJBLKpPRwCEnudM9MJXJKjcH5ZB" \
+"TwF5VntGJjvRgJGezd9SWhEru9SSptudBwxvBdXnwZHysyt6QWzEyDxJe5y24cY5HdsLBAhXT" \
+"QcRrfp4qet9gmDGbGGPGgtYzmWtKmTmP8FKRAhuLStZzmRatYLQQer9NY437p8DRGg3MQwCVX" \
+"Vpdba4GrWXAjJM9JBnhsxncBs4r3dR627jtw8svnPqhECmbc9HtcrAaTDEh8E9uKfSe7YpZSh" \
+"GswnB7pNhbDLGMxFKMgGBxzC3MCvJjRVXzjRg55JyB8P6CKck6nJ2vPw4CP5sJtaRUVrLMd2b" \
+"tMUw4W7yzjdc6hjd5jjCb4aaHqscd68xrubWRFjJLvuyMELFSXD3Z9L9VhjrTNKkM7yx5War9"
+
+#endif // CONFIG_H

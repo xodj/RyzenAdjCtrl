@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StyleSheet>
+<MainWindow value="QWidget {
+background-color: rgb(96, 96, 96);
+color: rgb(255, 255, 255);
+gridline-color: rgb(255, 255, 255);
+border-color: rgb(255, 255, 255);
+selection-color: rgb(255, 0, 0);
+selection-background-color: rgb(0, 0, 0);
+}
+QSpinBox, QDoubleSpinBox {
+background-color: rgb(58,57,58);
+border: 1px solid gray;
+margin: 0px 0px 0px 0px;
+padding: 2px 2px 3px 7px;
+}
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+subcontrol-origin: margin;
+subcontrol-position: top right;
+background-color: rgb(76,76,76);
+border: 1px solid gray;
+}
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+subcontrol-origin: margin;
+subcontrol-position: bottom right;
+background-color: rgb(76,76,76);
+border: 1px solid gray;
+}
+QSpinBox::up-button:hover, QSpinBox::down-button:hover, QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {
+background-color: rgb(122,121,122);
+}
+QSpinBox::up-button:pressed, QSpinBox::down-button:pressed, QDoubleSpinBox::up-button:pressed, QDoubleSpinBox::down-button:pressed {
+background-color: rgb(58,57,58);
+}
+QSpinBox::up-button:disabled, QSpinBox::up-button:off {
+image: url(./Theme/up_arrow_disabled.png);
+background-color: rgb(58,57,58);
+}
+QSpinBox::down-button:disabled, QSpinBox::down-button:off {
+image: url(./Theme/down_arrow_disabled.png);
+background-color: rgb(58,57,58);
+}
+QDoubleSpinBox::up-button:disabled, QDoubleSpinBox::up-button:off {
+image: url(./Theme/up_arrow_disabled.png);
+background-color: rgb(58,57,58);
+}
+QDoubleSpinBox::down-button:disabled, QDoubleSpinBox::down-button:off {
+background-color: rgb(58,57,58);
+image: url(./Theme/down_arrow_disabled.png);
+}
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+image: url(./Theme/up_arrow.png);
+width: 100%;
+}
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+image: url(./Theme/down_arrow.png);
+width: 100%;
+}
+QCheckBox {
+spacing: 5px;
+outline: none;
+color: rgb(255, 255, 255);
+margin-bottom: 2px;
+}
+QCheckBox:hover {
+color: rgb(255, 64, 64);
+}
+QCheckBox:disabled {
+color: rgb(96, 32, 32);
+}
+QCheckBox::indicator {
+width: 16px;
+height: 16px;
+}
+QGroupBox::indicator {
+margin-left: 2px;
+}
+QCheckBox::indicator:unchecked {
+image: url(./Theme/checkbox_unchecked.png);
+}
+QCheckBox::indicator:unchecked:hover {
+border: none;
+image: url(./Theme/checkbox_unchecked_focus.png);
+}
+QCheckBox::indicator:checked {
+image: url(./Theme/checkbox_checked.png);
+}
+QCheckBox::indicator:checked:hover {
+border: none;
+image: url(./Theme/checkbox_checked_focus.png);
+}
+QComboBox {
+border: 1px solid gray;
+background-color: rgb(58,57,58);
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+    border-left-width: 1px;
+    border-left-color: darkgray;
+    border-left-style: solid;
+}
+QComboBox::down-arrow,
+QComboBox::down-arrow:pressed,
+QComboBox::down-arrow:focus {
+image: url(./Theme/down_arrow_disabled.png);
+}
+QComboBox::down-arrow:on,
+QComboBox::down-arrow:hover {
+image: url(./Theme/down_arrow.png);
+}
+QPushButton {
+color: rgb(255,255,255);
+border: 1px solid gray;
+background-color: rgb(58,57,58);
+border-radius: 0px;
+}
+QPushButton:hover {
+background-color: rgb(96, 96, 96);
+}
+QPushButton:pressed {
+background-color: rgb(128, 128, 128);
+}
+QPushButton:checked {
+background-color: rgb(192, 192, 192);
+}"/>
+
+<TopWidget value="QWidget {
+background-color: rgb(190, 0, 55);
+}
+QPushButton {
+color: rgb(255,255,255);
+border: 1px solid gray;
+background-color: rgb(58,57,58);
+border-radius: 0px;
+}
+QPushButton:hover {
+background-color: rgb(96, 96, 96);
+}
+QPushButton:pressed {
+background-color: rgb(128, 128, 128);
+}
+QPushButton:checked {
+background-color: rgb(192, 192, 192);
+}"/>
+
+<TabWidget value="QWidget{
+background-color: rgb(64, 64, 64);
+}
+QPushButton {
+color: rgb(255,255,255);
+border: 1px solid gray;
+background-color: rgb(58,57,58);
+border-radius: 0px;
+}
+QPushButton:hover {
+background-color: rgb(96, 96, 96);
+}
+QPushButton:pressed {
+background-color: rgb(128, 128, 128);
+}
+QPushButton:checked {
+background-color: rgb(192, 192, 192);
+}"/>
+</StyleSheet>
