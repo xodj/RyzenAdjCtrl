@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ryzenAdj.apuForm.label</string>
+   <string>RyzenAdjGuiAPUForm</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -59,7 +59,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -85,8 +84,14 @@
        <property name="suffix">
         <string> W</string>
        </property>
+       <property name="minimum">
+        <number>3</number>
+       </property>
        <property name="maximum">
         <number>100</number>
+       </property>
+       <property name="value">
+        <number>40</number>
        </property>
       </widget>
      </item>
@@ -107,8 +112,14 @@
        <property name="suffix">
         <string> W</string>
        </property>
+       <property name="minimum">
+        <number>3</number>
+       </property>
        <property name="maximum">
         <number>100</number>
+       </property>
+       <property name="value">
+        <number>40</number>
        </property>
       </widget>
      </item>
@@ -130,10 +141,13 @@
         <string> MHz</string>
        </property>
        <property name="maximum">
-        <number>1300</number>
+        <number>2200</number>
        </property>
        <property name="singleStep">
         <number>16</number>
+       </property>
+       <property name="value">
+        <number>400</number>
        </property>
       </widget>
      </item>
@@ -155,10 +169,13 @@
         <string> MHz</string>
        </property>
        <property name="maximum">
-        <number>1300</number>
+        <number>2200</number>
        </property>
        <property name="singleStep">
         <number>16</number>
+       </property>
+       <property name="value">
+        <number>400</number>
        </property>
       </widget>
      </item>
@@ -172,7 +189,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -201,6 +217,9 @@
        <property name="maximum">
         <number>2133</number>
        </property>
+       <property name="value">
+        <number>1200</number>
+       </property>
       </widget>
      </item>
      <item row="5" column="1">
@@ -220,8 +239,14 @@
        <property name="suffix">
         <string> W</string>
        </property>
+       <property name="minimum">
+        <number>3</number>
+       </property>
        <property name="maximum">
         <number>100</number>
+       </property>
+       <property name="value">
+        <number>40</number>
        </property>
       </widget>
      </item>
@@ -245,6 +270,9 @@
        <property name="maximum">
         <number>2133</number>
        </property>
+       <property name="value">
+        <number>1200</number>
+       </property>
       </widget>
      </item>
      <item row="8" column="1">
@@ -264,8 +292,14 @@
        <property name="suffix">
         <string> Sec.</string>
        </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
-        <number>1024</number>
+        <number>120</number>
+       </property>
+       <property name="value">
+        <number>60</number>
        </property>
       </widget>
      </item>
@@ -279,7 +313,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -331,10 +364,13 @@
         <string> MHz</string>
        </property>
        <property name="maximum">
-        <number>1400</number>
+        <number>2200</number>
        </property>
        <property name="singleStep">
         <number>16</number>
+       </property>
+       <property name="value">
+        <number>400</number>
        </property>
       </widget>
      </item>
@@ -356,10 +392,13 @@
         <string> MHz</string>
        </property>
        <property name="maximum">
-        <number>1300</number>
+        <number>2200</number>
        </property>
        <property name="singleStep">
         <number>16</number>
+       </property>
+       <property name="value">
+        <number>400</number>
        </property>
       </widget>
      </item>
@@ -373,7 +412,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -403,7 +441,7 @@
         <number>35</number>
        </property>
        <property name="maximum">
-        <number>105</number>
+        <number>110</number>
        </property>
        <property name="value">
         <number>105</number>
@@ -428,10 +466,13 @@
         <string> MHz</string>
        </property>
        <property name="maximum">
-        <number>1400</number>
+        <number>2200</number>
        </property>
        <property name="singleStep">
         <number>16</number>
+       </property>
+       <property name="value">
+        <number>400</number>
        </property>
       </widget>
      </item>
@@ -453,10 +494,13 @@
         <string> MHz</string>
        </property>
        <property name="maximum">
-        <number>1400</number>
+        <number>2200</number>
        </property>
        <property name="singleStep">
         <number>16</number>
+       </property>
+       <property name="value">
+        <number>400</number>
        </property>
       </widget>
      </item>
@@ -502,8 +546,14 @@
        <property name="suffix">
         <string> Sec.</string>
        </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
         <number>3600</number>
+       </property>
+       <property name="value">
+        <number>900</number>
        </property>
       </widget>
      </item>
@@ -547,7 +597,7 @@
         <number>35</number>
        </property>
        <property name="maximum">
-        <number>95</number>
+        <number>110</number>
        </property>
        <property name="value">
         <number>95</number>
@@ -838,7 +888,6 @@
      </property>
      <property name="font">
       <font>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -875,7 +924,6 @@
      </property>
      <property name="font">
       <font>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -918,7 +966,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1025,7 +1072,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -1050,7 +1096,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
