@@ -3,8 +3,6 @@
     <showReloadStyleSheetButton value="0"/>
     <autoPresetApplyDurationChecked value="1"/>
     <autoPresetApplyDuration value="180"/>
-    <settingsReloadDurationChecked value="1"/>
-    <settingsReloadDuration value="30"/>
     <autoPresetSwitchAC value="1"/>
     <dcStatePresetId value="1"/>
     <acStatePresetId value="2"/>
