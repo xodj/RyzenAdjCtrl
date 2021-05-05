@@ -18,7 +18,7 @@ CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, CtrlSettings *conf)
     connect(action, SIGNAL(triggered()), this, SLOT(openCtrl()));
     trayMenu->addAction(action);
 
-    action = new QAction("Close Agent", this);
+    action = new QAction("Close", this);
     QIcon exitIcon(":/main/application-exit.png");
     action->setIcon(exitIcon);
     connect(action, SIGNAL(triggered()), this, SLOT(closeAgent()));
