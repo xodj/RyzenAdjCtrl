@@ -6,6 +6,7 @@
 #include <QProcess>
 #include <QTimer>
 #include "CtrlSettings.h"
+#include "CtrlEPMCallback.h"
 
 #include <QDebug>
 
@@ -21,6 +22,7 @@ private:
 
     void checkCurrentACState();
     void currentACStateChanged();
+    void epmIdChanged(epmMode currentEPM);
     void loadPreset(int currentPresetId);
 
     void RyzenAdjSendCommand(QString arguments);
@@ -34,6 +36,7 @@ private:
     QTimer *currentAc_refresh_timer;
     QTimer *bufferToService_refresh_timer;
     QTimer *autoPresetApplyTimer;
+    CtrlEPMCallback *epmCallback;
 };
 
 #endif // CTRLSERVICE_H

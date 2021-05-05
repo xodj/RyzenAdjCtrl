@@ -47,6 +47,9 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, CtrlSettings *conf)
 
     qDebug() << "RyzenAdj Service started";
     checkCurrentACState();
+
+    epmCallback = new CtrlEPMCallback;
+    connect(epmCallback, &CtrlEPMCallback::epmIdChanged, this, &CtrlService::epmIdChanged);
 }
 
 CtrlService::~CtrlService() {}
@@ -197,6 +200,10 @@ void CtrlService::currentACStateChanged(){
         loadPreset((currentACState == Battery)
                    ? (conf->getSettings()->dcStatePresetId)
                    : (conf->getSettings()->acStatePresetId));
+}
+
+void CtrlService::epmIdChanged(epmMode currentEPM){
+    qDebug()<<"EPM Id changed to"<<currentEPM;
 }
 
 void CtrlService::loadPreset(int currentPresetId){
