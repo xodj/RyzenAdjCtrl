@@ -38,7 +38,7 @@ FORMS += \
     CtrlSettingsForm.ui
 
 TRANSLATIONS += \
-    Appfolder/Language/CtrlGui_ru_RU.ts
+    Appfolder/Language/RyzenAdjCtrl_ru_RU.ts
 
 CODECFORSRC     = UTF-8
 
