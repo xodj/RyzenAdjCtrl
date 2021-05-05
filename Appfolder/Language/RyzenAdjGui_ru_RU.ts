@@ -2,13 +2,13 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
-    <name>RyzenAdjGui</name>
+    <name>CtrlGui</name>
     <message>
         <source>ryzenAdj.mainWindow.label</source>
         <translation></translation>
     </message>
     <message>
-        <source>RyzenAdjCtrl</source>
+        <source>CtrlService</source>
         <translation></translation>
     </message>
     <message>
@@ -33,7 +33,7 @@
     </message>
 </context>
 <context>
-    <name>RyzenAdjGuiAPUForm</name>
+    <name>CtrlGuiAPUForm</name>
     <message>
         <source>ryzenAdj.apuForm.label</source>
         <translation type="unfinished"></translation>
@@ -196,7 +196,7 @@
     </message>
 </context>
 <context>
-    <name>RyzenAdjGuiSettings</name>
+    <name>CtrlGuiSettings</name>
     <message>
         <source>Form</source>
         <translation></translation>

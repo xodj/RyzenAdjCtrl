@@ -10,7 +10,7 @@ CONFIG += c++11
 
 TARGET = RyzenAdjCtrl
 RC_ICONS = ./amd_icon.ico
-VERSION = 0.1.2.52
+VERSION = 0.1.3.53
 QMAKE_TARGET_COMPANY = "xo.dj@ya.ru"
 QMAKE_TARGET_DESCRIPTION = "GUI for RyzenAdj"
 QMAKE_TARGET_COPYRIGHT = "GPL-3.0 License"
@@ -21,24 +21,24 @@ RESOURCES += \
     RyzenAdjRes.qrc
 
 SOURCES += \
-    RyzenAdjCtrl.cpp \
-    RyzenAdjGui.cpp \
-    RyzenAdjCfg.cpp \
-    RyzenAdjMain.cpp
+    CtrlGui.cpp \
+    CtrlMain.cpp \
+    CtrlService.cpp \
+    CtrlSettings.cpp
 
 HEADERS += \
-    Config.h \
-    RyzenAdjCtrl.h \
-    RyzenAdjGui.h \
-    RyzenAdjCfg.h
+    CtrlConfig.h \
+    CtrlGui.h \
+    CtrlService.h \
+    CtrlSettings.h
 
 FORMS += \
-    RyzenAdjGui.ui \
-    RyzenAdjGuiAPUForm.ui \
-    RyzenAdjGuiSettings.ui
+    CtrlAPUForm.ui \
+    CtrlMainWindow.ui \
+    CtrlSettingsForm.ui
 
 TRANSLATIONS += \
-    Appfolder/Language/RyzenAdjGui_ru_RU.ts
+    Appfolder/Language/CtrlGui_ru_RU.ts
 
 CODECFORSRC     = UTF-8
 
