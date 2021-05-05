@@ -49,9 +49,7 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, CtrlSettings *conf)
     checkCurrentACState();
 }
 
-CtrlService::~CtrlService() {
-    exit(0);
-}
+CtrlService::~CtrlService() {}
 
 void CtrlService::recieveArgs(){
     char *iodata = (char*)bufferToService->data();
