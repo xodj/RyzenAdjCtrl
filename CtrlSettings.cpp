@@ -40,6 +40,10 @@ bool CtrlSettings::saveSettings() {
     xmlWriter.writeStartDocument();
     xmlWriter.writeStartElement("Settings");
     //
+        xmlWriter.writeStartElement("useAgent");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.useAgent));
+        xmlWriter.writeEndElement();
+
         xmlWriter.writeStartElement("showReloadStyleSheetButton");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showReloadStyleSheetButton));
         xmlWriter.writeEndElement();
@@ -76,6 +80,12 @@ bool CtrlSettings::openSettings(){
     while(!xmlReader.atEnd())
     {
         //
+        if (xmlReader.name() == QString("useAgent"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
+                if (attr.name().toString() == "value")
+                    settingsBuffer.useAgent =
+                            attr.value().toString().toInt();
+
         if (xmlReader.name() == QString("showReloadStyleSheetButton"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
                 if (attr.name().toString() == "value")

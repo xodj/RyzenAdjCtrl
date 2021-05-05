@@ -18,8 +18,10 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, CtrlSettings *conf)
     if(bufferToService->attach(QSharedMemory::ReadWrite))
         bufferToService->detach();
     else {
-        errorMessage("The service is not running.");
+        infoMessage("RyzenAdjCtrl Service is not runing!\nTry to run...");
+        startService();
     }
+
 
     setupUi();
     loadPresets();
@@ -640,6 +642,9 @@ void CtrlGui::saveSettings(){
     argsWriter.writeStartElement("bufferToService");
 
     //
+    if(settings->useAgent != ui_settings->useAgentCheckBox->isChecked())
+        settings->useAgent = ui_settings->useAgentCheckBox->isChecked();
+
     if(settings->autoPresetApplyDurationChecked != ui_settings->autoPresetApplyDurationCheckBox->isChecked()){
         settings->autoPresetApplyDurationChecked = ui_settings->autoPresetApplyDurationCheckBox->isChecked();
         argsWriter.writeStartElement("autoPresetApplyDurationChecked");
@@ -684,6 +689,8 @@ void CtrlGui::saveSettings(){
 void CtrlGui::readSettings(){
     settingsStr *settings = conf->getSettings();
 
+    ui_settings->useAgentCheckBox->setChecked(settings->useAgent);
+
     ui->rssPushButton->setVisible(settings->showReloadStyleSheetButton);
 
     ui_settings->autoPresetApplyDurationCheckBox->setChecked(settings->autoPresetApplyDurationChecked);
@@ -706,7 +713,6 @@ void CtrlGui::removeService(){}
 void CtrlGui::startService(){
     QProcess process;
     QString runas = ("" + qApp->arguments().value(0) + " startup");
-    qDebug()<<runas;
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
 }
 

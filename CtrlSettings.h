@@ -67,6 +67,7 @@ struct presetStr {
 };
 
 struct settingsStr {
+    bool useAgent = false;
     bool showReloadStyleSheetButton = false;
 
     bool autoPresetApplyDurationChecked = true;

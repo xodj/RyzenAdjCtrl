@@ -1,10 +1,12 @@
 #include <QApplication>
-#include <QSharedMemory>
 #include <QMessageBox>
-#include "CtrlService.h"
-#include "CtrlGui.h"
+#include <QSharedMemory>
 #include <QXmlStreamWriter>
 #include "CtrlConfig.h"
+#include "CtrlSettings.h"
+#include "CtrlService.h"
+#include "CtrlGui.h"
+#include "CtrlAgent.h"
 
 int errorMessage(QString message)
 {
@@ -15,27 +17,34 @@ int errorMessage(QString message)
     return 1;
 }
 
+int infoMessage(QString message)
+{
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setText(message);
+    msgBox.exec();
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     QString qSharedMemoryKey = sharedMemoryKey;
-    QSharedMemory guiAlreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
-    QSharedMemory ctrlAlreadyRunning("ctrlAlreadyRunning:" + qSharedMemoryKey);
+    QSharedMemory alreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
+    QSharedMemory serviceAlreadyRunning("serviceAlreadyRunning:" + qSharedMemoryKey);
     QSharedMemory *bufferToService = new QSharedMemory("bufferToService:" + qSharedMemoryKey);
 
     CtrlSettings *conf = new CtrlSettings;
 
     if(a.arguments().contains("startup")) {
-        if(ctrlAlreadyRunning.attach()){
+        if(serviceAlreadyRunning.attach()){
             return errorMessage("The service is already running.\n"
                                 "Allowed to run only one instance of the application.");
         } else {
-            ctrlAlreadyRunning.create(1);
+            serviceAlreadyRunning.create(1);
             (new CtrlService(bufferToService, conf));
         }
-    } else if(a.arguments().contains("agent")){
-        return errorMessage("The application agent not working yet.");
     } else if(a.arguments().contains("exit")){
         QByteArray data;
         QXmlStreamWriter argsWriter(&data);
@@ -60,12 +69,15 @@ int main(int argc, char *argv[])
         }
         exit(0);
     } else {
-        if(guiAlreadyRunning.attach()){
+        if(alreadyRunning.attach()){
             return errorMessage("The application is already running.\n"
                                 "Allowed to run only one instance of the application.");
         } else {
-            guiAlreadyRunning.create(1);
-            (new CtrlGui(bufferToService, conf))->show();
+            alreadyRunning.create(1);
+            if (conf->getSettings()->useAgent)
+                (new CtrlAgent(bufferToService, conf))->show();
+            else
+                (new CtrlGui(bufferToService, conf))->show();
         }
     }
     return a.exec();
