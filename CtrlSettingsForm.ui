@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>303</width>
-    <height>469</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -137,22 +137,22 @@
              </property>
              <item>
               <property name="text">
-               <string>Battery Saving</string>
+               <string>Battery Saver</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Optimal</string>
+               <string>Better Battery</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Perfomance</string>
+               <string>Balanced</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Extreme</string>
+               <string>Maximum Perfomance</string>
               </property>
              </item>
             </widget>
@@ -199,22 +199,22 @@
              </property>
              <item>
               <property name="text">
-               <string>Battery Saving</string>
+               <string>Battery Saver</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Optimal</string>
+               <string>Better Battery</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Perfomance</string>
+               <string>Balanced</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Extreme</string>
+               <string>Maximum Perfomance</string>
               </property>
              </item>
             </widget>
@@ -261,22 +261,22 @@
              </property>
              <item>
               <property name="text">
-               <string>Battery Saving</string>
+               <string>Battery Saver</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Optimal</string>
+               <string>Better Battery</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Perfomance</string>
+               <string>Balanced</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Extreme</string>
+               <string>Maximum Perfomance</string>
               </property>
              </item>
             </widget>
@@ -323,22 +323,22 @@
              </property>
              <item>
               <property name="text">
-               <string>Battery Saving</string>
+               <string>Battery Saver</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Optimal</string>
+               <string>Better Battery</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Perfomance</string>
+               <string>Balanced</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Extreme</string>
+               <string>Maximum Perfomance</string>
               </property>
              </item>
             </widget>
@@ -409,22 +409,22 @@
              </property>
              <item>
               <property name="text">
-               <string>Battery Saving</string>
+               <string>Battery Saver</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Optimal</string>
+               <string>Better Battery</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Perfomance</string>
+               <string>Balanced</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Extreme</string>
+               <string>Maximum Perfomance</string>
               </property>
              </item>
             </widget>
@@ -471,22 +471,22 @@
              </property>
              <item>
               <property name="text">
-               <string>Battery Saving</string>
+               <string>Battery Saver</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Optimal</string>
+               <string>Better Battery</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Perfomance</string>
+               <string>Balanced</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Extreme</string>
+               <string>Maximum Perfomance</string>
               </property>
              </item>
             </widget>
@@ -586,6 +586,16 @@
         </property>
         <property name="text">
          <string>Need to restart RyzenAdjCtrl.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="showNotificationsCheckBox">
+        <property name="text">
+         <string>Show notifications</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

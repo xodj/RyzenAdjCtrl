@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
     QSharedMemory alreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
     QSharedMemory serviceAlreadyRunning("serviceAlreadyRunning:" + qSharedMemoryKey);
     QSharedMemory *bufferToService = new QSharedMemory("bufferToService:" + qSharedMemoryKey);
+    QSharedMemory *bufferToGui = new QSharedMemory("bufferToGui:" + qSharedMemoryKey);
 
     CtrlSettings *conf = new CtrlSettings;
 
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
                                 "Allowed to run only one instance of the application.");
         } else {
             serviceAlreadyRunning.create(1);
-            (new CtrlService(bufferToService, conf));
+            (new CtrlService(bufferToService, bufferToGui, conf));
         }
     } else if(a.arguments().contains("exit")){
         QByteArray data;
@@ -75,9 +76,9 @@ int main(int argc, char *argv[])
         } else {
             alreadyRunning.create(1);
             if (conf->getSettings()->useAgent)
-                (new CtrlAgent(bufferToService, conf))->show();
+                (new CtrlAgent(bufferToService, bufferToGui, conf))->show();
             else
-                (new CtrlGui(bufferToService, conf))->show();
+                (new CtrlGui(bufferToService, bufferToGui, conf))->show();
         }
     }
     return a.exec();

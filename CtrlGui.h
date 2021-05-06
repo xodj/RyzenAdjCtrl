@@ -18,8 +18,10 @@ class CtrlGui : public QMainWindow
     Q_OBJECT
 
 public:
-    CtrlGui(QSharedMemory *bufferToService, CtrlSettings *conf);
+    CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf);
     ~CtrlGui();
+signals:
+    void messageToAgent(QString message);
 
 private:
     void setupUi();
@@ -35,7 +37,7 @@ private:
 
     void presetVariableChanged();
     void smuCheckBoxClicked();
-    void sendArgs(QByteArray arguments);
+    void sendArgsToService(QByteArray arguments);
 
     void saveSettings();
     void readSettings();
@@ -50,12 +52,18 @@ private:
     void presetPushButtonClicked();
     void settingsAutomaticPresetSwitchClicked();
 
+    void recieveArgs();
+    void decodeArgs(QByteArray args);
+
+    bool infoMessageShowed = false;
+
     Ui::CtrlGui *ui;
     Ui::CtrlGuiAPUForm *apuForm[4];
     Ui::CtrlGuiSettings *ui_settings;
     QFrame *settingFrame;
     QTranslator *qtLanguageTranslator;
     QSharedMemory *bufferToService;
+    QSharedMemory *bufferToGui;
     CtrlSettings *conf;
 };
 #endif // CTRLGUI_H

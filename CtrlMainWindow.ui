@@ -236,7 +236,7 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Battery Saving</string>
+             <string>Battery Saver</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -264,7 +264,7 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Optimal</string>
+             <string>Better Battery</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -292,7 +292,7 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Perfomance</string>
+             <string>Balanced</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -323,7 +323,7 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Extreme</string>
+             <string>Maximum Perfomance</string>
             </property>
             <property name="checkable">
              <bool>true</bool>

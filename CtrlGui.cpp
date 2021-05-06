@@ -7,10 +7,13 @@
 #include <QFile>
 #include <QDialogButtonBox>
 
-CtrlGui::CtrlGui(QSharedMemory *bufferToService, CtrlSettings *conf)
+#define bufferToGui_refresh_time 100
+
+CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
     : ui(new Ui::CtrlGui),
       ui_settings(new Ui::CtrlGuiSettings),
       bufferToService(bufferToService),
+      bufferToGui(bufferToGui),
       conf(conf)
 {
     qtLanguageTranslator = new QTranslator;
@@ -18,16 +21,20 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, CtrlSettings *conf)
     if(bufferToService->attach(QSharedMemory::ReadWrite))
         bufferToService->detach();
     else {
-        infoMessage("RyzenAdjCtrl Service is not runing!\nTry to run...");
+        //infoMessage("RyzenAdjCtrl Service is not runing!\nTry to run...");
         startService();
     }
-
 
     setupUi();
     loadPresets();
     readSettings();
     setupConnections();
     loadStyleSheet();
+
+    QTimer *bufferToService_refresh_timer = new QTimer;
+    connect(bufferToService_refresh_timer, &QTimer::timeout,
+            this, &CtrlGui::recieveArgs);
+    bufferToService_refresh_timer->start(bufferToGui_refresh_time);
 }
 
 void CtrlGui::setupUi(){
@@ -271,6 +278,16 @@ void CtrlGui::loadStyleSheet(){
 
 void CtrlGui::savePreset(){
     int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+
+    if(!infoMessageShowed){
+        infoMessage("For better experience"
+                    "\ndisable auto switcher"
+                    "\nin settings.");
+        infoMessageShowed = true;
+        conf->getSettings()->showNotificationToDisableAutoSwitcher = true;
+        conf->saveSettings();
+    }
+
     presetStr *presetsBuffer = conf->getPresets();
 
     presetsBuffer[i].cmdOutputValue = apuForm[i]->cmdOutputLineEdit->text();
@@ -343,11 +360,20 @@ void CtrlGui::savePreset(){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    sendArgs(data);
+    sendArgsToService(data);
 }
 
 void CtrlGui::applyPreset(){
     int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+
+    if(!infoMessageShowed){
+        infoMessage("For better experience"
+                    "\ndisable auto switcher"
+                    "\nin settings.");
+        infoMessageShowed = true;
+        conf->getSettings()->showNotificationToDisableAutoSwitcher = true;
+        conf->saveSettings();
+    }
 
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
@@ -368,7 +394,7 @@ void CtrlGui::applyPreset(){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    sendArgs(data);
+    sendArgsToService(data);
 }
 
 void CtrlGui::cancelPreset(){
@@ -426,6 +452,8 @@ void CtrlGui::cancelPreset(){
     argsWriter.writeStartDocument();
     argsWriter.writeStartElement("bufferToService");
     //
+        argsWriter.writeStartElement("save");
+        argsWriter.writeEndElement();
         argsWriter.writeStartElement("id");
             argsWriter.writeAttribute("value", QString::number(i));
         argsWriter.writeEndElement();
@@ -439,7 +467,7 @@ void CtrlGui::cancelPreset(){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    sendArgs(data);
+    sendArgsToService(data);
 }
 
 void CtrlGui::presetVariableChanged(){
@@ -648,6 +676,8 @@ void CtrlGui::saveSettings(){
     //
     if(settings->useAgent != ui_settings->useAgentGroupBox->isChecked())
         settings->useAgent = ui_settings->useAgentGroupBox->isChecked();
+    if(settings->showNotifications != ui_settings->showNotificationsCheckBox->isChecked())
+        settings->showNotifications = ui_settings->showNotificationsCheckBox->isChecked();
 
     if(settings->autoPresetApplyDurationChecked != ui_settings->reapplyDurationGroupBox->isChecked()){
         settings->autoPresetApplyDurationChecked = ui_settings->reapplyDurationGroupBox->isChecked();
@@ -689,25 +719,25 @@ void CtrlGui::saveSettings(){
     }
     if(settings->epmBatterySaverPresetId != ui_settings->epmBatterySaverComboBox->currentIndex()){
         settings->epmBatterySaverPresetId = ui_settings->epmBatterySaverComboBox->currentIndex();
-        argsWriter.writeStartElement("dcStatePresetId");
+        argsWriter.writeStartElement("epmBatterySaverPresetId");
             argsWriter.writeAttribute("value", QString::number(settings->epmBatterySaverPresetId));
         argsWriter.writeEndElement();
     }
     if(settings->epmBetterBatteryPresetId != ui_settings->epmBetterBatteryComboBox->currentIndex()){
         settings->epmBetterBatteryPresetId = ui_settings->epmBetterBatteryComboBox->currentIndex();
-        argsWriter.writeStartElement("acStatePresetId");
+        argsWriter.writeStartElement("epmBetterBatteryPresetId");
             argsWriter.writeAttribute("value", QString::number(settings->epmBetterBatteryPresetId));
         argsWriter.writeEndElement();
     }
     if(settings->epmBalancedPresetId != ui_settings->epmBalancedComboBox->currentIndex()){
         settings->epmBalancedPresetId = ui_settings->epmBalancedComboBox->currentIndex();
-        argsWriter.writeStartElement("dcStatePresetId");
+        argsWriter.writeStartElement("epmBalancedPresetId");
             argsWriter.writeAttribute("value", QString::number(settings->epmBalancedPresetId));
         argsWriter.writeEndElement();
     }
     if(settings->epmMaximumPerfomancePresetId != ui_settings->epmMaximumPerfomanceComboBox->currentIndex()){
         settings->epmMaximumPerfomancePresetId = ui_settings->epmMaximumPerfomanceComboBox->currentIndex();
-        argsWriter.writeStartElement("acStatePresetId");
+        argsWriter.writeStartElement("epmMaximumPerfomancePresetId");
             argsWriter.writeAttribute("value", QString::number(settings->epmMaximumPerfomancePresetId));
         argsWriter.writeEndElement();
     }
@@ -716,7 +746,7 @@ void CtrlGui::saveSettings(){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    sendArgs(data);
+    sendArgsToService(data);
 
     conf->saveSettings();
 }
@@ -725,6 +755,9 @@ void CtrlGui::readSettings(){
     settingsStr *settings = conf->getSettings();
 
     ui_settings->useAgentGroupBox->setChecked(settings->useAgent);
+    ui_settings->showNotificationsCheckBox->setChecked(settings->showNotifications);
+
+    infoMessageShowed = settings->showNotificationToDisableAutoSwitcher;
 
     ui->rssPushButton->setVisible(settings->showReloadStyleSheetButton);
 
@@ -769,10 +802,10 @@ void CtrlGui::stopService(){
     //
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
-    sendArgs(data);
+    sendArgsToService(data);
 }
 
-void CtrlGui::sendArgs(QByteArray arguments){
+void CtrlGui::sendArgsToService(QByteArray arguments){
     if(bufferToService->attach(QSharedMemory::ReadWrite)){
         char *iodata = (char*)bufferToService->data();
         if (bufferToService->lock()) {
@@ -875,4 +908,59 @@ void CtrlGui::settingsAutomaticPresetSwitchClicked(){
         if(ui_settings->acAutoPresetSwitchGroupBox->isChecked())
             ui_settings->epmAutoPresetSwitchGroupBox->setChecked(false);
     }
+}
+
+void CtrlGui::recieveArgs(){
+    QByteArray arguments;
+    if(bufferToGui->attach(QSharedMemory::ReadWrite)){
+        if (bufferToGui->lock())
+        {
+            char *iodata = (char*)bufferToGui->data();
+            for (int i=0;iodata[i];i++) {
+                arguments.append(iodata[i]);
+                iodata[i] = '\0';
+            }
+            bufferToGui->unlock();
+        }
+        bufferToGui->detach();
+    }
+    if(arguments.size() > 0)
+        decodeArgs(arguments);
+}
+
+void CtrlGui::decodeArgs(QByteArray args){
+    qDebug()<<"Recieved args from Service";
+    int currentPresetId = 0;
+    bool saved = false;
+
+    QXmlStreamReader argsReader(args);
+    argsReader.readNext();
+    while(!argsReader.atEnd())
+    {
+        //
+        if (argsReader.name() == QString("currentPresetId"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value"){
+                    currentPresetId = attr.value().toString().toInt();
+                    qDebug()<<"currentPresetId"<<currentPresetId;
+                }
+        if (argsReader.name() == QString("saved"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value"){
+                    saved = attr.value().toString().toInt();
+                    qDebug()<<"saved"<<saved;
+                }
+        //
+        argsReader.readNext();
+    }
+
+    QString message;
+    if (saved)
+        message = (conf->getPresets()[currentPresetId].presetName
+                   + " is runing now.");
+    else
+        message = (conf->getPresets()[currentPresetId].presetName
+                   + " NOT SAVED! is runing now.");
+    ui->label->setText("RyzenAdjCtrl - " + message);
+    emit messageToAgent(message);
 }

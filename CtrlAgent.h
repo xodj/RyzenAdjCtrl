@@ -13,8 +13,8 @@ class CtrlGuiX : public CtrlGui
 {
     Q_OBJECT
 public:
-    CtrlGuiX(QSharedMemory *bufferToService, CtrlSettings *conf)
-        : CtrlGui(bufferToService, conf)
+    CtrlGuiX(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
+        : CtrlGui(bufferToService, bufferToGui, conf)
     {}
 
 protected:
@@ -30,7 +30,7 @@ class CtrlAgent : public QSystemTrayIcon
 {
     Q_OBJECT
 public:
-    CtrlAgent(QSharedMemory *bufferToService, CtrlSettings *conf);
+    CtrlAgent(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf);
     ~CtrlAgent();
 
 private slots:
@@ -38,9 +38,14 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void closeAgent();
 
+    void notificationToTray(QString message);
+
 private:
+    QString lastMessage;
+
     QMenu *trayMenu;
     QSharedMemory *bufferToService;
+    QSharedMemory *bufferToGui;
     CtrlSettings *conf;
     CtrlGuiX *gui = nullptr;
 };

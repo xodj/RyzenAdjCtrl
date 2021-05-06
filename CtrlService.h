@@ -13,7 +13,7 @@
 class CtrlService : public QObject {
     Q_OBJECT
 public:
-    CtrlService(QSharedMemory *bufferToService, CtrlSettings *conf);
+    CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf);
     ~CtrlService();
 
 private:
@@ -24,11 +24,15 @@ private:
 
     void RyzenAdjSendCommand(QString arguments);
     void atrofacSendCommand(QString arguments);
+    void sendCurrentPresetIdToGui(int presetId, bool saved);
+    void sendArgsToGui(QByteArray arguments);
 
     ACState currentACState;
     epmMode currentEPMode;
+    int lastUsedPresetId = -1;
 
     QSharedMemory *bufferToService;
+    QSharedMemory *bufferToGui;
 
     CtrlSettings *conf;
     CtrlEPMCallback *epmCallback;

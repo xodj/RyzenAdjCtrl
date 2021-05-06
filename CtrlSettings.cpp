@@ -17,10 +17,10 @@ CtrlSettings::CtrlSettings()
     if (!presetsQFile.exists()){
         for(int i = 0;i < 4; i++)
             presetsBuffer[i].presetId = i;
-        presetsBuffer[0].presetName = "Battery";
-        presetsBuffer[1].presetName = "Optimal";
-        presetsBuffer[2].presetName = "Perfomance";
-        presetsBuffer[3].presetName = "Extreme";
+        presetsBuffer[0].presetName = "Battery Saver";
+        presetsBuffer[1].presetName = "Better Battery";
+        presetsBuffer[2].presetName = "Balanced";
+        presetsBuffer[3].presetName = "Maximum Perfomance";
         savePresets();
     }
     else
@@ -43,9 +43,15 @@ bool CtrlSettings::saveSettings() {
         xmlWriter.writeStartElement("useAgent");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.useAgent));
         xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("showNotifications");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showNotifications));
+        xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("showReloadStyleSheetButton");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showReloadStyleSheetButton));
+        xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("showNotificationToDisableAutoSwitcher");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showNotificationToDisableAutoSwitcher));
         xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("autoPresetApplyDurationChecked");
@@ -101,7 +107,17 @@ bool CtrlSettings::openSettings(){
                 if (attr.name().toString() == "value")
                     settingsBuffer.useAgent =
                             attr.value().toString().toInt();
+        if (xmlReader.name() == QString("showNotifications"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
+                if (attr.name().toString() == "value")
+                    settingsBuffer.showNotifications =
+                            attr.value().toString().toInt();
 
+        if (xmlReader.name() == QString("showNotificationToDisableAutoSwitcher"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
+                if (attr.name().toString() == "value")
+                    settingsBuffer.showNotificationToDisableAutoSwitcher =
+                            attr.value().toString().toInt();
         if (xmlReader.name() == QString("showReloadStyleSheetButton"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
                 if (attr.name().toString() == "value")

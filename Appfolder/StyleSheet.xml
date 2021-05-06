@@ -18,6 +18,28 @@ selection-color: rgb(255, 0, 0);
 selection-background-color: rgb(0, 0, 0);
 }
 
+QGroupBox:hover {
+color: rgb(255, 64, 64);
+}
+QGroupBox::indicator {
+width: 16px;
+height: 16px;
+}
+QGroupBox::indicator:unchecked {
+image: url(./Theme/checkbox_unchecked.png);
+}
+QGroupBox::indicator:unchecked:hover {
+border: none;
+image: url(./Theme/checkbox_unchecked_focus.png);
+}
+QGroupBox::indicator:checked {
+image: url(./Theme/checkbox_checked.png);
+}
+QGroupBox::indicator:checked:hover {
+border: none;
+image: url(./Theme/checkbox_checked_focus.png);
+}
+
 QSpinBox, QDoubleSpinBox {
 background-color: rgb(58,57,58);
 border: 1px solid gray;
@@ -101,9 +123,6 @@ color: rgb(96, 32, 32);
 QCheckBox::indicator {
 width: 16px;
 height: 16px;
-}
-QGroupBox::indicator {
-margin-left: 2px;
 }
 QCheckBox::indicator:unchecked {
 image: url(./Theme/checkbox_unchecked.png);

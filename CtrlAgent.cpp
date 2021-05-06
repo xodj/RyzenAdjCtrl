@@ -2,9 +2,10 @@
 #include <QProcess>
 #include <QMessageBox>
 
-CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, CtrlSettings *conf)
+CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
     : QSystemTrayIcon(new QSystemTrayIcon),
       bufferToService(bufferToService),
+      bufferToGui(bufferToGui),
       conf(conf)
 {
     QIcon icon(":/main/amd_icon.ico");
@@ -33,21 +34,20 @@ CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, CtrlSettings *conf)
     if(bufferToService->attach(QSharedMemory::ReadWrite))
         bufferToService->detach();
     else {
-        QMessageBox msgBox;
-        msgBox.setIcon(QMessageBox::Information);
-        msgBox.setText("RyzenAdjCtrl Service is not runing!\nTry to run...");
-        msgBox.exec();
         QProcess process;
         QString runas = ("" + qApp->arguments().value(0) + " startup");
         process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
     }
+
+    gui = new CtrlGuiX(bufferToService, bufferToGui, conf);
+    connect(gui, &CtrlGuiX::messageToAgent, this, &CtrlAgent::notificationToTray);
 }
 
 CtrlAgent::~CtrlAgent(){}
 
 void CtrlAgent::openCtrl(){
     if (gui == nullptr) {
-        gui = new CtrlGuiX(bufferToService, conf);
+        gui = new CtrlGuiX(bufferToService, bufferToGui, conf);
     }
     gui->show();
 }
@@ -59,3 +59,11 @@ void CtrlAgent::iconActivated(QSystemTrayIcon::ActivationReason reason){
 }
 
 void CtrlAgent::closeAgent(){ exit(0); }
+
+void CtrlAgent::notificationToTray(QString message){
+    if(conf->getSettings()->showNotifications)
+        if(lastMessage != message) {
+            lastMessage = message;
+            this->showMessage("RyzenAdjCtrl", message);
+    }
+}

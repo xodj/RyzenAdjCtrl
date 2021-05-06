@@ -18,15 +18,17 @@ void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg){
     std::cout << msg.toStdString() << std::endl;
 }
 
-CtrlService::CtrlService(QSharedMemory *bufferToService, CtrlSettings *conf)
+CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
     : QObject(nullptr),
       bufferToService(bufferToService),
+      bufferToGui(bufferToGui),
       conf(conf)
 {
     qInstallMessageHandler(messageHandler);
 
     settingsStr *settings = conf->getSettings();
     bufferToService->create(buffer_size);
+    bufferToGui->create(buffer_size);
     bufferToService_refresh_timer = new QTimer;
     bufferToService_refresh_timer->connect(bufferToService_refresh_timer,
                                            &QTimer::timeout, this,
@@ -217,10 +219,14 @@ void CtrlService::decodeArgs(QByteArray args){
         argsReader.readNext();
     }
 
-    if(id != -1)
+    if(id != -1) {
         qDebug()<<"Preset ID: "<<id;
-    if(ryzenAdjCmdLine.size() > 0)
+        sendCurrentPresetIdToGui(id, save);
+    }
+    if(ryzenAdjCmdLine.size() > 0) {
         RyzenAdjSendCommand(ryzenAdjCmdLine);
+
+    }
     if(fanPresetId > 0) {
         QString fanArguments;
         switch(fanPresetId){
@@ -293,10 +299,15 @@ void CtrlService::reapplyPresetTimeout(){
     qDebug() << "Reapply Preset Timeout";
     acCallback->emitCurrentACState();
     epmCallback->emitCurrentEPMState();
+    if(!conf->getSettings()->autoPresetSwitchAC
+       && !conf->getSettings()->epmAutoPresetSwitch
+       && lastUsedPresetId != -1)
+        loadPreset(lastUsedPresetId);
 }
 
 void CtrlService::loadPreset(int currentPresetId){
     qDebug()<<"Load preset ID:" << currentPresetId << "...";
+    sendCurrentPresetIdToGui(currentPresetId, true);
     if(conf->getPresets()[currentPresetId].cmdOutputValue.size() > 0)
         RyzenAdjSendCommand(conf->getPresets()[currentPresetId].cmdOutputValue);
 
@@ -352,5 +363,34 @@ void CtrlService::atrofacSendCommand(QString arguments) {
         qDebug() << "atrofac output:" << output;
         if (!output.contains("Err"))
             break;
+    }
+}
+
+void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
+    lastUsedPresetId = presetId;
+    QByteArray data;
+    QXmlStreamWriter argsWriter(&data);
+    argsWriter.setAutoFormatting(true);
+    argsWriter.writeStartDocument();
+    argsWriter.writeStartElement("bufferToGui");
+    //
+        argsWriter.writeStartElement("currentPresetId");
+            argsWriter.writeAttribute("value", QString::number(presetId));
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("saved");
+            argsWriter.writeAttribute("value", QString::number(saved));
+        argsWriter.writeEndElement();
+    //
+    argsWriter.writeEndElement();
+    argsWriter.writeEndDocument();
+    sendArgsToGui(data);
+}
+
+void CtrlService::sendArgsToGui(QByteArray arguments){
+    char *iodata = (char*)bufferToGui->data();
+    if (bufferToGui->lock()) {
+        for (int i=0;i<arguments.size();i++)
+            iodata[i] = arguments[i];
+        bufferToGui->unlock();
     }
 }

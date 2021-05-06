@@ -62,17 +62,20 @@ struct presetStr {
 };
 
 struct settingsStr {
-    bool useAgent = false;
-    bool showReloadStyleSheetButton = false;
+    bool useAgent = true;
+    bool showNotifications = true;
 
-    bool autoPresetApplyDurationChecked = true;
+    bool showReloadStyleSheetButton = false;
+    bool showNotificationToDisableAutoSwitcher = false;
+
+    bool autoPresetApplyDurationChecked = false;
     int autoPresetApplyDuration = 180;
 
     bool autoPresetSwitchAC = false;
     int dcStatePresetId = 1;
     int acStatePresetId = 2;
 
-    bool epmAutoPresetSwitch = true;
+    bool epmAutoPresetSwitch = false;
     int epmBatterySaverPresetId = 0;
     int epmBetterBatteryPresetId = 1;
     int epmBalancedPresetId = 2;
