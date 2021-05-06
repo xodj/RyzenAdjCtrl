@@ -20,23 +20,28 @@ private:
     void recieveArgs();
     void decodeArgs(QByteArray args);
 
-    void checkCurrentACState();
-    void currentACStateChanged();
-    void epmIdChanged(epmMode currentEPM);
     void loadPreset(int currentPresetId);
 
     void RyzenAdjSendCommand(QString arguments);
     void atrofacSendCommand(QString arguments);
 
-    QSharedMemory *bufferToService;
-    CtrlSettings *conf;
-
     ACState currentACState;
+    epmMode currentEPMode;
 
-    QTimer *currentAc_refresh_timer;
-    QTimer *bufferToService_refresh_timer;
-    QTimer *autoPresetApplyTimer;
+    QSharedMemory *bufferToService;
+
+    CtrlSettings *conf;
     CtrlEPMCallback *epmCallback;
+    CtrlACCallback *acCallback;
+
+    QTimer *bufferToService_refresh_timer;
+    QTimer *reapplyPresetTimer;
+
+public slots:
+    void currentACStateChanged(ACState state);
+    void epmIdChanged(epmMode EPMode);
+    void reapplyPresetTimeout();
+
 };
 
 #endif // CTRLSERVICE_H

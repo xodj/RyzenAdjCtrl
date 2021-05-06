@@ -12,17 +12,12 @@ enum enumFanPresetId {
     Manual
 };
 
-enum ACState {
-    Battery = 0,
-    ACPower
-};
-
 struct presetStr {
     int presetId = 0;
     QString presetName = "Preset Name";
     QString cmdOutputValue = "";
 
-    int fanPresetId = Perfomance;
+    int fanPresetId = None;
 
     int tempLimitValue = 85;
     bool tempLimitChecked = false;
@@ -73,9 +68,15 @@ struct settingsStr {
     bool autoPresetApplyDurationChecked = true;
     int autoPresetApplyDuration = 180;
 
-    bool autoPresetSwitchAC = true;
+    bool autoPresetSwitchAC = false;
     int dcStatePresetId = 1;
     int acStatePresetId = 2;
+
+    bool epmAutoPresetSwitch = true;
+    int epmBatterySaverPresetId = 0;
+    int epmBetterBatteryPresetId = 1;
+    int epmBalancedPresetId = 2;
+    int epmMaximumPerfomancePresetId = 3;
 };
 
 class CtrlSettings : public QObject

@@ -178,11 +178,14 @@ void CtrlGui::setupConnections(){
         connect(apuForm[i]->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
     }
 
-    connect(ui_settings->sStartPushButton, &QPushButton::clicked, this, &CtrlGui::startService);
-    connect(ui_settings->sStopPushButton, &QPushButton::clicked, this, &CtrlGui::stopService);
+    connect(ui_settings->serviceStartPushButton, &QPushButton::clicked, this, &CtrlGui::startService);
+    connect(ui_settings->serviceStopPushButton, &QPushButton::clicked, this, &CtrlGui::stopService);
 
     connect(ui_settings->savePushButton, &QPushButton::clicked, this, &CtrlGui::saveSettings);
     connect(ui_settings->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelSettings);
+
+    connect(ui_settings->epmAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
+    connect(ui_settings->acAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
 }
 
 void CtrlGui::loadPresets(){
@@ -633,6 +636,7 @@ void CtrlGui::languageChange()
 }
 
 void CtrlGui::saveSettings(){
+    settingFrame->hide();
     settingsStr* settings = conf->getSettings();
 
     QByteArray data;
@@ -642,24 +646,24 @@ void CtrlGui::saveSettings(){
     argsWriter.writeStartElement("bufferToService");
 
     //
-    if(settings->useAgent != ui_settings->useAgentCheckBox->isChecked())
-        settings->useAgent = ui_settings->useAgentCheckBox->isChecked();
+    if(settings->useAgent != ui_settings->useAgentGroupBox->isChecked())
+        settings->useAgent = ui_settings->useAgentGroupBox->isChecked();
 
-    if(settings->autoPresetApplyDurationChecked != ui_settings->autoPresetApplyDurationCheckBox->isChecked()){
-        settings->autoPresetApplyDurationChecked = ui_settings->autoPresetApplyDurationCheckBox->isChecked();
+    if(settings->autoPresetApplyDurationChecked != ui_settings->reapplyDurationGroupBox->isChecked()){
+        settings->autoPresetApplyDurationChecked = ui_settings->reapplyDurationGroupBox->isChecked();
         argsWriter.writeStartElement("autoPresetApplyDurationChecked");
             argsWriter.writeAttribute("value", QString::number(settings->autoPresetApplyDurationChecked));
         argsWriter.writeEndElement();
     }
-    if(settings->autoPresetApplyDuration != ui_settings->autoPresetApplyDurationSpinBox->value()){
-        settings->autoPresetApplyDuration = ui_settings->autoPresetApplyDurationSpinBox->value();
+    if(settings->autoPresetApplyDuration != ui_settings->reapplyDurationSpinBox->value()){
+        settings->autoPresetApplyDuration = ui_settings->reapplyDurationSpinBox->value();
         argsWriter.writeStartElement("autoPresetApplyDuration");
             argsWriter.writeAttribute("value", QString::number(settings->autoPresetApplyDuration));
         argsWriter.writeEndElement();
     }
 
-    if(settings->autoPresetSwitchAC != ui_settings->autoPresetSwitchCheckBox->isChecked()){
-        settings->autoPresetSwitchAC = ui_settings->autoPresetSwitchCheckBox->isChecked();
+    if(settings->autoPresetSwitchAC != ui_settings->acAutoPresetSwitchGroupBox->isChecked()){
+        settings->autoPresetSwitchAC = ui_settings->acAutoPresetSwitchGroupBox->isChecked();
         argsWriter.writeStartElement("autoPresetSwitchAC");
             argsWriter.writeAttribute("value", QString::number(settings->autoPresetSwitchAC));
         argsWriter.writeEndElement();
@@ -676,6 +680,37 @@ void CtrlGui::saveSettings(){
             argsWriter.writeAttribute("value", QString::number(settings->acStatePresetId));
         argsWriter.writeEndElement();
     }
+
+    if(settings->epmAutoPresetSwitch != ui_settings->epmAutoPresetSwitchGroupBox->isChecked()){
+        settings->epmAutoPresetSwitch = ui_settings->epmAutoPresetSwitchGroupBox->isChecked();
+        argsWriter.writeStartElement("epmAutoPresetSwitch");
+            argsWriter.writeAttribute("value", QString::number(settings->epmAutoPresetSwitch));
+        argsWriter.writeEndElement();
+    }
+    if(settings->epmBatterySaverPresetId != ui_settings->epmBatterySaverComboBox->currentIndex()){
+        settings->epmBatterySaverPresetId = ui_settings->epmBatterySaverComboBox->currentIndex();
+        argsWriter.writeStartElement("dcStatePresetId");
+            argsWriter.writeAttribute("value", QString::number(settings->epmBatterySaverPresetId));
+        argsWriter.writeEndElement();
+    }
+    if(settings->epmBetterBatteryPresetId != ui_settings->epmBetterBatteryComboBox->currentIndex()){
+        settings->epmBetterBatteryPresetId = ui_settings->epmBetterBatteryComboBox->currentIndex();
+        argsWriter.writeStartElement("acStatePresetId");
+            argsWriter.writeAttribute("value", QString::number(settings->epmBetterBatteryPresetId));
+        argsWriter.writeEndElement();
+    }
+    if(settings->epmBalancedPresetId != ui_settings->epmBalancedComboBox->currentIndex()){
+        settings->epmBalancedPresetId = ui_settings->epmBalancedComboBox->currentIndex();
+        argsWriter.writeStartElement("dcStatePresetId");
+            argsWriter.writeAttribute("value", QString::number(settings->epmBalancedPresetId));
+        argsWriter.writeEndElement();
+    }
+    if(settings->epmMaximumPerfomancePresetId != ui_settings->epmMaximumPerfomanceComboBox->currentIndex()){
+        settings->epmMaximumPerfomancePresetId = ui_settings->epmMaximumPerfomanceComboBox->currentIndex();
+        argsWriter.writeStartElement("acStatePresetId");
+            argsWriter.writeAttribute("value", QString::number(settings->epmMaximumPerfomancePresetId));
+        argsWriter.writeEndElement();
+    }
     //
 
     argsWriter.writeEndElement();
@@ -689,16 +724,22 @@ void CtrlGui::saveSettings(){
 void CtrlGui::readSettings(){
     settingsStr *settings = conf->getSettings();
 
-    ui_settings->useAgentCheckBox->setChecked(settings->useAgent);
+    ui_settings->useAgentGroupBox->setChecked(settings->useAgent);
 
     ui->rssPushButton->setVisible(settings->showReloadStyleSheetButton);
 
-    ui_settings->autoPresetApplyDurationCheckBox->setChecked(settings->autoPresetApplyDurationChecked);
-    ui_settings->autoPresetApplyDurationSpinBox->setValue(settings->autoPresetApplyDuration);
+    ui_settings->reapplyDurationGroupBox->setChecked(settings->autoPresetApplyDurationChecked);
+    ui_settings->reapplyDurationSpinBox->setValue(settings->autoPresetApplyDuration);
 
-    ui_settings->autoPresetSwitchCheckBox->setChecked(settings->autoPresetSwitchAC);
+    ui_settings->acAutoPresetSwitchGroupBox->setChecked(settings->autoPresetSwitchAC);
     ui_settings->dcStateComboBox->setCurrentIndex(settings->dcStatePresetId);
     ui_settings->acStateComboBox->setCurrentIndex(settings->acStatePresetId);
+
+    ui_settings->epmAutoPresetSwitchGroupBox->setChecked(settings->epmAutoPresetSwitch);
+    ui_settings->epmBatterySaverComboBox->setCurrentIndex(settings->epmBatterySaverPresetId);
+    ui_settings->epmBetterBatteryComboBox->setCurrentIndex(settings->epmBetterBatteryPresetId);
+    ui_settings->epmBalancedComboBox->setCurrentIndex(settings->epmBalancedPresetId);
+    ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(settings->epmMaximumPerfomancePresetId);
 }
 
 void CtrlGui::cancelSettings(){
@@ -822,6 +863,16 @@ void CtrlGui::presetPushButtonClicked(){
         ui->perfomanceTab->setHidden(true);
         ui->extremeTab->setHidden(true);
         break;
-        break;
+    }
+}
+
+void CtrlGui::settingsAutomaticPresetSwitchClicked(){
+    if (reinterpret_cast<QGroupBox *>(sender()) == ui_settings->epmAutoPresetSwitchGroupBox) {
+        if(ui_settings->epmAutoPresetSwitchGroupBox->isChecked())
+            ui_settings->acAutoPresetSwitchGroupBox->setChecked(false);
+    }
+    else {
+        if(ui_settings->acAutoPresetSwitchGroupBox->isChecked())
+            ui_settings->epmAutoPresetSwitchGroupBox->setChecked(false);
     }
 }

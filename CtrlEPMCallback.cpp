@@ -10,32 +10,32 @@
 CtrlEPMCallback *epmCallbackMainClass;
 
 void epmCallback(EFFECTIVE_POWER_MODE EPM, void*) {
-    epmMode currentEPM;
+    epmMode epm;
     switch(int(EPM)){
     case 0:
-        currentEPM = BatterySaver;
+        epm = BatterySaver;
         break;
     case 1:
-        currentEPM = BetterBattery;
+        epm = BetterBattery;
         break;
     case 2:
-        currentEPM = Balanced;
+        epm = Balanced;
         break;
     case 3:
-        currentEPM = MaxPerformance;
+        epm = MaxPerformance;
         break;
     case 4:
-        currentEPM = MaxPerformance;
+        epm = MaxPerformance;
         break;
     case 5:
-        currentEPM = GameMode;
+        epm = GameMode;
         break;
     case 6:
-        currentEPM = MixedReality;
+        epm = MixedReality;
         break;
     }
 
-    emit epmCallbackMainClass->epmIdChanged(currentEPM);
+    epmCallbackMainClass->emitEpmIdChanged(epm);
 }
 
 CtrlEPMCallback::CtrlEPMCallback() {
@@ -48,4 +48,45 @@ CtrlEPMCallback::CtrlEPMCallback() {
 
 CtrlEPMCallback::~CtrlEPMCallback() {
     PowerUnregisterFromEffectivePowerModeNotifications(epmHandle);
+}
+
+void CtrlEPMCallback::emitEpmIdChanged(epmMode epm){
+    currentEpm = epm;
+    emit epmIdChanged(epm);
+}
+
+void CtrlEPMCallback::emitCurrentEPMState(){
+    if(currentEpm != epmNone)
+        emit epmIdChanged(currentEpm);
+}
+
+#include <QTimer>
+
+#define currentAc_refresh_time 300
+
+CtrlACCallback::CtrlACCallback(){
+    currentAc_refresh_timer = new QTimer;
+    connect(currentAc_refresh_timer, &QTimer::timeout,
+            this, &CtrlACCallback::checkCurrentACState);
+    currentAc_refresh_timer->start(currentAc_refresh_time);
+}
+
+CtrlACCallback::~CtrlACCallback(){
+    disconnect(currentAc_refresh_timer, &QTimer::timeout,
+               this, &CtrlACCallback::checkCurrentACState);
+    currentAc_refresh_timer->stop();
+}
+
+void CtrlACCallback::checkCurrentACState(){
+    SYSTEM_POWER_STATUS sps;
+    if (GetSystemPowerStatus(&sps))
+        if(currentACState != ACState(sps.ACLineStatus)) {
+            currentACState = ACState(sps.ACLineStatus);
+            emit currentACStateChanged(currentACState);
+        }
+}
+
+void CtrlACCallback::emitCurrentACState(){
+    if(currentACState != ACNone)
+        emit currentACStateChanged(currentACState);
 }

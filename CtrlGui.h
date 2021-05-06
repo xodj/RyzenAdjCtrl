@@ -48,6 +48,7 @@ private:
 
     void settingsPushButtonClicked();
     void presetPushButtonClicked();
+    void settingsAutomaticPresetSwitchClicked();
 
     Ui::CtrlGui *ui;
     Ui::CtrlGuiAPUForm *apuForm[4];

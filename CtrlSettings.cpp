@@ -64,6 +64,22 @@ bool CtrlSettings::saveSettings() {
         xmlWriter.writeStartElement("acStatePresetId");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.acStatePresetId));
         xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("epmAutoPresetSwitch");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.epmAutoPresetSwitch));
+        xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("epmBatterySaverPresetId");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.epmBatterySaverPresetId));
+        xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("epmBetterBatteryPresetId");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.epmBetterBatteryPresetId));
+        xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("epmBalancedPresetId");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.epmBalancedPresetId));
+        xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("epmMaximumPerfomancePresetId");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.epmMaximumPerfomancePresetId));
+        xmlWriter.writeEndElement();
     //
     xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
@@ -109,7 +125,6 @@ bool CtrlSettings::openSettings(){
                 if (attr.name().toString() == "value")
                     settingsBuffer.autoPresetSwitchAC =
                             attr.value().toString().toInt();
-
         if (xmlReader.name() == QString("dcStatePresetId"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
                 if (attr.name().toString() == "value")
@@ -120,6 +135,34 @@ bool CtrlSettings::openSettings(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
                 if (attr.name().toString() == "value")
                     settingsBuffer.acStatePresetId =
+                            attr.value().toString().toInt();
+
+        if (xmlReader.name() == QString("epmAutoPresetSwitch"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
+                if (attr.name().toString() == "value")
+                    settingsBuffer.epmAutoPresetSwitch =
+                            attr.value().toString().toInt();
+        if (xmlReader.name() == QString("epmBatterySaverPresetId"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
+                if (attr.name().toString() == "value")
+                    settingsBuffer.epmBatterySaverPresetId =
+                            attr.value().toString().toInt();
+
+        if (xmlReader.name() == QString("epmBetterBatteryPresetId"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
+                if (attr.name().toString() == "value")
+                    settingsBuffer.epmBetterBatteryPresetId =
+                            attr.value().toString().toInt();
+        if (xmlReader.name() == QString("epmBalancedPresetId"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
+                if (attr.name().toString() == "value")
+                    settingsBuffer.epmBalancedPresetId =
+                            attr.value().toString().toInt();
+
+        if (xmlReader.name() == QString("epmMaximumPerfomancePresetId"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
+                if (attr.name().toString() == "value")
+                    settingsBuffer.epmMaximumPerfomancePresetId =
                             attr.value().toString().toInt();
         //
         xmlReader.readNext();
