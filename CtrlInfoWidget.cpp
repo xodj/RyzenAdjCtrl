@@ -34,7 +34,7 @@ void CtrlInfoWidget::setupUi() {
     verticalLayout->setSpacing(4);
     verticalLayout->setContentsMargins(2, 2, 2, 2);
 
-    horizontalLayout = new QHBoxLayout(this);
+    horizontalLayout = new QHBoxLayout;
     horizontalLayout->setSpacing(4);
     horizontalLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -42,7 +42,7 @@ void CtrlInfoWidget::setupUi() {
 
     horizontalLayout->addWidget(label);
 
-    timerDurationSpinBox= new QSpinBox(this);
+    timerDurationSpinBox= new QSpinBox;
     timerDurationSpinBox->setMinimum(100);
     timerDurationSpinBox->setMaximum(3000);
     timerDurationSpinBox->setValue(300);
@@ -55,15 +55,13 @@ void CtrlInfoWidget::setupUi() {
 
     verticalLayout->addLayout(horizontalLayout);
 
-    textEdit = new QTextEdit(this);
+    textEdit = new QTextEdit;
 
     verticalLayout->addWidget(textEdit);
 
     this->setLayout(verticalLayout);
 
-
     getInfoTimer = new QTimer;
-    getInfoTimer->start(300);
 }
 
 void CtrlInfoWidget::connectionUi(){
