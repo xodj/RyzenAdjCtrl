@@ -2,6 +2,7 @@
 #include "ui_CtrlMainWindow.h"
 #include "ui_CtrlAPUForm.h"
 #include "ui_CtrlSettingsForm.h"
+#include "ui_CtrlInfoWidget.h"
 #include "CtrlMain.cpp"
 #include <QDebug>
 #include <QFile>
@@ -12,6 +13,7 @@
 CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
     : ui(new Ui::CtrlGui),
       ui_settings(new Ui::CtrlGuiSettings),
+      ui_infoWidget(new Ui::CtrlInfoWidget),
       bufferToService(bufferToService),
       bufferToGui(bufferToGui),
       conf(conf)
@@ -30,6 +32,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     readSettings();
     setupConnections();
     loadStyleSheet();
+    this->resize(750, 450);
 
     QTimer *bufferToService_refresh_timer = new QTimer;
     connect(bufferToService_refresh_timer, &QTimer::timeout,
@@ -103,7 +106,9 @@ void CtrlGui::setupUi(){
         apuForm[i]->smuPowerSavingCheckBox->setProperty("idy",1);
     }
 
-    ciw = new CtrlInfoWidget;
+    ui_infoWidget = new Ui::CtrlInfoWidget;
+    ui_infoWidget->setupUi(ui->infoWidget);
+    ui->infoDockWidget->setHidden(true);
 
     settingFrame = new QFrame(nullptr, Qt::WindowType::Popup);
     settingFrame->setFrameStyle(QFrame::Panel);
@@ -260,7 +265,7 @@ void CtrlGui::loadStyleSheet(){
                     QString strStyleSheet = attr.value().toString();
                     this->setStyleSheet(strStyleSheet);
                     settingFrame->setStyleSheet(strStyleSheet);
-                    ciw->setStyleSheet(strStyleSheet);
+                    //ui_infoWidget->setStyleSheet(strStyleSheet);
                 }
 
         if (configReader.name() == QString("TopWidget"))
@@ -811,28 +816,33 @@ void CtrlGui::sendArgsToService(QByteArray arguments){
 }
 
 void CtrlGui::infoPushButtonClicked() {
-    if (ciw->geometry().width()<10) {
-        ciw->show();
-        ciw->hide();
-    }
-
-    if (ciw->isHidden()) {
-        QRect rect = ciw->geometry();
-        const QRect windowGeometry = this->geometry();
-        int height = windowGeometry.height();
-        int width = rect.width();
-        rect.setX(windowGeometry.right() + 4);
-        rect.setY(windowGeometry.top());
-        rect.setWidth(width);
-        rect.setHeight(height);
-        ciw->setGeometry(rect);
-
-        ciw->timerStart();
-        ciw->show();
+    if(ui->infoDockWidget->isHidden()){
+        ui->infoDockWidget->setHidden(false);
+        sendRyzenAdjInfo(ui_infoWidget->spinBox->value());
+        ui_infoWidget->spinBox->connect(ui_infoWidget->spinBox, &QSpinBox::valueChanged,
+                                        this, &CtrlGui::sendRyzenAdjInfo);
     } else {
-        ciw->timerStop();
-        ciw->hide();
+        ui->infoDockWidget->setHidden(true);
+        ui_infoWidget->textEdit->clear();
+        sendRyzenAdjInfo(0);
     }
+}
+
+void CtrlGui::sendRyzenAdjInfo(int value){
+    QByteArray data;
+    QXmlStreamWriter argsWriter(&data);
+    argsWriter.setAutoFormatting(true);
+    argsWriter.writeStartDocument();
+    argsWriter.writeStartElement("bufferToService");
+    //
+        argsWriter.writeStartElement("ryzenAdjInfoTimeout");
+            argsWriter.writeAttribute("value", QString::number(value));
+        argsWriter.writeEndElement();
+    //
+    argsWriter.writeEndElement();
+    argsWriter.writeEndDocument();
+
+    sendArgsToService(data);
 }
 
 void CtrlGui::settingsPushButtonClicked() {
@@ -947,8 +957,9 @@ void CtrlGui::recieveArgs(){
 
 void CtrlGui::decodeArgs(QByteArray args){
     qDebug()<<"Recieved args from Service";
-    int currentPresetId = 0;
+    int currentPresetId = -1;
     bool saved = false;
+    QString ryzenAdjInfo;
 
     QXmlStreamReader argsReader(args);
     argsReader.readNext();
@@ -959,25 +970,38 @@ void CtrlGui::decodeArgs(QByteArray args){
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value"){
                     currentPresetId = attr.value().toString().toInt();
-                    qDebug()<<"currentPresetId"<<currentPresetId;
+                    qDebug()<<"currentPresetId:"<<currentPresetId;
                 }
         if (argsReader.name() == QString("saved"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value"){
                     saved = attr.value().toString().toInt();
-                    qDebug()<<"saved"<<saved;
+                    qDebug()<<"saved:"<<saved;
+                }
+        if (argsReader.name() == QString("RyzenAdjInfo"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value"){
+                    ryzenAdjInfo = attr.value().toString();
+                    qDebug()<<"ryzenAdjInfo:"<<ryzenAdjInfo;
                 }
         //
         argsReader.readNext();
     }
 
-    QString message;
-    if (saved)
-        message = (conf->getPresets()[currentPresetId].presetName
-                   + " is runing now.");
-    else
-        message = (conf->getPresets()[currentPresetId].presetName
-                   + " NOT SAVED! is runing now.");
-    ui->label->setText("RyzenAdjCtrl - " + message);
-    emit messageToAgent(message);
+    if(currentPresetId != -1){
+        QString message;
+        if (saved)
+            message = (conf->getPresets()[currentPresetId].presetName
+                       + " is runing now.");
+        else
+            message = (conf->getPresets()[currentPresetId].presetName
+                       + " NOT SAVED! is runing now.");
+        ui->label->setText("RyzenAdjCtrl - " + message);
+        emit messageToAgent(message);
+    }
+
+    if(ryzenAdjInfo.size() > 0 && ui->infoDockWidget->isVisible()){
+        ui_infoWidget->textEdit->clear();
+        ui_infoWidget->textEdit->setText(ryzenAdjInfo);
+    }
 }

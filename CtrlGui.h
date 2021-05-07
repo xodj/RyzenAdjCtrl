@@ -6,12 +6,12 @@
 #include <QSharedMemory>
 #include <QFrame>
 #include "CtrlSettings.h"
-#include "CtrlInfoWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CtrlGui;
                class CtrlGuiAPUForm;
-               class CtrlGuiSettings; }
+               class CtrlGuiSettings;
+               class CtrlInfoWidget; }
 QT_END_NAMESPACE
 
 class CtrlGui : public QMainWindow
@@ -47,6 +47,8 @@ private:
     void startService();
 
     void infoPushButtonClicked();
+    void sendRyzenAdjInfo(int value);
+
     void settingsPushButtonClicked();
     void presetPushButtonClicked();
     void settingsAutomaticPresetSwitchClicked();
@@ -59,11 +61,11 @@ private:
     Ui::CtrlGui *ui;
     Ui::CtrlGuiAPUForm *apuForm[4];
     Ui::CtrlGuiSettings *ui_settings;
+    Ui::CtrlInfoWidget *ui_infoWidget;
     QFrame *settingFrame;
     QTranslator *qtLanguageTranslator;
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToGui;
     CtrlSettings *conf;
-    CtrlInfoWidget *ciw;
 };
 #endif // CTRLGUI_H

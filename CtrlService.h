@@ -24,8 +24,14 @@ private:
 
     void RyzenAdjSendCommand(QString arguments);
     void atrofacSendCommand(QString arguments);
+
     void sendCurrentPresetIdToGui(int presetId, bool saved);
     void sendArgsToGui(QByteArray arguments);
+
+    void currentInfoTimeoutChanged(int timeout);
+    void takeCurrentInfo();
+    void sendCurrentInfoToGui(QString info);
+    QTimer *takeCurrentInfoTimer;
 
     ACState currentACState;
     epmMode currentEPMode;

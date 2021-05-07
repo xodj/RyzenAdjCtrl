@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
+    <width>1051</width>
     <height>450</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>750</width>
-    <height>450</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -23,10 +23,16 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>750</width>
+     <height>450</height>
+    </size>
+   </property>
    <property name="styleSheet">
     <string notr="true"/>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
      <number>0</number>
     </property>
@@ -409,6 +415,24 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QDockWidget" name="infoDockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>300</width>
+     <height>450</height>
+    </size>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="infoWidget"/>
   </widget>
  </widget>
  <resources/>

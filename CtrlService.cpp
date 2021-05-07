@@ -41,6 +41,9 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
         connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                 this, &CtrlService::epmIdChanged);
     epmCallback->emitCurrentEPMState();
+
+    takeCurrentInfoTimer = new QTimer;
+    takeCurrentInfoTimer->connect(takeCurrentInfoTimer, &QTimer::timeout, this, &CtrlService::takeCurrentInfo);
 }
 
 CtrlService::~CtrlService() {}
@@ -74,12 +77,19 @@ void CtrlService::decodeArgs(QByteArray args){
     while(!argsReader.atEnd())
     {
         //
+        if (argsReader.name() == QString("ryzenAdjInfoTimeout"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value") {
+                    currentInfoTimeoutChanged(attr.value().toInt());
+                    qDebug() << "ryzenAdjInfoTimeout" << attr.value().toInt();
+                }
+
         if (argsReader.name() == QString("save"))
             save = true;
         if (argsReader.name() == QString("id"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value")
-                    id = attr.value().toString().toInt();
+                    id = attr.value().toInt();
         if (argsReader.name() == QString("ryzenAdjCmdLine"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value"){
@@ -90,7 +100,7 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("fanPresetId"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value") {
-                    fanPresetId = attr.value().toString().toInt();
+                    fanPresetId = attr.value().toInt();
                     if(save)
                         presets[id].fanPresetId = fanPresetId;
                 }
@@ -104,7 +114,7 @@ void CtrlService::decodeArgs(QByteArray args){
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value"){
                         settings->autoPresetApplyDurationChecked
-                                = attr.value().toString().toInt();
+                                = attr.value().toInt();
                         qDebug() << "autoPresetApplyDurationChecked set to "
                                  << settings->autoPresetApplyDurationChecked;
                         reapplyPresetTimer->stop();
@@ -116,7 +126,7 @@ void CtrlService::decodeArgs(QByteArray args){
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                 if (attr.name().toString() == "value"){
                         settings->autoPresetApplyDuration
-                                = attr.value().toString().toInt();
+                                = attr.value().toInt();
                         qDebug() << "autoPresetApplyDuration set to "
                                  << settings->autoPresetApplyDuration;
                         reapplyPresetTimer->stop();
@@ -129,7 +139,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                     if (attr.name().toString() == "value"){
                             settings->autoPresetSwitchAC
-                                    = attr.value().toString().toInt();
+                                    = attr.value().toInt();
                             qDebug() << "autoPresetSwitchAC set to "
                                      << settings->autoPresetSwitchAC;
                             disconnect(acCallback,&CtrlACCallback::currentACStateChanged,
@@ -142,7 +152,7 @@ void CtrlService::decodeArgs(QByteArray args){
             if (argsReader.name() == QString("dcStatePresetId"))
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                     if (attr.name().toString() == "value"){
-                            settings->dcStatePresetId = attr.value().toString().toInt();
+                            settings->dcStatePresetId = attr.value().toInt();
                             qDebug() << "dcStatePresetId set to "
                                      << settings->dcStatePresetId;
                             reapplyPresetTimeout();
@@ -150,7 +160,7 @@ void CtrlService::decodeArgs(QByteArray args){
             if (argsReader.name() == QString("acStatePresetId"))
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                     if (attr.name().toString() == "value"){
-                            settings->acStatePresetId = attr.value().toString().toInt();
+                            settings->acStatePresetId = attr.value().toInt();
                             qDebug() << "acStatePresetId set to "
                                      << settings->acStatePresetId;
                             reapplyPresetTimeout();
@@ -160,7 +170,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                     if (attr.name().toString() == "value"){
                             settings->epmAutoPresetSwitch
-                                    = attr.value().toString().toInt();
+                                    = attr.value().toInt();
                             qDebug() << "epmAutoPresetSwitch set to "
                                      << settings->epmAutoPresetSwitch;
                             disconnect(epmCallback, &CtrlEPMCallback::epmIdChanged,
@@ -173,7 +183,7 @@ void CtrlService::decodeArgs(QByteArray args){
             if (argsReader.name() == QString("epmBatterySaverPresetId"))
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                     if (attr.name().toString() == "value"){
-                            settings->epmBatterySaverPresetId = attr.value().toString().toInt();
+                            settings->epmBatterySaverPresetId = attr.value().toInt();
                             qDebug() << "epmBatterySaverPresetId set to "
                                      << settings->epmBatterySaverPresetId;
                             reapplyPresetTimeout();
@@ -181,7 +191,7 @@ void CtrlService::decodeArgs(QByteArray args){
             if (argsReader.name() == QString("epmBetterBatteryPresetId"))
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                     if (attr.name().toString() == "value"){
-                            settings->epmBetterBatteryPresetId = attr.value().toString().toInt();
+                            settings->epmBetterBatteryPresetId = attr.value().toInt();
                             qDebug() << "epmBetterBatteryPresetId set to "
                                      << settings->epmBetterBatteryPresetId;
                             reapplyPresetTimeout();
@@ -189,7 +199,7 @@ void CtrlService::decodeArgs(QByteArray args){
             if (argsReader.name() == QString("epmBalancedPresetId"))
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                     if (attr.name().toString() == "value"){
-                            settings->epmBalancedPresetId = attr.value().toString().toInt();
+                            settings->epmBalancedPresetId = attr.value().toInt();
                             qDebug() << "epmBalancedPresetId set to "
                                      << settings->epmBalancedPresetId;
                             reapplyPresetTimeout();
@@ -197,7 +207,7 @@ void CtrlService::decodeArgs(QByteArray args){
             if (argsReader.name() == QString("epmMaximumPerfomancePresetId"))
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
                     if (attr.name().toString() == "value"){
-                            settings->epmMaximumPerfomancePresetId = attr.value().toString().toInt();
+                            settings->epmMaximumPerfomancePresetId = attr.value().toInt();
                             qDebug() << "epmMaximumPerfomancePresetId set to "
                                      << settings->epmMaximumPerfomancePresetId;
                             reapplyPresetTimeout();
@@ -377,6 +387,46 @@ void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
         argsWriter.writeEndElement();
         argsWriter.writeStartElement("saved");
             argsWriter.writeAttribute("value", QString::number(saved));
+        argsWriter.writeEndElement();
+    //
+    argsWriter.writeEndElement();
+    argsWriter.writeEndDocument();
+    sendArgsToGui(data);
+}
+
+void CtrlService::currentInfoTimeoutChanged(int timeout){
+    if(timeout == 0)
+        takeCurrentInfoTimer->stop();
+    else {
+        takeCurrentInfoTimer->stop();
+        takeCurrentInfoTimer->start(timeout);
+    }
+}
+
+void CtrlService::takeCurrentInfo() {
+    QProcess process;
+    QString output;
+    for(int i = 0; i < 3; i++){
+        process.start("Binaries/ryzenadj.exe", QStringList({"--info"}));
+        if( !process.waitForStarted() || !process.waitForFinished())
+            return;
+        output = process.readAllStandardOutput();
+        if (!output.contains("Err"))
+            break;
+    }
+    if(output.size() > 1)
+        sendCurrentInfoToGui(output);
+}
+
+void CtrlService::sendCurrentInfoToGui(QString info){
+    QByteArray data;
+    QXmlStreamWriter argsWriter(&data);
+    argsWriter.setAutoFormatting(true);
+    argsWriter.writeStartDocument();
+    argsWriter.writeStartElement("bufferToGui");
+    //
+        argsWriter.writeStartElement("RyzenAdjInfo");
+            argsWriter.writeAttribute("value", info);
         argsWriter.writeEndElement();
     //
     argsWriter.writeEndElement();

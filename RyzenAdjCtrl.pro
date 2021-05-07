@@ -10,7 +10,7 @@ CONFIG += c++11
 
 TARGET = RyzenAdjCtrl
 RC_ICONS = ./amd_icon.ico
-VERSION = 0.2.5.223
+VERSION = 0.2.5.234
 QMAKE_TARGET_COMPANY = "xo.dj@ya.ru"
 QMAKE_TARGET_DESCRIPTION = "GUI for RyzenAdj"
 QMAKE_TARGET_COPYRIGHT = "GPL-3.0 License"
@@ -24,7 +24,6 @@ SOURCES += \
     CtrlAgent.cpp \
     CtrlEPMCallback.cpp \
     CtrlGui.cpp \
-    CtrlInfoWidget.cpp \
     CtrlMain.cpp \
     CtrlService.cpp \
     CtrlSettings.cpp
@@ -34,12 +33,12 @@ HEADERS += \
     CtrlConfig.h \
     CtrlEPMCallback.h \
     CtrlGui.h \
-    CtrlInfoWidget.h \
     CtrlService.h \
     CtrlSettings.h
 
 FORMS += \
     CtrlAPUForm.ui \
+    CtrlInfoWidget.ui \
     CtrlMainWindow.ui \
     CtrlSettingsForm.ui
 
