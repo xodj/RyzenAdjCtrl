@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>CtrlService</string>
+   <string>RyzenAdjCtrl</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -81,7 +81,7 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>CtrlService</string>
+          <string>RyzenAdjCtrl</string>
          </property>
         </widget>
        </item>
