@@ -979,6 +979,5 @@ void CtrlGui::decodeArgs(QByteArray args){
         message = (conf->getPresets()[currentPresetId].presetName
                    + " NOT SAVED! is runing now.");
     ui->label->setText("RyzenAdjCtrl - " + message);
-    this->setWindowTitle("RyzenAdjCtrl - " + message);
     emit messageToAgent(message);
 }
