@@ -8,24 +8,12 @@
 #define buffer_size 512
 #define bufferToService_refresh_time 100
 
-void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg){
-    QFile log("Service.log");
-    QDateTime dt = QDateTime::currentDateTime();
-    log.open(QIODevice::WriteOnly | QIODevice::Append);
-    QTextStream ts(&log);
-    ts << dt.toString("dd.MM.yyyy hh:mm:ss ") << msg << '\n';
-    log.close();
-    std::cout << msg.toStdString() << std::endl;
-}
-
 CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
     : QObject(nullptr),
       bufferToService(bufferToService),
       bufferToGui(bufferToGui),
       conf(conf)
 {
-    qInstallMessageHandler(messageHandler);
-
     settingsStr *settings = conf->getSettings();
     bufferToService->create(buffer_size);
     bufferToGui->create(buffer_size);
@@ -334,17 +322,24 @@ void CtrlService::loadPreset(int currentPresetId){
     }
 }
 
+#include <QProcess>
+#include <QDebug>
+#include <QtCore/QVariant>
+
 void CtrlService::RyzenAdjSendCommand(QString arguments) {
     qDebug()<<"RyzenAdj Commandline: "<<arguments;
-    QStringList argumentsList = arguments.split(" ",Qt::SkipEmptyParts);
     QProcess process;
-    QString output;
+    QString output, error;
+    QStringList argumentsList = arguments.split(" ",Qt::SkipEmptyParts);
     for(int i = 0; i < 3; i++){
+        qDebug() << "ryzenadj.exe exec with" << argumentsList;
         process.start("Binaries/ryzenadj.exe", argumentsList);
         if( !process.waitForStarted() || !process.waitForFinished())
             return;
         output = process.readAllStandardOutput();
+        error = process.readAllStandardError();
         qDebug() << "RyzenAdj output:" << output;
+        qDebug() << "RyzenAdj error:" << error;
         if (!output.contains("Err"))
             break;
     }
@@ -354,14 +349,17 @@ void CtrlService::atrofacSendCommand(QString arguments) {
     qDebug()<<"atrofac Commandline: "<<arguments;
     QStringList argumentsList = arguments.split(" ",Qt::SkipEmptyParts);
     QProcess process;
-    QString output;
+    QString output, error;
     for(int i = 0; i < 3; i++){
+        qDebug() << "atrofac-cli.exe exec with" << argumentsList;
         process.start("Binaries/atrofac-cli.exe", argumentsList);
         if( !process.waitForStarted() || !process.waitForFinished())
             return;
-        output = process.readAllStandardError();
+        output = process.readAllStandardOutput();
+        error = process.readAllStandardError();
         qDebug() << "atrofac output:" << output;
-        if (!output.contains("Err"))
+        qDebug() << "atrofac error:" << error;
+        if (!error.contains("Err"))
             break;
     }
 }

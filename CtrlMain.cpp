@@ -8,22 +8,29 @@
 #include "CtrlGui.h"
 #include "CtrlAgent.h"
 
-int errorMessage(QString message)
-{
-    QMessageBox msgBox;
-    msgBox.setIcon(QMessageBox::Critical);
-    msgBox.setText(message);
-    msgBox.exec();
-    return 1;
+#include <QDebug>
+#include <QFile>
+#include <QDateTime>
+#include <iostream>
+
+void serviceMessageHandler(QtMsgType, const QMessageLogContext &, const QString &msg){
+    QFile log("RyzenAdjCtrl - Service.log");
+    QDateTime dt = QDateTime::currentDateTime();
+    log.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&log);
+    ts << dt.toString("dd.MM.yyyy hh:mm:ss ") << msg << '\n';
+    log.close();
+    std::cout << msg.toStdString() << std::endl;
 }
 
-int infoMessage(QString message)
-{
-    QMessageBox msgBox;
-    msgBox.setIcon(QMessageBox::Information);
-    msgBox.setText(message);
-    msgBox.exec();
-    return 0;
+void guiMessageHandler(QtMsgType, const QMessageLogContext &, const QString &msg){
+    QFile log("RyzenAdjCtrl - Gui.log");
+    QDateTime dt = QDateTime::currentDateTime();
+    log.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&log);
+    ts << dt.toString("dd.MM.yyyy hh:mm:ss ") << msg << '\n';
+    log.close();
+    std::cout << msg.toStdString() << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -39,14 +46,17 @@ int main(int argc, char *argv[])
     CtrlSettings *conf = new CtrlSettings;
 
     if(a.arguments().contains("startup")) {
+        qInstallMessageHandler(serviceMessageHandler);
         if(serviceAlreadyRunning.attach()){
-            return errorMessage("The service is already running.\n"
-                                "Allowed to run only one instance of the application.");
+            qDebug() << "The service is already running.";
+            return 1;
         } else {
             serviceAlreadyRunning.create(1);
             (new CtrlService(bufferToService, bufferToGui, conf));
         }
     } else if(a.arguments().contains("exit")){
+        qInstallMessageHandler(serviceMessageHandler);
+        qDebug() << "Exit message from cli";
         QByteArray data;
         QXmlStreamWriter argsWriter(&data);
         argsWriter.setAutoFormatting(true);
@@ -70,9 +80,10 @@ int main(int argc, char *argv[])
         }
         exit(0);
     } else {
+        qInstallMessageHandler(guiMessageHandler);
         if(alreadyRunning.attach()){
-            return errorMessage("The application is already running.\n"
-                                "Allowed to run only one instance of the application.");
+            qDebug() << "The application is already running.";
+            return 1;
         } else {
             alreadyRunning.create(1);
             if (conf->getSettings()->useAgent)

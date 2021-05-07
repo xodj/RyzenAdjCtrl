@@ -21,7 +21,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     if(bufferToService->attach(QSharedMemory::ReadWrite))
         bufferToService->detach();
     else {
-        //infoMessage("RyzenAdjCtrl Service is not runing!\nTry to run...");
+        qDebug() << "RyzenAdjCtrl Service is not runing!";
         startService();
     }
 
@@ -103,6 +103,8 @@ void CtrlGui::setupUi(){
         apuForm[i]->smuPowerSavingCheckBox->setProperty("idy",1);
     }
 
+    ciw = new CtrlInfoWidget;
+
     settingFrame = new QFrame(nullptr, Qt::WindowType::Popup);
     settingFrame->setFrameStyle(QFrame::Panel);
     settingFrame->setAccessibleName("Settings");
@@ -123,6 +125,7 @@ void CtrlGui::setupUi(){
 
 void CtrlGui::setupConnections(){
     connect(ui->comboBox, &QComboBox::currentIndexChanged, this, &CtrlGui::languageChange);
+    connect(ui->infoPushButton, &QPushButton::clicked, this, &CtrlGui::infoPushButtonClicked);
     connect(ui->settingsPushButton, &QPushButton::clicked, this, &CtrlGui::settingsPushButtonClicked);
     connect(ui->rssPushButton, &QPushButton::clicked, this, &CtrlGui::loadStyleSheet);
 
@@ -184,9 +187,6 @@ void CtrlGui::setupConnections(){
         connect(apuForm[i]->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
         connect(apuForm[i]->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
     }
-
-    connect(ui_settings->serviceStartPushButton, &QPushButton::clicked, this, &CtrlGui::startService);
-    connect(ui_settings->serviceStopPushButton, &QPushButton::clicked, this, &CtrlGui::stopService);
 
     connect(ui_settings->savePushButton, &QPushButton::clicked, this, &CtrlGui::saveSettings);
     connect(ui_settings->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelSettings);
@@ -257,8 +257,10 @@ void CtrlGui::loadStyleSheet(){
         if (configReader.name() == QString("MainWindow"))
             foreach(const QXmlStreamAttribute &attr, configReader.attributes())
                 if (attr.name().toString() == "value") {
-                    this->setStyleSheet(attr.value().toString());
-                    settingFrame->setStyleSheet(attr.value().toString());
+                    QString strStyleSheet = attr.value().toString();
+                    this->setStyleSheet(strStyleSheet);
+                    settingFrame->setStyleSheet(strStyleSheet);
+                    ciw->setStyleSheet(strStyleSheet);
                 }
 
         if (configReader.name() == QString("TopWidget"))
@@ -277,12 +279,15 @@ void CtrlGui::loadStyleSheet(){
 }
 
 void CtrlGui::savePreset(){
+    ui->label->setText("RyzenAdjCtrl - Applying...");
     int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
 
     if(!infoMessageShowed){
-        infoMessage("For better experience"
-                    "\ndisable auto switcher"
-                    "\nin settings.");
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setText("For better experience:"
+                       "\nDisable auto switcher in settings.");
+        msgBox.exec();
         infoMessageShowed = true;
         conf->getSettings()->showNotificationToDisableAutoSwitcher = true;
         conf->saveSettings();
@@ -364,12 +369,15 @@ void CtrlGui::savePreset(){
 }
 
 void CtrlGui::applyPreset(){
+    ui->label->setText("RyzenAdjCtrl - Applying...");
     int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
 
     if(!infoMessageShowed){
-        infoMessage("For better experience"
-                    "\ndisable auto switcher"
-                    "\nin settings.");
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setText("For better experience:"
+                       "\nDisable auto switcher in settings.");
+        msgBox.exec();
         infoMessageShowed = true;
         conf->getSettings()->showNotificationToDisableAutoSwitcher = true;
         conf->saveSettings();
@@ -398,6 +406,7 @@ void CtrlGui::applyPreset(){
 }
 
 void CtrlGui::cancelPreset(){
+    ui->label->setText("RyzenAdjCtrl - Applying...");
     int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
     presetStr *presetsBuffer = conf->getPresets();
 
@@ -780,29 +789,10 @@ void CtrlGui::cancelSettings(){
     readSettings();
 }
 
-void CtrlGui::installService(){}
-
-void CtrlGui::removeService(){}
-
 void CtrlGui::startService(){
     QProcess process;
     QString runas = ("" + qApp->arguments().value(0) + " startup");
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
-}
-
-void CtrlGui::stopService(){
-    QByteArray data;
-    QXmlStreamWriter argsWriter(&data);
-    argsWriter.setAutoFormatting(true);
-    argsWriter.writeStartDocument();
-    argsWriter.writeStartElement("bufferToService");
-    //
-        argsWriter.writeStartElement("exit");
-        argsWriter.writeEndElement();
-    //
-    argsWriter.writeEndElement();
-    argsWriter.writeEndDocument();
-    sendArgsToService(data);
 }
 
 void CtrlGui::sendArgsToService(QByteArray arguments){
@@ -814,8 +804,35 @@ void CtrlGui::sendArgsToService(QByteArray arguments){
             bufferToService->unlock();
         }
         bufferToService->detach();
-    } else
-        errorMessage("The service is not running.");
+    } else {
+        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
+        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
+    }
+}
+
+void CtrlGui::infoPushButtonClicked() {
+    if (ciw->geometry().width()<10) {
+        ciw->show();
+        ciw->hide();
+    }
+
+    if (ciw->isHidden()) {
+        QRect rect = ciw->geometry();
+        const QRect windowGeometry = this->geometry();
+        int height = windowGeometry.height();
+        int width = rect.width();
+        rect.setX(windowGeometry.right() + 4);
+        rect.setY(windowGeometry.top());
+        rect.setWidth(width);
+        rect.setHeight(height);
+        ciw->setGeometry(rect);
+
+        ciw->timerStart();
+        ciw->show();
+    } else {
+        ciw->timerStop();
+        ciw->hide();
+    }
 }
 
 void CtrlGui::settingsPushButtonClicked() {

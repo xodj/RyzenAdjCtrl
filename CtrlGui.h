@@ -6,6 +6,7 @@
 #include <QSharedMemory>
 #include <QFrame>
 #include "CtrlSettings.h"
+#include "CtrlInfoWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CtrlGui;
@@ -43,11 +44,9 @@ private:
     void readSettings();
     void cancelSettings();
 
-    void installService();
-    void removeService();
     void startService();
-    void stopService();
 
+    void infoPushButtonClicked();
     void settingsPushButtonClicked();
     void presetPushButtonClicked();
     void settingsAutomaticPresetSwitchClicked();
@@ -65,5 +64,6 @@ private:
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToGui;
     CtrlSettings *conf;
+    CtrlInfoWidget *ciw;
 };
 #endif // CTRLGUI_H
