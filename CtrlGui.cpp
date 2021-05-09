@@ -3,10 +3,14 @@
 #include "ui_CtrlAPUForm.h"
 #include "ui_CtrlSettingsForm.h"
 #include "ui_CtrlInfoWidget.h"
-#include "CtrlMain.cpp"
 #include <QDebug>
 #include <QFile>
 #include <QDialogButtonBox>
+#include <QXmlStreamWriter>
+#include <QTimer>
+#include <QMessageBox>
+#include <QProcess>
+#include <QObject>
 
 #define bufferToGui_refresh_time 100
 

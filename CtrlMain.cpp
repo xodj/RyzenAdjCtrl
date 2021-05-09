@@ -13,6 +13,8 @@
 #include <QDateTime>
 #include <iostream>
 
+#define logFileSizeTreshold 10000000
+
 void serviceMessageHandler(QtMsgType, const QMessageLogContext &, const QString &msg){
     QFile log("RyzenAdjCtrl - Service.log");
     QDateTime dt = QDateTime::currentDateTime();
@@ -36,6 +38,13 @@ void guiMessageHandler(QtMsgType, const QMessageLogContext &, const QString &msg
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QFile log("RyzenAdjCtrl - Gui.log");
+    if(log.size() > logFileSizeTreshold)
+        log.remove("RyzenAdjCtrl - Gui.log");
+    log.setFileName("RyzenAdjCtrl - Service.log");
+    if(log.size() > logFileSizeTreshold)
+        log.remove("RyzenAdjCtrl - Service.log");
 
     QString qSharedMemoryKey = sharedMemoryKey;
     QSharedMemory alreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
