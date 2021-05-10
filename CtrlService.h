@@ -7,8 +7,41 @@
 #include <QTimer>
 #include "CtrlSettings.h"
 #include "CtrlEPMCallback.h"
+#include "lib/ryzenadj.h"
 
 #include <QDebug>
+
+struct PMTable{
+    QString ryzenFamily;
+    QString biosVersion;
+    QString pmTableVersion;
+    QString ryzenAdjVersion;
+
+    QString stapm_limit;
+    QString stapm_value;
+    QString fast_limit;
+    QString fast_value;
+    QString slow_limit;
+    QString slow_value;
+    QString apu_slow_limit;
+    QString apu_slow_value;
+    QString vrm_current;
+    QString vrm_current_value;
+    QString vrmsoc_current;
+    QString vrmsoc_current_value;
+    QString vrmmax_current;
+    QString vrmmax_current_value;
+    QString vrmsocmax_current;
+    QString vrmsocmax_current_value;
+    QString tctl_temp;
+    QString tctl_temp_value;
+    QString apu_skin_temp_limit;
+    QString apu_skin_temp_value;
+    QString dgpu_skin_temp_limit;
+    QString dgpu_skin_temp_value;
+    QString stapm_time;
+    QString slow_time;
+};
 
 class CtrlService : public QObject {
     Q_OBJECT
@@ -17,12 +50,13 @@ public:
     ~CtrlService();
 
 private:
+    void initPmTable();
+
     void recieveArgs();
     void decodeArgs(QByteArray args);
 
-    void loadPreset(int currentPresetId);
+    void loadPreset(presetStr preset);
 
-    void RyzenAdjSendCommand(QString arguments);
     void atrofacSendCommand(QString arguments);
 
     void sendCurrentPresetIdToGui(int presetId, bool saved);
@@ -30,7 +64,11 @@ private:
 
     void currentInfoTimeoutChanged(int timeout);
     void takeCurrentInfo();
-    void sendCurrentInfoToGui(QString info);
+    void sendCurrentInfoToGui();
+
+    ryzen_access adjEntryPoint;
+    PMTable pmTable;
+
     QTimer *takeCurrentInfoTimer;
 
     ACState currentACState;

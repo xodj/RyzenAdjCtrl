@@ -204,9 +204,6 @@ bool CtrlSettings::savePresets() {
             xmlWriter.writeStartElement("presetName");
                 xmlWriter.writeAttribute("value", presetsBuffer[i].presetName);
             xmlWriter.writeEndElement();
-            xmlWriter.writeStartElement("cmdOutputValue");
-                xmlWriter.writeAttribute("value", presetsBuffer[i].cmdOutputValue);
-            xmlWriter.writeEndElement();
 
             xmlWriter.writeStartElement("fanPresetId");
                 xmlWriter.writeAttribute("value", QString::number(presetsBuffer[i].fanPresetId));
@@ -354,11 +351,6 @@ bool CtrlSettings::openPresets(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
                 if (attr.name().toString() == "value")
                     presetsBuffer[i].presetName =
-                            attr.value().toString();
-        if (xmlReader.name() == QString("cmdOutputValue"))
-            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes())
-                if (attr.name().toString() == "value")
-                    presetsBuffer[i].cmdOutputValue =
                             attr.value().toString();
 
         if (xmlReader.name() == QString("fanPresetId"))

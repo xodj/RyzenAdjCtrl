@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-PROJECT(RyzenAdjCtrl VERSION 0.2.5.237 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.3.0.334 LANGUAGES CXX)
 
 set(STR_CTRL_VERSION ${RyzenAdjCtrl_VERSION})
 string(REPLACE "." "." RC_SPLIT ${STR_CTRL_VERSION})
 string(REPLACE "." ";" RC_SPLIT ${RC_SPLIT})
-message("CTRL_VERSION is now: ${STR_CTRL_VERSION}")
+message("\nRyzenAdjCtrl is now: ${STR_CTRL_VERSION}\n")
 list(GET RC_SPLIT 0 CTRL_VERSION)
 list(GET RC_SPLIT 1 CTRL_MAJOR_VERSION)
 list(GET RC_SPLIT 2 CTRL_MINOR_VERSION)
@@ -73,12 +73,10 @@ add_executable(RyzenAdjCtrl
         ${RyzenAdjCtrl_UI}
         ${RyzenAdjCtrl_TS_FILES})
 
-target_link_libraries(RyzenAdjCtrl PUBLIC Qt${QT_VERSION_MAJOR}::Widgets)
-set_target_properties(
-    RyzenAdjCtrl
+target_link_libraries(RyzenAdjCtrl PUBLIC Qt${QT_VERSION_MAJOR}::Widgets libryzenadj.lib)
+set_target_properties(RyzenAdjCtrl
     PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
-               LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
-)
+    LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})

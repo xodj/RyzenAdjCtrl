@@ -35,8 +35,8 @@ private:
     void savePreset();
     void applyPreset();
     void cancelPreset();
+    void sendPreset(int presetId, bool save);
 
-    void presetVariableChanged();
     void smuCheckBoxClicked();
     void sendArgsToService(QByteArray arguments);
 

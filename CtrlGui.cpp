@@ -12,7 +12,7 @@
 #include <QProcess>
 #include <QObject>
 
-#define bufferToGui_refresh_time 100
+#define bufferToGui_refresh_time 33
 
 CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
     : ui(new Ui::CtrlGui),
@@ -36,7 +36,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     readSettings();
     setupConnections();
     loadStyleSheet();
-    this->resize(750, 450);
+    this->resize(650, 410);
 
     QTimer *bufferToService_refresh_timer = new QTimer;
     connect(bufferToService_refresh_timer, &QTimer::timeout,
@@ -60,8 +60,6 @@ void CtrlGui::setupUi(){
         apuForm[i]->savePushButton->setProperty("idx",i);
         apuForm[i]->applyPushButton->setProperty("idx",i);
         apuForm[i]->cancelPushButton->setProperty("idx",i);
-
-        apuForm[i]->cmdOutputLineEdit->setProperty("idx",i);
 
         apuForm[i]->fanComboBox->setProperty("idx",i);
 
@@ -148,51 +146,6 @@ void CtrlGui::setupConnections(){
         connect(apuForm[i]->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
         connect(apuForm[i]->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
 
-        connect(apuForm[i]->fanComboBox, &QComboBox::currentIndexChanged, this, &CtrlGui::presetVariableChanged);
-
-        connect(apuForm[i]->apuSkinSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-
-        connect(apuForm[i]->apuSkinSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->apuSkinCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-
-        connect(apuForm[i]->tempLimitSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->tempLimitCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->apuSkinSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->apuSkinCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->stampLimitSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->stampLimitCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->fastLimitSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->fastLimitCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->fastTimeSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->fastTimeCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->slowLimitSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->slowLimitCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->slowTimeSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->slowTimeCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-
-        connect(apuForm[i]->vrmCurrentSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->vrmCurrentCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->vrmMaxSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->vrmMaxCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-
-        connect(apuForm[i]->minFclkSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->minFclkCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->maxFclkSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->maxFclkCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-
-        connect(apuForm[i]->minGfxclkSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->minGfxclkCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->maxGfxclkSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->maxGfxclkCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->minSocclkSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->minSocclkCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->maxSocclkSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->maxSocclkCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->minVcnSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->minVcnCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->maxVcnSpinBox, &QSpinBox::valueChanged, this, &CtrlGui::presetVariableChanged);
-        connect(apuForm[i]->maxVcnCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::presetVariableChanged);
-
         connect(apuForm[i]->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
         connect(apuForm[i]->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
     }
@@ -207,8 +160,6 @@ void CtrlGui::setupConnections(){
 void CtrlGui::loadPresets(){
     presetStr *presetsBuffer = conf->getPresets();
     for(int i = 0;i < 4;i++){
-        apuForm[i]->cmdOutputLineEdit->setText(presetsBuffer[i].cmdOutputValue);
-
         apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i].fanPresetId);
 
         apuForm[i]->tempLimitSpinBox->setValue(presetsBuffer[i].tempLimitValue);
@@ -304,8 +255,6 @@ void CtrlGui::savePreset(){
 
     presetStr *presetsBuffer = conf->getPresets();
 
-    presetsBuffer[i].cmdOutputValue = apuForm[i]->cmdOutputLineEdit->text();
-
     presetsBuffer[i].fanPresetId = apuForm[i]->fanComboBox->currentIndex();
 
     presetsBuffer[i].tempLimitValue = apuForm[i]->tempLimitSpinBox->value();
@@ -353,28 +302,7 @@ void CtrlGui::savePreset(){
 
     conf->savePresets();
 
-    QByteArray data;
-    QXmlStreamWriter argsWriter(&data);
-    argsWriter.setAutoFormatting(true);
-    argsWriter.writeStartDocument();
-    argsWriter.writeStartElement("bufferToService");
-    //
-        argsWriter.writeStartElement("save");
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("id");
-            argsWriter.writeAttribute("value", QString::number(i));
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("ryzenAdjCmdLine");
-            argsWriter.writeAttribute("value", apuForm[i]->cmdOutputLineEdit->text());
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("fanPresetId");
-            argsWriter.writeAttribute("value", QString::number(apuForm[i]->fanComboBox->currentIndex()));
-        argsWriter.writeEndElement();
-    //
-    argsWriter.writeEndElement();
-    argsWriter.writeEndDocument();
-
-    sendArgsToService(data);
+    sendPreset(i, true);
 }
 
 void CtrlGui::applyPreset(){
@@ -392,34 +320,13 @@ void CtrlGui::applyPreset(){
         conf->saveSettings();
     }
 
-    QByteArray data;
-    QXmlStreamWriter argsWriter(&data);
-    argsWriter.setAutoFormatting(true);
-    argsWriter.writeStartDocument();
-    argsWriter.writeStartElement("bufferToService");
-    //
-        argsWriter.writeStartElement("id");
-            argsWriter.writeAttribute("value", QString::number(i));
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("ryzenAdjCmdLine");
-            argsWriter.writeAttribute("value", apuForm[i]->cmdOutputLineEdit->text());
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("fanPresetId");
-            argsWriter.writeAttribute("value", QString::number(apuForm[i]->fanComboBox->currentIndex()));
-        argsWriter.writeEndElement();
-    //
-    argsWriter.writeEndElement();
-    argsWriter.writeEndDocument();
-
-    sendArgsToService(data);
+    sendPreset(i, false);
 }
 
 void CtrlGui::cancelPreset(){
     ui->label->setText("RyzenAdjCtrl - Applying...");
     int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
     presetStr *presetsBuffer = conf->getPresets();
-
-    apuForm[i]->cmdOutputLineEdit->setText(presetsBuffer[i].cmdOutputValue);
 
     apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i].fanPresetId);
 
@@ -464,20 +371,123 @@ void CtrlGui::cancelPreset(){
     apuForm[i]->smuMaxPerformanceCheckBox->setChecked(presetsBuffer[i].smuMaxPerfomance);
     apuForm[i]->smuPowerSavingCheckBox->setChecked(presetsBuffer[i].smuPowerSaving);
 
+    sendPreset(i, false);
+}
+
+void CtrlGui::sendPreset(int i, bool save){
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
     argsWriter.setAutoFormatting(true);
     argsWriter.writeStartDocument();
     argsWriter.writeStartElement("bufferToService");
     //
-        argsWriter.writeStartElement("save");
-        argsWriter.writeEndElement();
+        if(save) {
+            argsWriter.writeStartElement("save");
+            argsWriter.writeEndElement();
+        }
         argsWriter.writeStartElement("id");
-            argsWriter.writeAttribute("value", QString::number(i));
+            argsWriter.writeAttribute("value", QString::number(save));
         argsWriter.writeEndElement();
-        argsWriter.writeStartElement("ryzenAdjCmdLine");
-            argsWriter.writeAttribute("value", apuForm[i]->cmdOutputLineEdit->text());
-        argsWriter.writeEndElement();
+
+        if(apuForm[i]->tempLimitCheckBox->isChecked()) {
+            argsWriter.writeStartElement("tempLimitValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->tempLimitSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->apuSkinCheckBox->isChecked()) {
+            argsWriter.writeStartElement("apuSkinValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->apuSkinSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(apuForm[i]->stampLimitCheckBox->isChecked()) {
+            argsWriter.writeStartElement("stampLimitValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->stampLimitSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->fastLimitCheckBox->isChecked()) {
+            argsWriter.writeStartElement("fastLimitValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->fastLimitSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->fastTimeCheckBox->isChecked()) {
+            argsWriter.writeStartElement("fastTimeValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->fastTimeSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->slowLimitCheckBox->isChecked()) {
+            argsWriter.writeStartElement("slowLimitValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->slowLimitSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->slowTimeCheckBox->isChecked()) {
+            argsWriter.writeStartElement("slowTimeValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->slowTimeSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(apuForm[i]->vrmCurrentCheckBox->isChecked()) {
+            argsWriter.writeStartElement("vrmCurrentValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->vrmCurrentSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->vrmMaxCheckBox->isChecked()) {
+            argsWriter.writeStartElement("vrmMaxValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->vrmMaxSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(apuForm[i]->minFclkCheckBox->isChecked()) {
+            argsWriter.writeStartElement("minFclkValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->minFclkSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->maxFclkCheckBox->isChecked()) {
+            argsWriter.writeStartElement("maxFclkValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->maxFclkSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(apuForm[i]->minGfxclkCheckBox->isChecked()) {
+            argsWriter.writeStartElement("minGfxclkValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->minGfxclkSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->maxGfxclkCheckBox->isChecked()) {
+            argsWriter.writeStartElement("maxGfxclkValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->maxGfxclkSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->minSocclkCheckBox->isChecked()) {
+            argsWriter.writeStartElement("minSocclkValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->minSocclkSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->maxSocclkCheckBox->isChecked()) {
+            argsWriter.writeStartElement("maxSocclkValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->maxSocclkSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->minVcnCheckBox->isChecked()) {
+            argsWriter.writeStartElement("minVcnValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->minVcnSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->maxVcnCheckBox->isChecked()) {
+            argsWriter.writeStartElement("maxVcnValue");
+                argsWriter.writeAttribute("value", QString::number(apuForm[i]->maxVcnSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(apuForm[i]->smuMaxPerformanceCheckBox->isChecked()) {
+            argsWriter.writeStartElement("tempLimitValue");
+            argsWriter.writeEndElement();
+        }
+        if(apuForm[i]->smuPowerSavingCheckBox->isChecked()) {
+            argsWriter.writeStartElement("tempLimitValue");
+            argsWriter.writeEndElement();
+        }
+
         argsWriter.writeStartElement("fanPresetId");
             argsWriter.writeAttribute("value", QString::number(apuForm[i]->fanComboBox->currentIndex()));
         argsWriter.writeEndElement();
@@ -486,158 +496,6 @@ void CtrlGui::cancelPreset(){
     argsWriter.writeEndDocument();
 
     sendArgsToService(data);
-}
-
-void CtrlGui::presetVariableChanged(){
-    int i = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
-    apuForm[i]->cmdOutputLineEdit->clear();
-
-    if(apuForm[i]->tempLimitCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--tctl-temp=" +
-                        QString::number(apuForm[i]->tempLimitSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->apuSkinCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--apu-skin-temp=" +
-                        QString::number(apuForm[i]->apuSkinSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->stampLimitCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--stapm-limit=" +
-                        QString::number(apuForm[i]->stampLimitSpinBox->value() * 1000)
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->fastLimitCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--fast-limit=" +
-                        QString::number(apuForm[i]->fastLimitSpinBox->value() * 1000)
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->fastTimeCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--stapm-time=" +
-                        QString::number(apuForm[i]->fastTimeSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->slowLimitCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--slow-limit=" +
-                        QString::number(apuForm[i]->slowLimitSpinBox->value() * 1000)
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->slowTimeCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--slow-time=" +
-                        QString::number(apuForm[i]->slowTimeSpinBox->value())
-                         + " "
-                        )
-                    );
-
-    if(apuForm[i]->vrmCurrentCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--vrm-current=" +
-                        QString::number(apuForm[i]->vrmCurrentSpinBox->value() * 1000)
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->vrmMaxCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--vrmmax-current=" +
-                        QString::number(apuForm[i]->vrmMaxSpinBox->value() * 1000)
-                         + " "
-                        )
-                    );
-
-    if(apuForm[i]->minFclkCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--min-fclk-frequency=" +
-                        QString::number(apuForm[i]->minFclkSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->maxFclkCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--max-fclk-frequency=" +
-                        QString::number(apuForm[i]->maxFclkSpinBox->value())
-                         + " "
-                        )
-                    );
-
-    if(apuForm[i]->minGfxclkCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--min-gfxclk=" +
-                        QString::number(apuForm[i]->minGfxclkSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->maxGfxclkCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--max-gfxclk=" +
-                        QString::number(apuForm[i]->maxGfxclkSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->minSocclkCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--min-socclk-frequency=" +
-                        QString::number(apuForm[i]->minSocclkSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->maxSocclkCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--max-socclk-frequency=" +
-                        QString::number(apuForm[i]->maxSocclkSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->maxVcnCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--max-vcn=" +
-                        QString::number(apuForm[i]->maxVcnSpinBox->value())
-                         + " "
-                        )
-                    );
-    if(apuForm[i]->minVcnCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append(
-                        "--min-vcn=" +
-                        QString::number(apuForm[i]->minVcnSpinBox->value())
-                         + " "
-                        )
-                    );
-
-    if(apuForm[i]->smuMaxPerformanceCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append("--max-performance "));
-    if(apuForm[i]->smuPowerSavingCheckBox->isChecked())
-        apuForm[i]->cmdOutputLineEdit->setText(
-                    apuForm[i]->cmdOutputLineEdit->text().append("--power-saving"));
 }
 
 void CtrlGui::smuCheckBoxClicked(){
@@ -651,8 +509,6 @@ void CtrlGui::smuCheckBoxClicked(){
         if(apuForm[idx]->smuPowerSavingCheckBox->isChecked())
             apuForm[idx]->smuMaxPerformanceCheckBox->setChecked(false);
     }
-
-    presetVariableChanged();
 }
 
 CtrlGui::~CtrlGui()
@@ -827,7 +683,6 @@ void CtrlGui::infoPushButtonClicked() {
                                         this, &CtrlGui::sendRyzenAdjInfo);
     } else {
         ui->infoDockWidget->setHidden(true);
-        ui_infoWidget->textEdit->clear();
         sendRyzenAdjInfo(0);
     }
 }
@@ -960,7 +815,6 @@ void CtrlGui::recieveArgs(){
 }
 
 void CtrlGui::decodeArgs(QByteArray args){
-    qDebug()<<"Recieved args from Service";
     int currentPresetId = -1;
     bool saved = false;
     QString ryzenAdjInfo;
@@ -982,12 +836,116 @@ void CtrlGui::decodeArgs(QByteArray args){
                     saved = attr.value().toString().toInt();
                     qDebug()<<"saved:"<<saved;
                 }
-        if (argsReader.name() == QString("RyzenAdjInfo"))
+
+        /*if (argsReader.name() == QString("ryzenFamily"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
-                if (attr.name().toString() == "value"){
-                    ryzenAdjInfo = attr.value().toString();
-                    qDebug()<<"ryzenAdjInfo:"<<ryzenAdjInfo;
-                }
+                if (attr.name().toString() == "value"){}
+        if (argsReader.name() == QString("biosVersion"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value"){}
+        if (argsReader.name() == QString("pmTableVersion"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value"){}
+        if (argsReader.name() == QString("ryzenAdjVersion"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value"){};*/
+
+        if (argsReader.name() == QString("stapm_limit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->stapm_limit->setText(attr.value().toString());
+        if (argsReader.name() == QString("stapm_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->stapm_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("fast_limit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->fast_limit->setText(attr.value().toString());
+        if (argsReader.name() == QString("fast_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->fast_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("slow_limit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->slow_limit->setText(attr.value().toString());
+        if (argsReader.name() == QString("slow_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->slow_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("apu_slow_limit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->apu_slow_limit->setText(attr.value().toString());
+        if (argsReader.name() == QString("apu_slow_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->apu_slow_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("vrm_current"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->vrm_current->setText(attr.value().toString());
+        if (argsReader.name() == QString("vrm_current_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->vrm_current_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("vrmsoc_current"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->vrmsoc_current->setText(attr.value().toString());
+        if (argsReader.name() == QString("vrmsoc_current_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->vrmsoc_current_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("vrmmax_current"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->vrmmax_current->setText(attr.value().toString());
+        if (argsReader.name() == QString("vrmmax_current_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->vrmmax_current_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("vrmsocmax_current"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->vrmsocmax_current->setText(attr.value().toString());
+        if (argsReader.name() == QString("vrmsocmax_current_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->vrmsocmax_current_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("tctl_temp"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->tctl_temp->setText(attr.value().toString());
+        if (argsReader.name() == QString("tctl_temp_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->tctl_temp_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("apu_skin_temp_limit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->apu_skin_temp_limit->setText(attr.value().toString());
+        if (argsReader.name() == QString("apu_skin_temp_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->apu_skin_temp_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("dgpu_skin_temp_limit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->dgpu_skin_temp_limit->setText(attr.value().toString());
+        if (argsReader.name() == QString("dgpu_skin_temp_value"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->dgpu_skin_temp_value->setText(attr.value().toString());
+        if (argsReader.name() == QString("stapm_time"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->stapm_time->setText(attr.value().toString());
+        if (argsReader.name() == QString("slow_time"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->slow_time->setText(attr.value().toString());
         //
         argsReader.readNext();
     }
@@ -1002,10 +960,5 @@ void CtrlGui::decodeArgs(QByteArray args){
                        + " NOT SAVED! is runing now.");
         ui->label->setText("RyzenAdjCtrl - " + message);
         emit messageToAgent(message);
-    }
-
-    if(ryzenAdjInfo.size() > 0 && ui->infoDockWidget->isVisible()){
-        ui_infoWidget->textEdit->clear();
-        ui_infoWidget->textEdit->setText(ryzenAdjInfo);
     }
 }

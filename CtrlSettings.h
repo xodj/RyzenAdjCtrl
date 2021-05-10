@@ -15,7 +15,6 @@ enum enumFanPresetId {
 struct presetStr {
     int presetId = 0;
     QString presetName = "Preset Name";
-    QString cmdOutputValue = "";
 
     int fanPresetId = None;
 
@@ -23,6 +22,7 @@ struct presetStr {
     bool tempLimitChecked = false;
     int apuSkinValue = 105;
     bool apuSkinChecked = false;
+
     int stampLimitValue = 25;
     bool stampLimitChecked = false;
     int fastLimitValue = 25;

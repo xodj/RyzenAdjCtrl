@@ -1,16 +1,10 @@
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui widgets
 
 CONFIG += c++11
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
 TARGET = RyzenAdjCtrl
 RC_ICONS = ./amd_icon.ico
-VERSION = 0.2.5.234
+VERSION = 0.3.0.334
 QMAKE_TARGET_COMPANY = "xo.dj@ya.ru"
 QMAKE_TARGET_DESCRIPTION = "GUI for RyzenAdj"
 QMAKE_TARGET_COPYRIGHT = "GPL-3.0 License"
@@ -47,7 +41,8 @@ TRANSLATIONS += \
 
 CODECFORSRC     = UTF-8
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/RyzenAdj/build/release/ -llibryzenadj
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/RyzenAdj/build/debug/ -llibryzenadj
+
+INCLUDEPATH += $$PWD/RyzenAdj/
+DEPENDPATH += $$PWD/RyzenAdj/
