@@ -1,6 +1,4 @@
 #include "CtrlAgent.h"
-#include <QProcess>
-#include <QMessageBox>
 
 CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
     : QSystemTrayIcon(new QSystemTrayIcon),
@@ -30,14 +28,6 @@ CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, QSharedMemory *bufferToGui,
 
     connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-
-    if(bufferToService->attach(QSharedMemory::ReadWrite))
-        bufferToService->detach();
-    else {
-        QProcess process;
-        QString runas = ("" + qApp->arguments().value(0) + " startup");
-        process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
-    }
 
     gui = new CtrlGuiX(bufferToService, bufferToGui, conf);
     connect(gui, &CtrlGuiX::messageToAgent, this, &CtrlAgent::notificationToTray);

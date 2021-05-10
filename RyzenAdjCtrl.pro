@@ -4,7 +4,7 @@ CONFIG += c++11
 
 TARGET = RyzenAdjCtrl
 RC_ICONS = ./amd_icon.ico
-VERSION = 0.3.0.334
+VERSION = 0.3.0.338
 QMAKE_TARGET_COMPANY = "xo.dj@ya.ru"
 QMAKE_TARGET_DESCRIPTION = "GUI for RyzenAdj"
 QMAKE_TARGET_COPYRIGHT = "GPL-3.0 License"

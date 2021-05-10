@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>594</width>
+    <width>640</width>
     <height>415</height>
    </rect>
   </property>
@@ -40,7 +40,7 @@
           </font>
          </property>
          <property name="title">
-          <string>CPU Settings:</string>
+          <string>CPU Settings</string>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -543,7 +543,7 @@
           </font>
          </property>
          <property name="title">
-          <string>Power Settings:</string>
+          <string>Power Settings</string>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -702,7 +702,7 @@
           </font>
          </property>
          <property name="title">
-          <string>ASUS ROG FAN Preset:</string>
+          <string>ASUS ROG FAN Preset</string>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -774,7 +774,7 @@
           </font>
          </property>
          <property name="title">
-          <string>Memory Settings:</string>
+          <string>Memory Settings</string>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -933,7 +933,7 @@
           </font>
          </property>
          <property name="title">
-          <string>GPU Settings:</string>
+          <string>GPU Settings</string>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -990,6 +990,73 @@
             </item>
             <item>
              <widget class="QSpinBox" name="minSocclkSpinBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>85</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="suffix">
+               <string> MHz</string>
+              </property>
+              <property name="maximum">
+               <number>2200</number>
+              </property>
+              <property name="singleStep">
+               <number>16</number>
+              </property>
+              <property name="value">
+               <number>400</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_17">
+            <item>
+             <spacer name="horizontalSpacer_16">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>1</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="maxSocclkCheckBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string>Max SoC Clock</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="maxSocclkSpinBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1220,73 +1287,6 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_17">
-            <item>
-             <spacer name="horizontalSpacer_16">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>1</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="maxSocclkCheckBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
-              </property>
-              <property name="text">
-               <string>Max SoC Clock</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="maxSocclkSpinBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>85</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="suffix">
-               <string> MHz</string>
-              </property>
-              <property name="maximum">
-               <number>2200</number>
-              </property>
-              <property name="singleStep">
-               <number>16</number>
-              </property>
-              <property name="value">
-               <number>400</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_19">
             <item>
              <spacer name="horizontalSpacer_14">
@@ -1366,7 +1366,7 @@
           </font>
          </property>
          <property name="title">
-          <string>SMU Settings:</string>
+          <string>SMU Settings</string>
          </property>
          <property name="flat">
           <bool>true</bool>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1051</width>
-    <height>450</height>
+    <width>1101</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -23,12 +23,6 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <property name="minimumSize">
-    <size>
-     <width>800</width>
-     <height>500</height>
-    </size>
-   </property>
    <property name="styleSheet">
     <string notr="true"/>
    </property>

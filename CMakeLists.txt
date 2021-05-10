@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-PROJECT(RyzenAdjCtrl VERSION 0.3.0.334 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.3.0.338 LANGUAGES CXX)
 
 set(STR_CTRL_VERSION ${RyzenAdjCtrl_VERSION})
 string(REPLACE "." "." RC_SPLIT ${STR_CTRL_VERSION})
@@ -29,8 +29,6 @@ endif()
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-
-SET(QT_USE_QTMAIN ON)
 
 set(RyzenAdjCtrl_HEADERS
     CtrlAgent.h
@@ -73,10 +71,11 @@ add_executable(RyzenAdjCtrl
         ${RyzenAdjCtrl_UI}
         ${RyzenAdjCtrl_TS_FILES})
 
-target_link_libraries(RyzenAdjCtrl PUBLIC Qt${QT_VERSION_MAJOR}::Widgets libryzenadj.lib)
+target_link_libraries(RyzenAdjCtrl PUBLIC Qt${QT_VERSION_MAJOR}::Widgets ${CMAKE_CURRENT_SOURCE_DIR}/RyzenAdj/build/${CMAKE_BUILD_TYPE}/libryzenadj.lib)
 set_target_properties(RyzenAdjCtrl
     PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
     LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/RyzenAdj)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
