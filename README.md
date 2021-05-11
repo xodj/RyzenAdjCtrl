@@ -22,7 +22,7 @@ GUI for RyzenAdj.
 - MSVC https://github.com/xodj/RyzenAdjCtrl/releases/download/0.1.0.41/VC_redist.x64.exe
 - Windows 10, version 1703 or later
 
-Distributed by GPL-3 license.
+# Distributed by GPL-3 license.
 
 # Contains:
 RyzenAdj https://github.com/FlyGoat/RyzenAdj,
