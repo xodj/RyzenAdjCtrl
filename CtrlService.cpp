@@ -49,7 +49,10 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
     takeCurrentInfoTimer->connect(takeCurrentInfoTimer, &QTimer::timeout, this, &CtrlService::takeCurrentInfo);
 }
 
-CtrlService::~CtrlService() { cleanup_ryzenadj(adjEntryPoint); }
+CtrlService::~CtrlService() {
+    cleanup_ryzenadj(adjEntryPoint);
+    exit(0);
+}
 
 void CtrlService::initPmTable(){
     adjEntryPoint = init_ryzenadj();
@@ -269,7 +272,7 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("exit")){
             qDebug() << "Ricieved exit command";
             qDebug() << "RyzenAdj Service stoped";
-            exit(0);
+            this->~CtrlService();
         }
 
 
@@ -622,6 +625,19 @@ void CtrlService::sendCurrentInfoToGui(){
     argsWriter.writeStartDocument();
     argsWriter.writeStartElement("bufferToGui");
     //
+        argsWriter.writeStartElement("ryzenFamily");
+            argsWriter.writeAttribute("value", pmTable.ryzenFamily);
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("biosVersion");
+            argsWriter.writeAttribute("value", pmTable.biosVersion);
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("pmTableVersion");
+            argsWriter.writeAttribute("value", pmTable.pmTableVersion);
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("ryzenAdjVersion");
+            argsWriter.writeAttribute("value", pmTable.ryzenAdjVersion);
+        argsWriter.writeEndElement();
+
         argsWriter.writeStartElement("stapm_limit");
             argsWriter.writeAttribute("value", pmTable.stapm_limit);
         argsWriter.writeEndElement();

@@ -413,8 +413,8 @@
   <widget class="QDockWidget" name="infoDockWidget">
    <property name="minimumSize">
     <size>
-     <width>300</width>
-     <height>500</height>
+     <width>80</width>
+     <height>38</height>
     </size>
    </property>
    <property name="floating">

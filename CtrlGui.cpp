@@ -36,7 +36,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     readSettings();
     setupConnections();
     loadStyleSheet();
-    this->resize(700, 415);
+    this->resize(750, 500);
 
     QTimer *bufferToService_refresh_timer = new QTimer;
     connect(bufferToService_refresh_timer, &QTimer::timeout,
@@ -733,10 +733,11 @@ void CtrlGui::presetPushButtonClicked(){
         ui->perfomancePushButton->setChecked(false);
         ui->extremePushButton->setChecked(false);
 
-        ui->batteryTab->setHidden(false);
         ui->optimalTab->setHidden(true);
         ui->perfomanceTab->setHidden(true);
         ui->extremeTab->setHidden(true);
+
+        ui->batteryTab->setHidden(false);
         break;
     case 1:
         ui->batteryPushButton->setChecked(false);
@@ -745,9 +746,10 @@ void CtrlGui::presetPushButtonClicked(){
         ui->extremePushButton->setChecked(false);
 
         ui->batteryTab->setHidden(true);
-        ui->optimalTab->setHidden(false);
         ui->perfomanceTab->setHidden(true);
         ui->extremeTab->setHidden(true);
+
+        ui->optimalTab->setHidden(false);
         break;
     case 2:
         ui->batteryPushButton->setChecked(false);
@@ -757,8 +759,9 @@ void CtrlGui::presetPushButtonClicked(){
 
         ui->batteryTab->setHidden(true);
         ui->optimalTab->setHidden(true);
-        ui->perfomanceTab->setHidden(false);
         ui->extremeTab->setHidden(true);
+
+        ui->perfomanceTab->setHidden(false);
         break;
     case 3:
         ui->batteryPushButton->setChecked(false);
@@ -769,6 +772,7 @@ void CtrlGui::presetPushButtonClicked(){
         ui->batteryTab->setHidden(true);
         ui->optimalTab->setHidden(true);
         ui->perfomanceTab->setHidden(true);
+
         ui->extremeTab->setHidden(false);
         break;
     default:
@@ -777,10 +781,11 @@ void CtrlGui::presetPushButtonClicked(){
         ui->perfomancePushButton->setChecked(false);
         ui->extremePushButton->setChecked(false);
 
-        ui->batteryTab->setHidden(false);
         ui->optimalTab->setHidden(true);
         ui->perfomanceTab->setHidden(true);
         ui->extremeTab->setHidden(true);
+
+        ui->batteryTab->setHidden(false);
         break;
     }
 }
@@ -837,18 +842,34 @@ void CtrlGui::decodeArgs(QByteArray args){
                     qDebug()<<"saved:"<<saved;
                 }
 
-        /*if (argsReader.name() == QString("ryzenFamily"))
+        if (argsReader.name() == QString("ryzenFamily"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
-                if (attr.name().toString() == "value"){}
+                if (attr.name().toString() == "value")
+                    if(ryzenFamily != attr.value().toString()){
+                        ryzenFamily = attr.value().toString();
+                        ui_infoWidget->ryzenFamily->setText("APU Ryzen " + ryzenFamily + " Family");
+                    }
         if (argsReader.name() == QString("biosVersion"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
-                if (attr.name().toString() == "value"){}
+                if (attr.name().toString() == "value")
+                    if(biosVersion != attr.value().toString()){
+                        biosVersion = attr.value().toString();
+                        ui_infoWidget->biosVersion->setText("BIOS Version: " + biosVersion);
+                    }
         if (argsReader.name() == QString("pmTableVersion"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
-                if (attr.name().toString() == "value"){}
+                if (attr.name().toString() == "value")
+                    if(pmTableVersion != attr.value().toString()){
+                        pmTableVersion = attr.value().toString();
+                        ui_infoWidget->pmTableVersion->setText("PM Table Version: " + pmTableVersion);
+                    }
         if (argsReader.name() == QString("ryzenAdjVersion"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
-                if (attr.name().toString() == "value"){};*/
+                if (attr.name().toString() == "value")
+                    if(ryzenAdjVersion != attr.value().toString()){
+                        ryzenAdjVersion = attr.value().toString();
+                        ui_infoWidget->ryzenAdjVersion->setText("RyzenAdj Version: " + ryzenAdjVersion);
+                    }
 
         if (argsReader.name() == QString("stapm_limit"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes())

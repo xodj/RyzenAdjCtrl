@@ -67,5 +67,10 @@ private:
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToGui;
     CtrlSettings *conf;
+
+    QString ryzenFamily;
+    QString biosVersion;
+    QString pmTableVersion;
+    QString ryzenAdjVersion;
 };
 #endif // CTRLGUI_H
