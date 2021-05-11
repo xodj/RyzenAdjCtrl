@@ -36,7 +36,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     readSettings();
     setupConnections();
     loadStyleSheet();
-    this->resize(750, 500);
+    this->resize(800, 500);
 
     QTimer *bufferToService_refresh_timer = new QTimer;
     connect(bufferToService_refresh_timer, &QTimer::timeout,
