@@ -89,16 +89,13 @@ class CtrlSettings : public QObject
 public:
     CtrlSettings();
     ~CtrlSettings();
-    presetStr* getPresets(){ return presetsBuffer; }
-    settingsStr* getSettings(){ return &settingsBuffer; }
     bool saveSettings();
     bool openSettings();
     bool savePresets();
     bool openPresets();
+    presetStr **presetsBuffer;
+    settingsStr *settingsBuffer;
 
-private:
-    presetStr *presetsBuffer;
-    settingsStr settingsBuffer;
 };
 
 #endif // CTRLSETTINGS_H

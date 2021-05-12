@@ -12,10 +12,9 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
     : QObject(nullptr),
       bufferToService(bufferToService),
       bufferToGui(bufferToGui),
-      conf(conf)
+      presetsBuffer(conf->presetsBuffer),
+      settingsBuffer(conf->settingsBuffer)
 {
-    settingsStr *settings = conf->getSettings();
-
     initPmTable();
 
     bufferToService->create(buffer_size);
@@ -29,18 +28,18 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
     reapplyPresetTimer = new QTimer;
     connect(reapplyPresetTimer, &QTimer::timeout,
             this, &CtrlService::reapplyPresetTimeout);
-    if(settings->autoPresetApplyDurationChecked)
-        reapplyPresetTimer->start(settings->autoPresetApplyDuration * 1000);
+    if(settingsBuffer->autoPresetApplyDurationChecked)
+        reapplyPresetTimer->start(settingsBuffer->autoPresetApplyDuration * 1000);
 
     qDebug() << "RyzenAdj Service started";
     acCallback = new CtrlACCallback;
-    if(settings->autoPresetSwitchAC)
+    if(settingsBuffer->autoPresetSwitchAC)
         connect(acCallback, &CtrlACCallback::currentACStateChanged,
                 this, &CtrlService::currentACStateChanged);
     acCallback->emitCurrentACState();
 
     epmCallback = new CtrlEPMCallback;
-    if(settings->epmAutoPresetSwitch)
+    if(settingsBuffer->epmAutoPresetSwitch)
         connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                 this, &CtrlService::epmIdChanged);
     epmCallback->emitCurrentEPMState();
@@ -114,7 +113,6 @@ void CtrlService::decodeArgs(QByteArray args){
     qDebug()<<"Recieved args from GUI";
     bool save = false;
     int id = -1;
-    settingsStr* settings = conf->getSettings();
     presetStr recievedPreset;
 
     QXmlStreamReader argsReader(args);
@@ -123,150 +121,172 @@ void CtrlService::decodeArgs(QByteArray args){
     {
         //
         if (argsReader.name() == QString("ryzenAdjInfoTimeout"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value") {
                     currentInfoTimeoutChanged(attr.value().toInt());
                     qDebug() << "ryzenAdjInfoTimeout" << attr.value().toInt();
                 }
+            }else{}
 
 
 
         if (argsReader.name() == QString("save"))
             save = true;
         if (argsReader.name() == QString("id"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     id = attr.value().toInt();
+            }else{}
 
 
         if (argsReader.name() == QString("tempLimitValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.tempLimitChecked = true;
                     recievedPreset.tempLimitValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("apuSkinValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.apuSkinChecked = true;
                     recievedPreset.apuSkinValue = attr.value().toInt();
                 }
+            }else{}
 
 
         if (argsReader.name() == QString("stampLimitValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.stampLimitChecked = true;
                     recievedPreset.stampLimitValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("fastLimitValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.fastLimitChecked = true;
                     recievedPreset.fastLimitValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("fastTimeValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.fastTimeChecked = true;
                     recievedPreset.fastTimeValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("slowLimitValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.slowLimitChecked = true;
                     recievedPreset.slowLimitValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("slowTimeValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.slowTimeChecked = true;
                     recievedPreset.slowTimeValue = attr.value().toInt();
                 }
+            }else{}
 
 
         if (argsReader.name() == QString("vrmCurrentValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.vrmCurrentChecked = true;
                     recievedPreset.vrmCurrentValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("vrmMaxValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.vrmMaxChecked = true;
                     recievedPreset.vrmMaxValue = attr.value().toInt();
                 }
+            }else{}
 
 
         if (argsReader.name() == QString("minFclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.minFclkChecked = true;
                     recievedPreset.minFclkValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("maxFclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.maxFclkChecked = true;
                     recievedPreset.maxFclkValue = attr.value().toInt();
                 }
+            }else{}
 
 
         if (argsReader.name() == QString("minGfxclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.minGfxclkChecked = true;
                     recievedPreset.minGfxclkValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("maxGfxclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.maxGfxclkChecked = true;
                     recievedPreset.maxGfxclkValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("minSocclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.minSocclkChecked = true;
                     recievedPreset.minSocclkValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("maxSocclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.maxSocclkChecked = true;
                     recievedPreset.maxSocclkValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("minVcnValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.minVcnChecked = true;
                     recievedPreset.minVcnValue = attr.value().toInt();
                 }
+            }else{}
         if (argsReader.name() == QString("maxVcnValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.maxVcnChecked = true;
                     recievedPreset.maxVcnValue = attr.value().toInt();
                 }
+            }else{}
 
 
         if (argsReader.name() == QString("smuMaxPerfomance"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.smuMaxPerfomance = true;
                 }
+            }else{}
         if (argsReader.name() == QString("smuPowerSaving"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     recievedPreset.smuPowerSaving = true;
                 }
+            }else{}
 
 
         if (argsReader.name() == QString("fanPresetId"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     recievedPreset.fanPresetId = attr.value().toInt();
+            }else{}
 
 
         if (argsReader.name() == QString("exit")){
@@ -278,107 +298,117 @@ void CtrlService::decodeArgs(QByteArray args){
 
 
         if (argsReader.name() == QString("autoPresetApplyDurationChecked"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                        settings->autoPresetApplyDurationChecked
+                        settingsBuffer->autoPresetApplyDurationChecked
                                 = attr.value().toInt();
                         qDebug() << "autoPresetApplyDurationChecked set to "
-                                 << settings->autoPresetApplyDurationChecked;
+                                 << settingsBuffer->autoPresetApplyDurationChecked;
                         reapplyPresetTimer->stop();
-                        if(conf->getSettings()->autoPresetApplyDurationChecked)
-                            reapplyPresetTimer->start(conf ->getSettings()
+                        if(settingsBuffer->autoPresetApplyDurationChecked)
+                            reapplyPresetTimer->start(settingsBuffer
                                                         ->autoPresetApplyDuration * 1000);
                     }
+            }else{}
         if (argsReader.name() == QString("autoPresetApplyDuration"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                        settings->autoPresetApplyDuration
+                        settingsBuffer->autoPresetApplyDuration
                                 = attr.value().toInt();
                         qDebug() << "autoPresetApplyDuration set to "
-                                 << settings->autoPresetApplyDuration;
+                                 << settingsBuffer->autoPresetApplyDuration;
                         reapplyPresetTimer->stop();
-                        if(conf->getSettings()->autoPresetApplyDurationChecked)
-                            reapplyPresetTimer->start(conf->getSettings()
+                        if(settingsBuffer->autoPresetApplyDurationChecked)
+                            reapplyPresetTimer->start(settingsBuffer
                                                         ->autoPresetApplyDuration * 1000);
                     }
+            }else{}
 
             if (argsReader.name() == QString("autoPresetSwitchAC"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
-                            settings->autoPresetSwitchAC
+                            settingsBuffer->autoPresetSwitchAC
                                     = attr.value().toInt();
                             qDebug() << "autoPresetSwitchAC set to "
-                                     << settings->autoPresetSwitchAC;
+                                     << settingsBuffer->autoPresetSwitchAC;
                             disconnect(acCallback,&CtrlACCallback::currentACStateChanged,
                                        this, &CtrlService::currentACStateChanged);
-                            if(conf->getSettings()->autoPresetSwitchAC)
+                            if(settingsBuffer->autoPresetSwitchAC)
                                 connect(acCallback, &CtrlACCallback::currentACStateChanged,
                                         this, &CtrlService::currentACStateChanged);
                             reapplyPresetTimeout();
                         }
+                }else{}
             if (argsReader.name() == QString("dcStatePresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
-                            settings->dcStatePresetId = attr.value().toInt();
+                            settingsBuffer->dcStatePresetId = attr.value().toInt();
                             qDebug() << "dcStatePresetId set to "
-                                     << settings->dcStatePresetId;
+                                     << settingsBuffer->dcStatePresetId;
                             reapplyPresetTimeout();
                         }
+                }else{}
             if (argsReader.name() == QString("acStatePresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
-                            settings->acStatePresetId = attr.value().toInt();
+                            settingsBuffer->acStatePresetId = attr.value().toInt();
                             qDebug() << "acStatePresetId set to "
-                                     << settings->acStatePresetId;
+                                     << settingsBuffer->acStatePresetId;
                             reapplyPresetTimeout();
                         }
+                }else{}
 
             if (argsReader.name() == QString("epmAutoPresetSwitch"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
-                            settings->epmAutoPresetSwitch
+                            settingsBuffer->epmAutoPresetSwitch
                                     = attr.value().toInt();
                             qDebug() << "epmAutoPresetSwitch set to "
-                                     << settings->epmAutoPresetSwitch;
+                                     << settingsBuffer->epmAutoPresetSwitch;
                             disconnect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                                     this, &CtrlService::epmIdChanged);
-                            if(conf->getSettings()->epmAutoPresetSwitch)
+                            if(settingsBuffer->epmAutoPresetSwitch)
                                 connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                                         this, &CtrlService::epmIdChanged);
                             reapplyPresetTimeout();
                         }
+                }else{}
             if (argsReader.name() == QString("epmBatterySaverPresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
-                            settings->epmBatterySaverPresetId = attr.value().toInt();
+                            settingsBuffer->epmBatterySaverPresetId = attr.value().toInt();
                             qDebug() << "epmBatterySaverPresetId set to "
-                                     << settings->epmBatterySaverPresetId;
+                                     << settingsBuffer->epmBatterySaverPresetId;
                             reapplyPresetTimeout();
                         }
+                }else{}
             if (argsReader.name() == QString("epmBetterBatteryPresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
-                            settings->epmBetterBatteryPresetId = attr.value().toInt();
+                            settingsBuffer->epmBetterBatteryPresetId = attr.value().toInt();
                             qDebug() << "epmBetterBatteryPresetId set to "
-                                     << settings->epmBetterBatteryPresetId;
+                                     << settingsBuffer->epmBetterBatteryPresetId;
                             reapplyPresetTimeout();
                         }
+                }else{}
             if (argsReader.name() == QString("epmBalancedPresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
-                            settings->epmBalancedPresetId = attr.value().toInt();
+                            settingsBuffer->epmBalancedPresetId = attr.value().toInt();
                             qDebug() << "epmBalancedPresetId set to "
-                                     << settings->epmBalancedPresetId;
+                                     << settingsBuffer->epmBalancedPresetId;
                             reapplyPresetTimeout();
                         }
+                }else{}
             if (argsReader.name() == QString("epmMaximumPerfomancePresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
-                            settings->epmMaximumPerfomancePresetId = attr.value().toInt();
+                            settingsBuffer->epmMaximumPerfomancePresetId = attr.value().toInt();
                             qDebug() << "epmMaximumPerfomancePresetId set to "
-                                     << settings->epmMaximumPerfomancePresetId;
+                                     << settingsBuffer->epmMaximumPerfomancePresetId;
                             reapplyPresetTimeout();
                         }
+                }else{}
         //
 
         argsReader.readNext();
@@ -386,11 +416,11 @@ void CtrlService::decodeArgs(QByteArray args){
 
     if(id != -1) {
         qDebug()<<"Preset ID: "<<id;
+        lastUsedPresetId = id;
         sendCurrentPresetIdToGui(id, save);
-        loadPreset(recievedPreset);
+        loadPreset(&recievedPreset);
         if (save){
-            presetStr* presets = conf->getPresets();
-            presets[id] = recievedPreset;
+            presetsBuffer[id] = &recievedPreset;
         }
     }
 }
@@ -400,13 +430,13 @@ void CtrlService::currentACStateChanged(ACState state){
     qDebug() << "Current state:"
              << ((state == Battery) ? "DC State" : "AC State");
 
-    if(conf->getSettings()->autoPresetSwitchAC){
+    if(settingsBuffer->autoPresetSwitchAC){
         sendCurrentPresetIdToGui((state == Battery)
-                                 ? (conf->getSettings()->dcStatePresetId)
-                                 : (conf->getSettings()->acStatePresetId), true);
-        loadPreset(conf->getPresets()[(state == Battery)
-                ? (conf->getSettings()->dcStatePresetId)
-                : (conf->getSettings()->acStatePresetId)]);
+                                 ? (settingsBuffer->dcStatePresetId)
+                                 : (settingsBuffer->acStatePresetId), true);
+        loadPreset(presetsBuffer[(state == Battery)
+                ? (settingsBuffer->dcStatePresetId)
+                : (settingsBuffer->acStatePresetId)]);
     }
 }
 
@@ -417,19 +447,19 @@ void CtrlService::epmIdChanged(epmMode EPMode){
     switch(EPMode){
     case BatterySaver:
         strEPMode = "Battery Saver Mode";
-        epmPresetId = conf->getSettings()->epmBatterySaverPresetId;
+        epmPresetId = settingsBuffer->epmBatterySaverPresetId;
         break;
     case BetterBattery:
         strEPMode = "Better Battery Effective Power Mode";
-        epmPresetId = conf->getSettings()->epmBetterBatteryPresetId;
+        epmPresetId = settingsBuffer->epmBetterBatteryPresetId;
         break;
     case Balanced:
         strEPMode = "Balanced Effective Power Mode";
-        epmPresetId = conf->getSettings()->epmBalancedPresetId;
+        epmPresetId = settingsBuffer->epmBalancedPresetId;
         break;
     case MaxPerformance:
         strEPMode = "Maximum Performance Effective Power Mode";
-        epmPresetId = conf->getSettings()->epmMaximumPerfomancePresetId;
+        epmPresetId = settingsBuffer->epmMaximumPerfomancePresetId;
         break;
     default:
         strEPMode = "ERROR!";
@@ -437,10 +467,10 @@ void CtrlService::epmIdChanged(epmMode EPMode){
     }
     qDebug() << "Current EPM:" << strEPMode;
 
-    if(conf->getSettings()->epmAutoPresetSwitch && epmPresetId != -1){
+    if(settingsBuffer->epmAutoPresetSwitch && epmPresetId != -1){
         qDebug()<<"Load preset ID:" << epmPresetId << "...";
         sendCurrentPresetIdToGui(epmPresetId, true);
-        loadPreset(conf->getPresets()[epmPresetId]);
+        loadPreset(presetsBuffer[epmPresetId]);
     }
 }
 
@@ -448,18 +478,18 @@ void CtrlService::reapplyPresetTimeout(){
     qDebug() << "Reapply Preset Timeout";
     acCallback->emitCurrentACState();
     epmCallback->emitCurrentEPMState();
-    if(!conf->getSettings()->autoPresetSwitchAC
-       && !conf->getSettings()->epmAutoPresetSwitch
+    if(!settingsBuffer->autoPresetSwitchAC
+       && !settingsBuffer->epmAutoPresetSwitch
        && lastUsedPresetId != -1) {
         sendCurrentPresetIdToGui(lastUsedPresetId, true);
-        loadPreset(conf->getPresets()[lastUsedPresetId]);
+        loadPreset(presetsBuffer[lastUsedPresetId]);
     }
 }
 
-void CtrlService::loadPreset(presetStr preset){
-    if(preset.fanPresetId > 0) {
+void CtrlService::loadPreset(presetStr *preset){
+    if(preset->fanPresetId > 0) {
         QString fanArguments;
-        switch(preset.fanPresetId){
+        switch(preset->fanPresetId){
         case 1:
             fanArguments = "plan windows";
             break;
@@ -480,65 +510,63 @@ void CtrlService::loadPreset(presetStr preset){
     }
 
 
-    if(preset.tempLimitChecked)
-        set_tctl_temp(adjEntryPoint, preset.tempLimitValue);
-    if(preset.apuSkinChecked)
-        set_apu_skin_temp_limit(adjEntryPoint, preset.apuSkinValue);
+    if(preset->tempLimitChecked)
+        set_tctl_temp(adjEntryPoint, preset->tempLimitValue);
+    if(preset->apuSkinChecked)
+        set_apu_skin_temp_limit(adjEntryPoint, preset->apuSkinValue);
 
-    if(preset.stampLimitChecked)
-        set_stapm_limit(adjEntryPoint, preset.stampLimitValue * 1000);
-    if(preset.fastLimitChecked)
-        set_fast_limit(adjEntryPoint, preset.fastLimitValue * 1000);
-    if(preset.fastTimeChecked)
-        set_stapm_time(adjEntryPoint, preset.fastTimeValue);
-    if(preset.slowLimitChecked)
-        set_slow_limit(adjEntryPoint, preset.slowLimitValue * 1000);
-    if(preset.slowTimeChecked)
-        set_slow_time(adjEntryPoint, preset.slowTimeValue);
+    if(preset->stampLimitChecked)
+        set_stapm_limit(adjEntryPoint, preset->stampLimitValue * 1000);
+    if(preset->fastLimitChecked)
+        set_fast_limit(adjEntryPoint, preset->fastLimitValue * 1000);
+    if(preset->fastTimeChecked)
+        set_stapm_time(adjEntryPoint, preset->fastTimeValue);
+    if(preset->slowLimitChecked)
+        set_slow_limit(adjEntryPoint, preset->slowLimitValue * 1000);
+    if(preset->slowTimeChecked)
+        set_slow_time(adjEntryPoint, preset->slowTimeValue);
 
-    if(preset.vrmCurrentChecked)
-        set_vrm_current(adjEntryPoint, preset.vrmCurrentValue * 1000);
-    if(preset.vrmMaxChecked)
-        set_vrmmax_current(adjEntryPoint, preset.vrmMaxValue * 1000);
+    if(preset->vrmCurrentChecked)
+        set_vrm_current(adjEntryPoint, preset->vrmCurrentValue * 1000);
+    if(preset->vrmMaxChecked)
+        set_vrmmax_current(adjEntryPoint, preset->vrmMaxValue * 1000);
 
-    if(preset.maxFclkChecked)
-        set_max_fclk_freq(adjEntryPoint, preset.maxFclkValue);
-    if(preset.minFclkChecked)
-        set_min_fclk_freq(adjEntryPoint, preset.minFclkValue);
+    if(preset->maxFclkChecked)
+        set_max_fclk_freq(adjEntryPoint, preset->maxFclkValue);
+    if(preset->minFclkChecked)
+        set_min_fclk_freq(adjEntryPoint, preset->minFclkValue);
 
-    if(preset.minGfxclkChecked)
-        set_max_gfxclk_freq(adjEntryPoint, preset.minGfxclkValue);
-    if(preset.maxGfxclkChecked)
-        set_min_gfxclk_freq(adjEntryPoint, preset.maxGfxclkValue);
-    if(preset.maxSocclkChecked)
-        set_max_socclk_freq(adjEntryPoint, preset.maxSocclkValue);
-    if(preset.minSocclkChecked)
-        set_min_socclk_freq(adjEntryPoint, preset.minSocclkValue);
-    if(preset.maxVcnChecked)
-        set_max_vcn(adjEntryPoint, preset.maxVcnValue);
-    if(preset.minVcnChecked)
-        set_min_vcn(adjEntryPoint, preset.minVcnValue);
+    if(preset->minGfxclkChecked)
+        set_max_gfxclk_freq(adjEntryPoint, preset->minGfxclkValue);
+    if(preset->maxGfxclkChecked)
+        set_min_gfxclk_freq(adjEntryPoint, preset->maxGfxclkValue);
+    if(preset->maxSocclkChecked)
+        set_max_socclk_freq(adjEntryPoint, preset->maxSocclkValue);
+    if(preset->minSocclkChecked)
+        set_min_socclk_freq(adjEntryPoint, preset->minSocclkValue);
+    if(preset->maxVcnChecked)
+        set_max_vcn(adjEntryPoint, preset->maxVcnValue);
+    if(preset->minVcnChecked)
+        set_min_vcn(adjEntryPoint, preset->minVcnValue);
 
-    if(preset.smuPowerSaving)
+    if(preset->smuPowerSaving)
         set_power_saving(adjEntryPoint);
-    if(preset.smuMaxPerfomance)
+    if(preset->smuMaxPerfomance)
         set_max_performance(adjEntryPoint);
 
-    /*set_vrmsoc_current(adjEntryPoint, preset.);
-    set_vrmsocmax_current(adjEntryPoint, preset.);
-    set_psi0_current(adjEntryPoint, preset.);
-    set_psi0soc_current(adjEntryPoint, preset.);
-    set_max_lclk(adjEntryPoint, preset.);
-    set_min_lclk(adjEntryPoint, preset.);
-    set_prochot_deassertion_ramp(adjEntryPoint ry, preset.);
-    set_dgpu_skin_temp_limit(adjEntryPoint, preset.);
-    set_apu_slow_limit(adjEntryPoint, preset.);
-    set_skin_temp_power_limit(adjEntryPoint ry, preset.);*/
+    /*set_vrmsoc_current(adjEntryPoint, preset->);
+    set_vrmsocmax_current(adjEntryPoint, preset->);
+    set_psi0_current(adjEntryPoint, preset->);
+    set_psi0soc_current(adjEntryPoint, preset->);
+    set_max_lclk(adjEntryPoint, preset->);
+    set_min_lclk(adjEntryPoint, preset->);
+    set_prochot_deassertion_ramp(adjEntryPoint ry, preset->);
+    set_dgpu_skin_temp_limit(adjEntryPoint, preset->);
+    set_apu_slow_limit(adjEntryPoint, preset->);
+    set_skin_temp_power_limit(adjEntryPoint ry, preset->);*/
 }
 
 #include <QProcess>
-#include <QDebug>
-#include <QtCore/QVariant>
 
 void CtrlService::atrofacSendCommand(QString arguments) {
     qDebug()<<"atrofac Commandline: "<<arguments;

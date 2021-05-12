@@ -36,7 +36,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     readSettings();
     setupConnections();
     loadStyleSheet();
-    this->resize(800, 500);
+    this->resize(824, 500);
 
     QTimer *bufferToService_refresh_timer = new QTimer;
     connect(bufferToService_refresh_timer, &QTimer::timeout,
@@ -158,50 +158,50 @@ void CtrlGui::setupConnections(){
 }
 
 void CtrlGui::loadPresets(){
-    presetStr *presetsBuffer = conf->getPresets();
+    presetStr **presetsBuffer = conf->presetsBuffer;
     for(int i = 0;i < 4;i++){
-        apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i].fanPresetId);
+        apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i]->fanPresetId);
 
-        apuForm[i]->tempLimitSpinBox->setValue(presetsBuffer[i].tempLimitValue);
-        apuForm[i]->tempLimitCheckBox->setChecked(presetsBuffer[i].tempLimitChecked);
-        apuForm[i]->apuSkinSpinBox->setValue(presetsBuffer[i].apuSkinValue);
-        apuForm[i]->apuSkinCheckBox->setChecked(presetsBuffer[i].apuSkinChecked);
-        apuForm[i]->stampLimitSpinBox->setValue(presetsBuffer[i].stampLimitValue);
-        apuForm[i]->stampLimitCheckBox->setChecked(presetsBuffer[i].stampLimitChecked);
-        apuForm[i]->fastLimitSpinBox->setValue(presetsBuffer[i].fastLimitValue);
-        apuForm[i]->fastLimitCheckBox->setChecked(presetsBuffer[i].fastLimitChecked);
-        apuForm[i]->fastTimeSpinBox->setValue(presetsBuffer[i].fastTimeValue);
-        apuForm[i]->fastTimeCheckBox->setChecked(presetsBuffer[i].fastTimeChecked);
-        apuForm[i]->slowLimitSpinBox->setValue(presetsBuffer[i].slowLimitValue);
-        apuForm[i]->slowLimitCheckBox->setChecked(presetsBuffer[i].slowLimitChecked);
-        apuForm[i]->slowTimeSpinBox->setValue(presetsBuffer[i].slowTimeValue);
-        apuForm[i]->slowTimeCheckBox->setChecked(presetsBuffer[i].slowTimeChecked);
+        apuForm[i]->tempLimitSpinBox->setValue(presetsBuffer[i]->tempLimitValue);
+        apuForm[i]->tempLimitCheckBox->setChecked(presetsBuffer[i]->tempLimitChecked);
+        apuForm[i]->apuSkinSpinBox->setValue(presetsBuffer[i]->apuSkinValue);
+        apuForm[i]->apuSkinCheckBox->setChecked(presetsBuffer[i]->apuSkinChecked);
+        apuForm[i]->stampLimitSpinBox->setValue(presetsBuffer[i]->stampLimitValue);
+        apuForm[i]->stampLimitCheckBox->setChecked(presetsBuffer[i]->stampLimitChecked);
+        apuForm[i]->fastLimitSpinBox->setValue(presetsBuffer[i]->fastLimitValue);
+        apuForm[i]->fastLimitCheckBox->setChecked(presetsBuffer[i]->fastLimitChecked);
+        apuForm[i]->fastTimeSpinBox->setValue(presetsBuffer[i]->fastTimeValue);
+        apuForm[i]->fastTimeCheckBox->setChecked(presetsBuffer[i]->fastTimeChecked);
+        apuForm[i]->slowLimitSpinBox->setValue(presetsBuffer[i]->slowLimitValue);
+        apuForm[i]->slowLimitCheckBox->setChecked(presetsBuffer[i]->slowLimitChecked);
+        apuForm[i]->slowTimeSpinBox->setValue(presetsBuffer[i]->slowTimeValue);
+        apuForm[i]->slowTimeCheckBox->setChecked(presetsBuffer[i]->slowTimeChecked);
 
-        apuForm[i]->vrmCurrentSpinBox->setValue(presetsBuffer[i].vrmCurrentValue);
-        apuForm[i]->vrmCurrentCheckBox->setChecked(presetsBuffer[i].vrmCurrentChecked);
-        apuForm[i]->vrmMaxSpinBox->setValue(presetsBuffer[i].vrmMaxValue);
-        apuForm[i]->vrmMaxCheckBox->setChecked(presetsBuffer[i].vrmMaxChecked);
+        apuForm[i]->vrmCurrentSpinBox->setValue(presetsBuffer[i]->vrmCurrentValue);
+        apuForm[i]->vrmCurrentCheckBox->setChecked(presetsBuffer[i]->vrmCurrentChecked);
+        apuForm[i]->vrmMaxSpinBox->setValue(presetsBuffer[i]->vrmMaxValue);
+        apuForm[i]->vrmMaxCheckBox->setChecked(presetsBuffer[i]->vrmMaxChecked);
 
-        apuForm[i]->minFclkSpinBox->setValue(presetsBuffer[i].minFclkValue);
-        apuForm[i]->minFclkCheckBox->setChecked(presetsBuffer[i].minFclkChecked);
-        apuForm[i]->maxFclkSpinBox->setValue(presetsBuffer[i].maxFclkValue);
-        apuForm[i]->maxFclkCheckBox->setChecked(presetsBuffer[i].maxFclkChecked);
+        apuForm[i]->minFclkSpinBox->setValue(presetsBuffer[i]->minFclkValue);
+        apuForm[i]->minFclkCheckBox->setChecked(presetsBuffer[i]->minFclkChecked);
+        apuForm[i]->maxFclkSpinBox->setValue(presetsBuffer[i]->maxFclkValue);
+        apuForm[i]->maxFclkCheckBox->setChecked(presetsBuffer[i]->maxFclkChecked);
 
-        apuForm[i]->minGfxclkSpinBox->setValue(presetsBuffer[i].minGfxclkValue);
-        apuForm[i]->minGfxclkCheckBox->setChecked(presetsBuffer[i].minGfxclkChecked);
-        apuForm[i]->maxGfxclkSpinBox->setValue(presetsBuffer[i].maxGfxclkValue);
-        apuForm[i]->maxGfxclkCheckBox->setChecked(presetsBuffer[i].maxGfxclkChecked);
-        apuForm[i]->minSocclkSpinBox->setValue(presetsBuffer[i].minSocclkValue);
-        apuForm[i]->minSocclkCheckBox->setChecked(presetsBuffer[i].minSocclkChecked);
-        apuForm[i]->maxSocclkSpinBox->setValue(presetsBuffer[i].maxSocclkValue);
-        apuForm[i]->maxSocclkCheckBox->setChecked(presetsBuffer[i].maxSocclkChecked);
-        apuForm[i]->minVcnSpinBox->setValue(presetsBuffer[i].minVcnValue);
-        apuForm[i]->minVcnCheckBox->setChecked(presetsBuffer[i].minVcnChecked);
-        apuForm[i]->maxVcnSpinBox->setValue(presetsBuffer[i].maxVcnValue);
-        apuForm[i]->maxVcnCheckBox->setChecked(presetsBuffer[i].maxVcnChecked);
+        apuForm[i]->minGfxclkSpinBox->setValue(presetsBuffer[i]->minGfxclkValue);
+        apuForm[i]->minGfxclkCheckBox->setChecked(presetsBuffer[i]->minGfxclkChecked);
+        apuForm[i]->maxGfxclkSpinBox->setValue(presetsBuffer[i]->maxGfxclkValue);
+        apuForm[i]->maxGfxclkCheckBox->setChecked(presetsBuffer[i]->maxGfxclkChecked);
+        apuForm[i]->minSocclkSpinBox->setValue(presetsBuffer[i]->minSocclkValue);
+        apuForm[i]->minSocclkCheckBox->setChecked(presetsBuffer[i]->minSocclkChecked);
+        apuForm[i]->maxSocclkSpinBox->setValue(presetsBuffer[i]->maxSocclkValue);
+        apuForm[i]->maxSocclkCheckBox->setChecked(presetsBuffer[i]->maxSocclkChecked);
+        apuForm[i]->minVcnSpinBox->setValue(presetsBuffer[i]->minVcnValue);
+        apuForm[i]->minVcnCheckBox->setChecked(presetsBuffer[i]->minVcnChecked);
+        apuForm[i]->maxVcnSpinBox->setValue(presetsBuffer[i]->maxVcnValue);
+        apuForm[i]->maxVcnCheckBox->setChecked(presetsBuffer[i]->maxVcnChecked);
 
-        apuForm[i]->smuMaxPerformanceCheckBox->setChecked(presetsBuffer[i].smuMaxPerfomance);
-        apuForm[i]->smuPowerSavingCheckBox->setChecked(presetsBuffer[i].smuPowerSaving);
+        apuForm[i]->smuMaxPerformanceCheckBox->setChecked(presetsBuffer[i]->smuMaxPerfomance);
+        apuForm[i]->smuPowerSavingCheckBox->setChecked(presetsBuffer[i]->smuPowerSaving);
     }
 }
 
@@ -215,23 +215,26 @@ void CtrlGui::loadStyleSheet(){
     {
         //
         if (configReader.name() == QString("MainWindow"))
-            foreach(const QXmlStreamAttribute &attr, configReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
                 if (attr.name().toString() == "value") {
                     QString strStyleSheet = attr.value().toString();
                     this->setStyleSheet(strStyleSheet);
                     settingFrame->setStyleSheet(strStyleSheet);
                     //ui_infoWidget->setStyleSheet(strStyleSheet);
                 }
+            }else{}
 
         if (configReader.name() == QString("TopWidget"))
-            foreach(const QXmlStreamAttribute &attr, configReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui->topwidget->setStyleSheet(attr.value().toString());;
+                    ui->topwidget->setStyleSheet(attr.value().toString());
+            }else{}
 
         if (configReader.name() == QString("TabWidget"))
-            foreach(const QXmlStreamAttribute &attr, configReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui->tabbtnwidget->setStyleSheet(attr.value().toString());
+            }else{}
         //
         configReader.readNext();
     }
@@ -249,56 +252,56 @@ void CtrlGui::savePreset(){
                        "\nDisable auto switcher in settings.");
         msgBox.exec();
         infoMessageShowed = true;
-        conf->getSettings()->showNotificationToDisableAutoSwitcher = true;
+        conf->settingsBuffer->showNotificationToDisableAutoSwitcher = true;
         conf->saveSettings();
     }
 
-    presetStr *presetsBuffer = conf->getPresets();
+    presetStr **presetsBuffer = conf->presetsBuffer;
 
-    presetsBuffer[i].fanPresetId = apuForm[i]->fanComboBox->currentIndex();
+    presetsBuffer[i]->fanPresetId = apuForm[i]->fanComboBox->currentIndex();
 
-    presetsBuffer[i].tempLimitValue = apuForm[i]->tempLimitSpinBox->value();
-    presetsBuffer[i].tempLimitChecked = apuForm[i]->tempLimitCheckBox->isChecked();
-    presetsBuffer[i].apuSkinValue = apuForm[i]->apuSkinSpinBox->value();
-    presetsBuffer[i].apuSkinChecked = apuForm[i]->apuSkinCheckBox->isChecked();
-    presetsBuffer[i].stampLimitValue = apuForm[i]->stampLimitSpinBox->value();
-    presetsBuffer[i].stampLimitChecked = apuForm[i]->stampLimitCheckBox->isChecked();
-    presetsBuffer[i].fastLimitValue = apuForm[i]->fastLimitSpinBox->value();
-    presetsBuffer[i].fastLimitChecked = apuForm[i]->fastLimitCheckBox->isChecked();
-    presetsBuffer[i].fastTimeValue = apuForm[i]->fastTimeSpinBox->value();
-    presetsBuffer[i].fastTimeChecked = apuForm[i]->fastTimeCheckBox->isChecked();
-    presetsBuffer[i].slowLimitValue = apuForm[i]->slowLimitSpinBox->value();
-    presetsBuffer[i].slowLimitChecked = apuForm[i]->slowLimitCheckBox->isChecked();
-    presetsBuffer[i].slowTimeValue = apuForm[i]->slowTimeSpinBox->value();
-    presetsBuffer[i].slowTimeChecked = apuForm[i]->slowTimeCheckBox->isChecked();
+    presetsBuffer[i]->tempLimitValue = apuForm[i]->tempLimitSpinBox->value();
+    presetsBuffer[i]->tempLimitChecked = apuForm[i]->tempLimitCheckBox->isChecked();
+    presetsBuffer[i]->apuSkinValue = apuForm[i]->apuSkinSpinBox->value();
+    presetsBuffer[i]->apuSkinChecked = apuForm[i]->apuSkinCheckBox->isChecked();
+    presetsBuffer[i]->stampLimitValue = apuForm[i]->stampLimitSpinBox->value();
+    presetsBuffer[i]->stampLimitChecked = apuForm[i]->stampLimitCheckBox->isChecked();
+    presetsBuffer[i]->fastLimitValue = apuForm[i]->fastLimitSpinBox->value();
+    presetsBuffer[i]->fastLimitChecked = apuForm[i]->fastLimitCheckBox->isChecked();
+    presetsBuffer[i]->fastTimeValue = apuForm[i]->fastTimeSpinBox->value();
+    presetsBuffer[i]->fastTimeChecked = apuForm[i]->fastTimeCheckBox->isChecked();
+    presetsBuffer[i]->slowLimitValue = apuForm[i]->slowLimitSpinBox->value();
+    presetsBuffer[i]->slowLimitChecked = apuForm[i]->slowLimitCheckBox->isChecked();
+    presetsBuffer[i]->slowTimeValue = apuForm[i]->slowTimeSpinBox->value();
+    presetsBuffer[i]->slowTimeChecked = apuForm[i]->slowTimeCheckBox->isChecked();
 
-    presetsBuffer[i].vrmCurrentValue = apuForm[i]->vrmCurrentSpinBox->value();
-    presetsBuffer[i].vrmCurrentChecked = apuForm[i]->vrmCurrentCheckBox->isChecked();
-    presetsBuffer[i].vrmMaxValue = apuForm[i]->vrmMaxSpinBox->value();
-    presetsBuffer[i].vrmMaxChecked = apuForm[i]->vrmMaxCheckBox->isChecked();
+    presetsBuffer[i]->vrmCurrentValue = apuForm[i]->vrmCurrentSpinBox->value();
+    presetsBuffer[i]->vrmCurrentChecked = apuForm[i]->vrmCurrentCheckBox->isChecked();
+    presetsBuffer[i]->vrmMaxValue = apuForm[i]->vrmMaxSpinBox->value();
+    presetsBuffer[i]->vrmMaxChecked = apuForm[i]->vrmMaxCheckBox->isChecked();
 
-    presetsBuffer[i].minFclkValue = apuForm[i]->minFclkSpinBox->value();
-    presetsBuffer[i].minFclkChecked = apuForm[i]->minFclkCheckBox->isChecked();
-    presetsBuffer[i].maxFclkValue = apuForm[i]->maxFclkSpinBox->value();
-    presetsBuffer[i].maxFclkChecked = apuForm[i]->maxFclkCheckBox->isChecked();
+    presetsBuffer[i]->minFclkValue = apuForm[i]->minFclkSpinBox->value();
+    presetsBuffer[i]->minFclkChecked = apuForm[i]->minFclkCheckBox->isChecked();
+    presetsBuffer[i]->maxFclkValue = apuForm[i]->maxFclkSpinBox->value();
+    presetsBuffer[i]->maxFclkChecked = apuForm[i]->maxFclkCheckBox->isChecked();
 
-    presetsBuffer[i].minGfxclkValue = apuForm[i]->minGfxclkSpinBox->value();
-    presetsBuffer[i].minGfxclkChecked = apuForm[i]->minGfxclkCheckBox->isChecked();
-    presetsBuffer[i].maxGfxclkValue = apuForm[i]->maxGfxclkSpinBox->value();
-    presetsBuffer[i].maxGfxclkChecked = apuForm[i]->maxGfxclkCheckBox->isChecked();
+    presetsBuffer[i]->minGfxclkValue = apuForm[i]->minGfxclkSpinBox->value();
+    presetsBuffer[i]->minGfxclkChecked = apuForm[i]->minGfxclkCheckBox->isChecked();
+    presetsBuffer[i]->maxGfxclkValue = apuForm[i]->maxGfxclkSpinBox->value();
+    presetsBuffer[i]->maxGfxclkChecked = apuForm[i]->maxGfxclkCheckBox->isChecked();
 
-    presetsBuffer[i].minSocclkValue = apuForm[i]->minSocclkSpinBox->value();
-    presetsBuffer[i].minSocclkChecked = apuForm[i]->minSocclkCheckBox->isChecked();
-    presetsBuffer[i].maxSocclkValue = apuForm[i]->maxSocclkSpinBox->value();
-    presetsBuffer[i].maxSocclkChecked = apuForm[i]->maxSocclkCheckBox->isChecked();
+    presetsBuffer[i]->minSocclkValue = apuForm[i]->minSocclkSpinBox->value();
+    presetsBuffer[i]->minSocclkChecked = apuForm[i]->minSocclkCheckBox->isChecked();
+    presetsBuffer[i]->maxSocclkValue = apuForm[i]->maxSocclkSpinBox->value();
+    presetsBuffer[i]->maxSocclkChecked = apuForm[i]->maxSocclkCheckBox->isChecked();
 
-    presetsBuffer[i].minVcnValue = apuForm[i]->minVcnSpinBox->value();
-    presetsBuffer[i].minVcnChecked = apuForm[i]->minVcnCheckBox->isChecked();
-    presetsBuffer[i].maxVcnValue = apuForm[i]->maxVcnSpinBox->value();
-    presetsBuffer[i].maxVcnChecked = apuForm[i]->maxVcnCheckBox->isChecked();
+    presetsBuffer[i]->minVcnValue = apuForm[i]->minVcnSpinBox->value();
+    presetsBuffer[i]->minVcnChecked = apuForm[i]->minVcnCheckBox->isChecked();
+    presetsBuffer[i]->maxVcnValue = apuForm[i]->maxVcnSpinBox->value();
+    presetsBuffer[i]->maxVcnChecked = apuForm[i]->maxVcnCheckBox->isChecked();
 
-    presetsBuffer[i].smuMaxPerfomance = apuForm[i]->smuMaxPerformanceCheckBox->isChecked();
-    presetsBuffer[i].smuPowerSaving = apuForm[i]->smuPowerSavingCheckBox->isChecked();
+    presetsBuffer[i]->smuMaxPerfomance = apuForm[i]->smuMaxPerformanceCheckBox->isChecked();
+    presetsBuffer[i]->smuPowerSaving = apuForm[i]->smuPowerSavingCheckBox->isChecked();
 
     conf->savePresets();
 
@@ -316,7 +319,7 @@ void CtrlGui::applyPreset(){
                        "\nDisable auto switcher in settings.");
         msgBox.exec();
         infoMessageShowed = true;
-        conf->getSettings()->showNotificationToDisableAutoSwitcher = true;
+        conf->settingsBuffer->showNotificationToDisableAutoSwitcher = true;
         conf->saveSettings();
     }
 
@@ -326,50 +329,50 @@ void CtrlGui::applyPreset(){
 void CtrlGui::cancelPreset(){
     ui->label->setText("RyzenAdjCtrl - Applying...");
     int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
-    presetStr *presetsBuffer = conf->getPresets();
+    presetStr **presetsBuffer = conf->presetsBuffer;
 
-    apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i].fanPresetId);
+    apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i]->fanPresetId);
 
-    apuForm[i]->tempLimitSpinBox->setValue(presetsBuffer[i].tempLimitValue);
-    apuForm[i]->tempLimitCheckBox->setChecked(presetsBuffer[i].tempLimitChecked);
-    apuForm[i]->apuSkinSpinBox->setValue(presetsBuffer[i].apuSkinValue);
-    apuForm[i]->apuSkinCheckBox->setChecked(presetsBuffer[i].apuSkinChecked);
-    apuForm[i]->stampLimitSpinBox->setValue(presetsBuffer[i].stampLimitValue);
-    apuForm[i]->stampLimitCheckBox->setChecked(presetsBuffer[i].stampLimitChecked);
-    apuForm[i]->fastLimitSpinBox->setValue(presetsBuffer[i].fastLimitValue);
-    apuForm[i]->fastLimitCheckBox->setChecked(presetsBuffer[i].fastLimitChecked);
-    apuForm[i]->fastTimeSpinBox->setValue(presetsBuffer[i].fastTimeValue);
-    apuForm[i]->fastTimeCheckBox->setChecked(presetsBuffer[i].fastTimeChecked);
-    apuForm[i]->slowLimitSpinBox->setValue(presetsBuffer[i].slowLimitValue);
-    apuForm[i]->slowLimitCheckBox->setChecked(presetsBuffer[i].slowLimitChecked);
-    apuForm[i]->slowTimeSpinBox->setValue(presetsBuffer[i].slowTimeValue);
-    apuForm[i]->slowTimeCheckBox->setChecked(presetsBuffer[i].slowTimeChecked);
+    apuForm[i]->tempLimitSpinBox->setValue(presetsBuffer[i]->tempLimitValue);
+    apuForm[i]->tempLimitCheckBox->setChecked(presetsBuffer[i]->tempLimitChecked);
+    apuForm[i]->apuSkinSpinBox->setValue(presetsBuffer[i]->apuSkinValue);
+    apuForm[i]->apuSkinCheckBox->setChecked(presetsBuffer[i]->apuSkinChecked);
+    apuForm[i]->stampLimitSpinBox->setValue(presetsBuffer[i]->stampLimitValue);
+    apuForm[i]->stampLimitCheckBox->setChecked(presetsBuffer[i]->stampLimitChecked);
+    apuForm[i]->fastLimitSpinBox->setValue(presetsBuffer[i]->fastLimitValue);
+    apuForm[i]->fastLimitCheckBox->setChecked(presetsBuffer[i]->fastLimitChecked);
+    apuForm[i]->fastTimeSpinBox->setValue(presetsBuffer[i]->fastTimeValue);
+    apuForm[i]->fastTimeCheckBox->setChecked(presetsBuffer[i]->fastTimeChecked);
+    apuForm[i]->slowLimitSpinBox->setValue(presetsBuffer[i]->slowLimitValue);
+    apuForm[i]->slowLimitCheckBox->setChecked(presetsBuffer[i]->slowLimitChecked);
+    apuForm[i]->slowTimeSpinBox->setValue(presetsBuffer[i]->slowTimeValue);
+    apuForm[i]->slowTimeCheckBox->setChecked(presetsBuffer[i]->slowTimeChecked);
 
-    apuForm[i]->vrmCurrentSpinBox->setValue(presetsBuffer[i].vrmCurrentValue);
-    apuForm[i]->vrmCurrentCheckBox->setChecked(presetsBuffer[i].vrmCurrentChecked);
-    apuForm[i]->vrmMaxSpinBox->setValue(presetsBuffer[i].vrmMaxValue);
-    apuForm[i]->vrmMaxCheckBox->setChecked(presetsBuffer[i].vrmMaxChecked);
+    apuForm[i]->vrmCurrentSpinBox->setValue(presetsBuffer[i]->vrmCurrentValue);
+    apuForm[i]->vrmCurrentCheckBox->setChecked(presetsBuffer[i]->vrmCurrentChecked);
+    apuForm[i]->vrmMaxSpinBox->setValue(presetsBuffer[i]->vrmMaxValue);
+    apuForm[i]->vrmMaxCheckBox->setChecked(presetsBuffer[i]->vrmMaxChecked);
 
-    apuForm[i]->minFclkSpinBox->setValue(presetsBuffer[i].minFclkValue);
-    apuForm[i]->minFclkCheckBox->setChecked(presetsBuffer[i].minFclkChecked);
-    apuForm[i]->maxFclkSpinBox->setValue(presetsBuffer[i].maxFclkValue);
-    apuForm[i]->maxFclkCheckBox->setChecked(presetsBuffer[i].maxFclkChecked);
+    apuForm[i]->minFclkSpinBox->setValue(presetsBuffer[i]->minFclkValue);
+    apuForm[i]->minFclkCheckBox->setChecked(presetsBuffer[i]->minFclkChecked);
+    apuForm[i]->maxFclkSpinBox->setValue(presetsBuffer[i]->maxFclkValue);
+    apuForm[i]->maxFclkCheckBox->setChecked(presetsBuffer[i]->maxFclkChecked);
 
-    apuForm[i]->minGfxclkSpinBox->setValue(presetsBuffer[i].minGfxclkValue);
-    apuForm[i]->minGfxclkCheckBox->setChecked(presetsBuffer[i].minGfxclkChecked);
-    apuForm[i]->maxGfxclkSpinBox->setValue(presetsBuffer[i].maxGfxclkValue);
-    apuForm[i]->maxGfxclkCheckBox->setChecked(presetsBuffer[i].maxGfxclkChecked);
-    apuForm[i]->minSocclkSpinBox->setValue(presetsBuffer[i].minSocclkValue);
-    apuForm[i]->minSocclkCheckBox->setChecked(presetsBuffer[i].minSocclkChecked);
-    apuForm[i]->maxSocclkSpinBox->setValue(presetsBuffer[i].maxSocclkValue);
-    apuForm[i]->maxSocclkCheckBox->setChecked(presetsBuffer[i].maxSocclkChecked);
-    apuForm[i]->minVcnSpinBox->setValue(presetsBuffer[i].minVcnValue);
-    apuForm[i]->minVcnCheckBox->setChecked(presetsBuffer[i].minVcnChecked);
-    apuForm[i]->maxVcnSpinBox->setValue(presetsBuffer[i].maxVcnValue);
-    apuForm[i]->maxVcnCheckBox->setChecked(presetsBuffer[i].maxVcnChecked);
+    apuForm[i]->minGfxclkSpinBox->setValue(presetsBuffer[i]->minGfxclkValue);
+    apuForm[i]->minGfxclkCheckBox->setChecked(presetsBuffer[i]->minGfxclkChecked);
+    apuForm[i]->maxGfxclkSpinBox->setValue(presetsBuffer[i]->maxGfxclkValue);
+    apuForm[i]->maxGfxclkCheckBox->setChecked(presetsBuffer[i]->maxGfxclkChecked);
+    apuForm[i]->minSocclkSpinBox->setValue(presetsBuffer[i]->minSocclkValue);
+    apuForm[i]->minSocclkCheckBox->setChecked(presetsBuffer[i]->minSocclkChecked);
+    apuForm[i]->maxSocclkSpinBox->setValue(presetsBuffer[i]->maxSocclkValue);
+    apuForm[i]->maxSocclkCheckBox->setChecked(presetsBuffer[i]->maxSocclkChecked);
+    apuForm[i]->minVcnSpinBox->setValue(presetsBuffer[i]->minVcnValue);
+    apuForm[i]->minVcnCheckBox->setChecked(presetsBuffer[i]->minVcnChecked);
+    apuForm[i]->maxVcnSpinBox->setValue(presetsBuffer[i]->maxVcnValue);
+    apuForm[i]->maxVcnCheckBox->setChecked(presetsBuffer[i]->maxVcnChecked);
 
-    apuForm[i]->smuMaxPerformanceCheckBox->setChecked(presetsBuffer[i].smuMaxPerfomance);
-    apuForm[i]->smuPowerSavingCheckBox->setChecked(presetsBuffer[i].smuPowerSaving);
+    apuForm[i]->smuMaxPerformanceCheckBox->setChecked(presetsBuffer[i]->smuMaxPerfomance);
+    apuForm[i]->smuPowerSavingCheckBox->setChecked(presetsBuffer[i]->smuPowerSaving);
 
     sendPreset(i, false);
 }
@@ -386,7 +389,7 @@ void CtrlGui::sendPreset(int i, bool save){
             argsWriter.writeEndElement();
         }
         argsWriter.writeStartElement("id");
-            argsWriter.writeAttribute("value", QString::number(save));
+            argsWriter.writeAttribute("value", QString::number(i));
         argsWriter.writeEndElement();
 
         if(apuForm[i]->tempLimitCheckBox->isChecked()) {
@@ -539,7 +542,7 @@ void CtrlGui::languageChange()
 
 void CtrlGui::saveSettings(){
     settingFrame->hide();
-    settingsStr* settings = conf->getSettings();
+    settingsStr* settings = conf->settingsBuffer;
 
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
@@ -626,7 +629,7 @@ void CtrlGui::saveSettings(){
 }
 
 void CtrlGui::readSettings(){
-    settingsStr *settings = conf->getSettings();
+    settingsStr *settings = conf->settingsBuffer;
 
     ui_settings->useAgentGroupBox->setChecked(settings->useAgent);
     ui_settings->showNotificationsCheckBox->setChecked(settings->showNotifications);
@@ -830,143 +833,173 @@ void CtrlGui::decodeArgs(QByteArray args){
     {
         //
         if (argsReader.name() == QString("currentPresetId"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     currentPresetId = attr.value().toString().toInt();
                     qDebug()<<"currentPresetId:"<<currentPresetId;
                 }
+            }else{}
         if (argsReader.name() == QString("saved"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     saved = attr.value().toString().toInt();
                     qDebug()<<"saved:"<<saved;
                 }
+            }else{}
 
         if (argsReader.name() == QString("ryzenFamily"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     if(ryzenFamily != attr.value().toString()){
                         ryzenFamily = attr.value().toString();
                         ui_infoWidget->ryzenFamily->setText("APU Ryzen " + ryzenFamily + " Family");
                     }
+            }else{}
         if (argsReader.name() == QString("biosVersion"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     if(biosVersion != attr.value().toString()){
                         biosVersion = attr.value().toString();
                         ui_infoWidget->biosVersion->setText("BIOS Version: " + biosVersion);
                     }
+            }else{}
         if (argsReader.name() == QString("pmTableVersion"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     if(pmTableVersion != attr.value().toString()){
                         pmTableVersion = attr.value().toString();
                         ui_infoWidget->pmTableVersion->setText("PM Table Version: " + pmTableVersion);
                     }
+            }else{}
         if (argsReader.name() == QString("ryzenAdjVersion"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     if(ryzenAdjVersion != attr.value().toString()){
                         ryzenAdjVersion = attr.value().toString();
                         ui_infoWidget->ryzenAdjVersion->setText("RyzenAdj Version: " + ryzenAdjVersion);
                     }
+            }else{}
 
         if (argsReader.name() == QString("stapm_limit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->stapm_limit->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("stapm_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->stapm_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("fast_limit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->fast_limit->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("fast_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->fast_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("slow_limit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->slow_limit->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("slow_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->slow_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("apu_slow_limit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->apu_slow_limit->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("apu_slow_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->apu_slow_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("vrm_current"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->vrm_current->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("vrm_current_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->vrm_current_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("vrmsoc_current"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->vrmsoc_current->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("vrmsoc_current_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->vrmsoc_current_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("vrmmax_current"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->vrmmax_current->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("vrmmax_current_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->vrmmax_current_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("vrmsocmax_current"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->vrmsocmax_current->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("vrmsocmax_current_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->vrmsocmax_current_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("tctl_temp"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->tctl_temp->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("tctl_temp_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->tctl_temp_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("apu_skin_temp_limit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->apu_skin_temp_limit->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("apu_skin_temp_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->apu_skin_temp_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("dgpu_skin_temp_limit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->dgpu_skin_temp_limit->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("dgpu_skin_temp_value"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->dgpu_skin_temp_value->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("stapm_time"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->stapm_time->setText(attr.value().toString());
+            }else{}
         if (argsReader.name() == QString("slow_time"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes())
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
                     ui_infoWidget->slow_time->setText(attr.value().toString());
+            }else{}
         //
         argsReader.readNext();
     }
@@ -974,10 +1007,10 @@ void CtrlGui::decodeArgs(QByteArray args){
     if(currentPresetId != -1){
         QString message;
         if (saved)
-            message = (conf->getPresets()[currentPresetId].presetName
+            message = (conf->presetsBuffer[currentPresetId]->presetName
                        + " is runing now.");
         else
-            message = (conf->getPresets()[currentPresetId].presetName
+            message = (conf->presetsBuffer[currentPresetId]->presetName
                        + " NOT SAVED! is runing now.");
         ui->label->setText("RyzenAdjCtrl - " + message);
         emit messageToAgent(message);

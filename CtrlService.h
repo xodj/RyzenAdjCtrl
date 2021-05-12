@@ -55,7 +55,7 @@ private:
     void recieveArgs();
     void decodeArgs(QByteArray args);
 
-    void loadPreset(presetStr preset);
+    void loadPreset(presetStr *preset);
 
     void atrofacSendCommand(QString arguments);
 
@@ -78,12 +78,14 @@ private:
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToGui;
 
-    CtrlSettings *conf;
     CtrlEPMCallback *epmCallback;
     CtrlACCallback *acCallback;
 
     QTimer *bufferToService_refresh_timer;
     QTimer *reapplyPresetTimer;
+
+    presetStr **presetsBuffer;
+    settingsStr *settingsBuffer;
 
 public slots:
     void currentACStateChanged(ACState state);

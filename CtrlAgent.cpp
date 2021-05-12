@@ -51,7 +51,7 @@ void CtrlAgent::iconActivated(QSystemTrayIcon::ActivationReason reason){
 void CtrlAgent::closeAgent(){ exit(0); }
 
 void CtrlAgent::notificationToTray(QString message){
-    if(conf->getSettings()->showNotifications)
+    if(conf->settingsBuffer->showNotifications)
         if(lastMessage != message) {
             lastMessage = message;
             this->showMessage("RyzenAdjCtrl", message);
