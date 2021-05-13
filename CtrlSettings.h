@@ -93,8 +93,49 @@ public:
     bool openSettings();
     bool savePresets();
     bool openPresets();
-    presetStr **presetsBuffer;
-    settingsStr *settingsBuffer;
+
+    settingsStr *getSettingsBuffer(){
+        return &settingsBuffer;
+    }
+
+    bool setPresetBuffer(int idx, presetStr *preset){
+        presetStr *presetBuffer = getPresetBuffer(idx);
+        if(presetBuffer == nullptr){
+            insertNewPreset(idx, preset);
+        } else
+            presetBuffer = preset;
+        return true;
+    }
+
+    presetStr *getPresetBuffer(int idx){
+        presetStr *presetBuffer = nullptr;
+        for(qsizetype i = 0;i < presets->count();i++)
+            if(presets->at(i)->presetId == idx)
+                presetBuffer = presets->at(i);
+        return presetBuffer;
+    }
+
+    int insertNewPreset(int newidx = -1, presetStr *newPreset = nullptr){
+        if(newPreset == nullptr)
+            newPreset = new presetStr;
+        if(newidx == -1){
+            newidx = presets->count();
+            for(;;){
+                newidx++;
+                if(getPresetBuffer(newidx) == nullptr)
+                    break;
+            }
+        }
+        newPreset->presetId = newidx;
+        newPreset->presetName = "New preset";
+        presets->emplaceBack(newPreset);
+        return newidx;
+    }
+
+    QList<presetStr*> *presets;
+
+private:
+    settingsStr settingsBuffer;
 
 };
 

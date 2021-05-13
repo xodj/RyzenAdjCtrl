@@ -73,7 +73,8 @@ private:
 
     ACState currentACState;
     epmMode currentEPMode;
-    int lastUsedPresetId = -1;
+    int lastPresetId = -1;
+    presetStr *lastPreset = nullptr;
 
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToGui;
@@ -84,8 +85,7 @@ private:
     QTimer *bufferToService_refresh_timer;
     QTimer *reapplyPresetTimer;
 
-    presetStr **presetsBuffer;
-    settingsStr *settingsBuffer;
+    CtrlSettings *conf;
 
 public slots:
     void currentACStateChanged(ACState state);

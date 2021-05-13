@@ -12,8 +12,7 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
     : QObject(nullptr),
       bufferToService(bufferToService),
       bufferToGui(bufferToGui),
-      presetsBuffer(conf->presetsBuffer),
-      settingsBuffer(conf->settingsBuffer)
+      conf(conf)
 {
     initPmTable();
 
@@ -28,6 +27,7 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
     reapplyPresetTimer = new QTimer;
     connect(reapplyPresetTimer, &QTimer::timeout,
             this, &CtrlService::reapplyPresetTimeout);
+    settingsStr *settingsBuffer = conf->getSettingsBuffer();
     if(settingsBuffer->autoPresetApplyDurationChecked)
         reapplyPresetTimer->start(settingsBuffer->autoPresetApplyDuration * 1000);
 
@@ -113,7 +113,8 @@ void CtrlService::decodeArgs(QByteArray args){
     qDebug()<<"Recieved args from GUI";
     bool save = false;
     int id = -1;
-    presetStr recievedPreset;
+    presetStr *recievedPreset = new presetStr;
+    settingsStr *settingsBuffer = conf->getSettingsBuffer();
 
     QXmlStreamReader argsReader(args);
     argsReader.readNext();
@@ -142,15 +143,15 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("tempLimitValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.tempLimitChecked = true;
-                    recievedPreset.tempLimitValue = attr.value().toInt();
+                    recievedPreset->tempLimitChecked = true;
+                    recievedPreset->tempLimitValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("apuSkinValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.apuSkinChecked = true;
-                    recievedPreset.apuSkinValue = attr.value().toInt();
+                    recievedPreset->apuSkinChecked = true;
+                    recievedPreset->apuSkinValue = attr.value().toInt();
                 }
             }else{}
 
@@ -158,36 +159,36 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("stampLimitValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.stampLimitChecked = true;
-                    recievedPreset.stampLimitValue = attr.value().toInt();
+                    recievedPreset->stampLimitChecked = true;
+                    recievedPreset->stampLimitValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("fastLimitValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.fastLimitChecked = true;
-                    recievedPreset.fastLimitValue = attr.value().toInt();
+                    recievedPreset->fastLimitChecked = true;
+                    recievedPreset->fastLimitValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("fastTimeValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.fastTimeChecked = true;
-                    recievedPreset.fastTimeValue = attr.value().toInt();
+                    recievedPreset->fastTimeChecked = true;
+                    recievedPreset->fastTimeValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("slowLimitValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.slowLimitChecked = true;
-                    recievedPreset.slowLimitValue = attr.value().toInt();
+                    recievedPreset->slowLimitChecked = true;
+                    recievedPreset->slowLimitValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("slowTimeValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.slowTimeChecked = true;
-                    recievedPreset.slowTimeValue = attr.value().toInt();
+                    recievedPreset->slowTimeChecked = true;
+                    recievedPreset->slowTimeValue = attr.value().toInt();
                 }
             }else{}
 
@@ -195,15 +196,15 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("vrmCurrentValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.vrmCurrentChecked = true;
-                    recievedPreset.vrmCurrentValue = attr.value().toInt();
+                    recievedPreset->vrmCurrentChecked = true;
+                    recievedPreset->vrmCurrentValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("vrmMaxValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.vrmMaxChecked = true;
-                    recievedPreset.vrmMaxValue = attr.value().toInt();
+                    recievedPreset->vrmMaxChecked = true;
+                    recievedPreset->vrmMaxValue = attr.value().toInt();
                 }
             }else{}
 
@@ -211,15 +212,15 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("minFclkValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.minFclkChecked = true;
-                    recievedPreset.minFclkValue = attr.value().toInt();
+                    recievedPreset->minFclkChecked = true;
+                    recievedPreset->minFclkValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("maxFclkValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.maxFclkChecked = true;
-                    recievedPreset.maxFclkValue = attr.value().toInt();
+                    recievedPreset->maxFclkChecked = true;
+                    recievedPreset->maxFclkValue = attr.value().toInt();
                 }
             }else{}
 
@@ -227,43 +228,43 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("minGfxclkValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.minGfxclkChecked = true;
-                    recievedPreset.minGfxclkValue = attr.value().toInt();
+                    recievedPreset->minGfxclkChecked = true;
+                    recievedPreset->minGfxclkValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("maxGfxclkValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.maxGfxclkChecked = true;
-                    recievedPreset.maxGfxclkValue = attr.value().toInt();
+                    recievedPreset->maxGfxclkChecked = true;
+                    recievedPreset->maxGfxclkValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("minSocclkValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.minSocclkChecked = true;
-                    recievedPreset.minSocclkValue = attr.value().toInt();
+                    recievedPreset->minSocclkChecked = true;
+                    recievedPreset->minSocclkValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("maxSocclkValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.maxSocclkChecked = true;
-                    recievedPreset.maxSocclkValue = attr.value().toInt();
+                    recievedPreset->maxSocclkChecked = true;
+                    recievedPreset->maxSocclkValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("minVcnValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.minVcnChecked = true;
-                    recievedPreset.minVcnValue = attr.value().toInt();
+                    recievedPreset->minVcnChecked = true;
+                    recievedPreset->minVcnValue = attr.value().toInt();
                 }
             }else{}
         if (argsReader.name() == QString("maxVcnValue"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.maxVcnChecked = true;
-                    recievedPreset.maxVcnValue = attr.value().toInt();
+                    recievedPreset->maxVcnChecked = true;
+                    recievedPreset->maxVcnValue = attr.value().toInt();
                 }
             }else{}
 
@@ -271,13 +272,13 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("smuMaxPerfomance"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.smuMaxPerfomance = true;
+                    recievedPreset->smuMaxPerfomance = true;
                 }
             }else{}
         if (argsReader.name() == QString("smuPowerSaving"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
-                    recievedPreset.smuPowerSaving = true;
+                    recievedPreset->smuPowerSaving = true;
                 }
             }else{}
 
@@ -285,7 +286,7 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("fanPresetId"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    recievedPreset.fanPresetId = attr.value().toInt();
+                    recievedPreset->fanPresetId = attr.value().toInt();
             }else{}
 
 
@@ -416,16 +417,18 @@ void CtrlService::decodeArgs(QByteArray args){
 
     if(id != -1) {
         qDebug()<<"Preset ID: "<<id;
-        lastUsedPresetId = id;
+        lastPresetId = id;
+        lastPreset = recievedPreset;
         sendCurrentPresetIdToGui(id, save);
-        loadPreset(&recievedPreset);
+        loadPreset(recievedPreset);
         if (save){
-            presetsBuffer[id] = &recievedPreset;
+            conf->setPresetBuffer(id, recievedPreset);
         }
     }
 }
 
 void CtrlService::currentACStateChanged(ACState state){
+    settingsStr *settingsBuffer = conf->getSettingsBuffer();
     currentACState = state;
     qDebug() << "Current state:"
              << ((state == Battery) ? "DC State" : "AC State");
@@ -434,13 +437,14 @@ void CtrlService::currentACStateChanged(ACState state){
         sendCurrentPresetIdToGui((state == Battery)
                                  ? (settingsBuffer->dcStatePresetId)
                                  : (settingsBuffer->acStatePresetId), true);
-        loadPreset(presetsBuffer[(state == Battery)
+        loadPreset(conf->getPresetBuffer((state == Battery)
                 ? (settingsBuffer->dcStatePresetId)
-                : (settingsBuffer->acStatePresetId)]);
+                : (settingsBuffer->acStatePresetId)));
     }
 }
 
 void CtrlService::epmIdChanged(epmMode EPMode){
+    settingsStr *settingsBuffer = conf->getSettingsBuffer();
     currentEPMode = EPMode;
     QString strEPMode;
     int epmPresetId = -1;
@@ -470,19 +474,20 @@ void CtrlService::epmIdChanged(epmMode EPMode){
     if(settingsBuffer->epmAutoPresetSwitch && epmPresetId != -1){
         qDebug()<<"Load preset ID:" << epmPresetId << "...";
         sendCurrentPresetIdToGui(epmPresetId, true);
-        loadPreset(presetsBuffer[epmPresetId]);
+        loadPreset(conf->getPresetBuffer(epmPresetId));
     }
 }
 
 void CtrlService::reapplyPresetTimeout(){
+    settingsStr *settingsBuffer = conf->getSettingsBuffer();
     qDebug() << "Reapply Preset Timeout";
     acCallback->emitCurrentACState();
     epmCallback->emitCurrentEPMState();
     if(!settingsBuffer->autoPresetSwitchAC
        && !settingsBuffer->epmAutoPresetSwitch
-       && lastUsedPresetId != -1) {
-        sendCurrentPresetIdToGui(lastUsedPresetId, true);
-        loadPreset(presetsBuffer[lastUsedPresetId]);
+       && lastPreset != nullptr) {
+        sendCurrentPresetIdToGui(lastPresetId, true);
+        loadPreset(lastPreset);
     }
 }
 
@@ -588,7 +593,7 @@ void CtrlService::atrofacSendCommand(QString arguments) {
 }
 
 void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
-    lastUsedPresetId = presetId;
+    lastPresetId = presetId;
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
     argsWriter.setAutoFormatting(true);

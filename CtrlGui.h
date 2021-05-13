@@ -5,6 +5,8 @@
 #include <QTranslator>
 #include <QSharedMemory>
 #include <QFrame>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QPushButton>
 #include "CtrlSettings.h"
 
 QT_BEGIN_NAMESPACE
@@ -51,6 +53,9 @@ private:
 
     void settingsPushButtonClicked();
     void presetPushButtonClicked();
+    void presetPlusPushButtonClicked();
+    void presetDeletePushButtonClicked();
+    void presetNameEditChanged(QString name);
     void settingsAutomaticPresetSwitchClicked();
 
     void recieveArgs();
@@ -59,7 +64,6 @@ private:
     bool infoMessageShowed = false;
 
     Ui::CtrlGui *ui;
-    Ui::CtrlGuiAPUForm *apuForm[4];
     Ui::CtrlGuiSettings *ui_settings;
     Ui::CtrlInfoWidget *ui_infoWidget;
     QFrame *settingFrame;
@@ -67,6 +71,13 @@ private:
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToGui;
     CtrlSettings *conf;
+
+    QList<Ui::CtrlGuiAPUForm*> *presetFormList;
+    QVBoxLayout *verticalLayout;
+    QList<QWidget*> *tabWidgetsList;
+    QList<QPushButton*> *tabButtonList;
+    QPushButton *tabPlusButton;
+    QSpacerItem *spacer;
 
     QString ryzenFamily;
     QString biosVersion;

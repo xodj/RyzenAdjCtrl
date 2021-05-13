@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
             return 1;
         } else {
             alreadyRunning.create(1);
-            if (conf->settingsBuffer->useAgent)
+            if (conf->getSettingsBuffer()->useAgent)
                 (new CtrlAgent(bufferToService, bufferToGui, conf))->show();
             else
                 (new CtrlGui(bufferToService, bufferToGui, conf))->show();

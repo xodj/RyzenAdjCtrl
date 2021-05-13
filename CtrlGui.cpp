@@ -44,69 +44,94 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     bufferToService_refresh_timer->start(bufferToGui_refresh_time);
 }
 
+#include <QScroller>
+
 void CtrlGui::setupUi(){
     ui->setupUi(this);
     ui->comboBox->addItems(QStringList() << "en_US"<< "ru_RU");
     ui->comboBox->setHidden(true);
 
-    for(int i = 0;i < 4;i++){
-        apuForm[i] = new Ui::CtrlGuiAPUForm;
+    verticalLayout = new QVBoxLayout;
+    verticalLayout->setSpacing(0);
+    verticalLayout->setContentsMargins(0, 0, 0, 0);
+    ui->tabWidget->setLayout(verticalLayout);
+
+    QFont font;
+    font.setPointSize(9);
+    font.setBold(true);
+    QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+
+    tabWidgetsList = new QList<QWidget*>;
+    QWidget *widget;
+
+    presetFormList = new QList<Ui::CtrlGuiAPUForm*>;
+    Ui::CtrlGuiAPUForm *presetForm;
+
+    tabButtonList = new QList<QPushButton*>;
+    QPushButton *button;
+
+    for(qsizetype i = 0;i < conf->presets->count();i++){
+        presetStr *preset = conf->presets->at(i);
+        int idx = preset->presetId;
+
+        widget = new QWidget;
+        widget->setProperty("idx",idx);
+        tabWidgetsList->insert(i, widget);
+        verticalLayout->addWidget(widget);
+        presetForm = new Ui::CtrlGuiAPUForm;
+        presetForm->setupUi(widget);
+        widget->setHidden(true);
+        if(i == 0)
+            widget->setHidden(false);
+
+        presetForm->deletePushButton->setProperty("idx",idx);
+        presetForm->presetNameEdit->setText(preset->presetName);
+        presetForm->presetNameEdit->setProperty("idx",idx);
+
+        presetForm->savePushButton->setProperty("idx",idx);
+        presetForm->applyPushButton->setProperty("idx",idx);
+        presetForm->cancelPushButton->setProperty("idx",idx);
+
+        presetForm->fanComboBox->setProperty("idx",idx);
+
+        presetForm->smuMaxPerformanceCheckBox->setProperty("idx",idx);
+        presetForm->smuPowerSavingCheckBox->setProperty("idx",idx);
+
+        presetForm->smuMaxPerformanceCheckBox->setProperty("idy",0);
+        presetForm->smuPowerSavingCheckBox->setProperty("idy",1);
+
+        presetFormList->insert(i, presetForm);
+        //
+        button = new QPushButton(preset->presetName);
+
+        button->setObjectName(QString::fromUtf8("tabPushButton") + QString::number(i));
+        button->setMinimumSize(QSize(105, 23));
+        button->setFont(font);
+        button->setStyleSheet(QString::fromUtf8(""));
+        button->setCheckable(true);
+        button->setProperty("idx",idx);
+        button->setSizePolicy(sizePolicy);
+        if(i == 0)
+            button->setChecked(true);
+
+        ui->scrollAreaWidgetContents->layout()->addWidget(button);
+
+        tabButtonList->insert(i, button);
     }
-    apuForm[0]->setupUi(ui->batteryTab);
-    apuForm[1]->setupUi(ui->optimalTab);
-    apuForm[2]->setupUi(ui->perfomanceTab);
-    apuForm[3]->setupUi(ui->extremeTab);
-    for(int i = 0;i < 4;i++){
-        apuForm[i]->savePushButton->setProperty("idx",i);
-        apuForm[i]->applyPushButton->setProperty("idx",i);
-        apuForm[i]->cancelPushButton->setProperty("idx",i);
 
-        apuForm[i]->fanComboBox->setProperty("idx",i);
+    tabPlusButton = new QPushButton("+");
+    tabPlusButton->setObjectName(QString::fromUtf8("tabPlusPushButton"));
+    tabPlusButton->setMinimumSize(QSize(23, 23));
+    tabPlusButton->setMaximumSize(QSize(23, 23));
+    tabPlusButton->setFont(font);
+    tabPlusButton->setStyleSheet(QString::fromUtf8(""));
+    tabPlusButton->setSizePolicy(sizePolicy);
+    ui->scrollAreaWidgetContents->layout()->addWidget(tabPlusButton);
 
-        apuForm[i]->tempLimitSpinBox->setProperty("idx",i);
-        apuForm[i]->tempLimitCheckBox->setProperty("idx",i);
-        apuForm[i]->apuSkinSpinBox->setProperty("idx",i);
-        apuForm[i]->apuSkinCheckBox->setProperty("idx",i);
-        apuForm[i]->stampLimitSpinBox->setProperty("idx",i);
-        apuForm[i]->stampLimitCheckBox->setProperty("idx",i);
-        apuForm[i]->fastLimitSpinBox->setProperty("idx",i);
-        apuForm[i]->fastLimitCheckBox->setProperty("idx",i);
-        apuForm[i]->fastTimeSpinBox->setProperty("idx",i);
-        apuForm[i]->fastTimeCheckBox->setProperty("idx",i);
-        apuForm[i]->slowLimitSpinBox->setProperty("idx",i);
-        apuForm[i]->slowLimitCheckBox->setProperty("idx",i);
-        apuForm[i]->slowTimeSpinBox->setProperty("idx",i);
-        apuForm[i]->slowTimeCheckBox->setProperty("idx",i);
+    spacer = new QSpacerItem(23, 23, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    ui->scrollAreaWidgetContents->layout()->addItem(spacer);
 
-        apuForm[i]->vrmCurrentSpinBox->setProperty("idx",i);
-        apuForm[i]->vrmCurrentCheckBox->setProperty("idx",i);
-        apuForm[i]->vrmMaxSpinBox->setProperty("idx",i);
-        apuForm[i]->vrmMaxCheckBox->setProperty("idx",i);
-
-        apuForm[i]->minFclkSpinBox->setProperty("idx",i);
-        apuForm[i]->minFclkCheckBox->setProperty("idx",i);
-        apuForm[i]->maxFclkSpinBox->setProperty("idx",i);
-        apuForm[i]->maxFclkCheckBox->setProperty("idx",i);
-
-        apuForm[i]->minGfxclkSpinBox->setProperty("idx",i);
-        apuForm[i]->minGfxclkCheckBox->setProperty("idx",i);
-        apuForm[i]->maxGfxclkSpinBox->setProperty("idx",i);
-        apuForm[i]->maxGfxclkCheckBox->setProperty("idx",i);
-        apuForm[i]->minSocclkSpinBox->setProperty("idx",i);
-        apuForm[i]->minSocclkCheckBox->setProperty("idx",i);
-        apuForm[i]->maxSocclkSpinBox->setProperty("idx",i);
-        apuForm[i]->maxSocclkCheckBox->setProperty("idx",i);
-        apuForm[i]->minVcnSpinBox->setProperty("idx",i);
-        apuForm[i]->minVcnCheckBox->setProperty("idx",i);
-        apuForm[i]->maxVcnSpinBox->setProperty("idx",i);
-        apuForm[i]->maxVcnCheckBox->setProperty("idx",i);
-
-        apuForm[i]->smuMaxPerformanceCheckBox->setProperty("idx",i);
-        apuForm[i]->smuPowerSavingCheckBox->setProperty("idx",i);
-
-        apuForm[i]->smuMaxPerformanceCheckBox->setProperty("idy",0);
-        apuForm[i]->smuPowerSavingCheckBox->setProperty("idy",1);
-    }
+    QScroller::grabGesture(ui->scrollArea, QScroller::LeftMouseButtonGesture);
 
     ui_infoWidget = new Ui::CtrlInfoWidget;
     ui_infoWidget->setupUi(ui->infoWidget);
@@ -118,16 +143,6 @@ void CtrlGui::setupUi(){
     settingFrame->resize(1,1);
     ui_settings->setupUi(settingFrame);
     ui->tabWidget->setHidden(false);
-
-    ui->batteryTab->setHidden(true);
-    ui->extremeTab->setHidden(true);
-    ui->perfomanceTab->setHidden(false);
-    ui->optimalTab->setHidden(true);
-
-    ui->batteryPushButton->setProperty("idx",0);
-    ui->optimalPushButton->setProperty("idx",1);
-    ui->perfomancePushButton->setProperty("idx",2);
-    ui->extremePushButton->setProperty("idx",3);
 }
 
 void CtrlGui::setupConnections(){
@@ -136,18 +151,20 @@ void CtrlGui::setupConnections(){
     connect(ui->settingsPushButton, &QPushButton::clicked, this, &CtrlGui::settingsPushButtonClicked);
     connect(ui->rssPushButton, &QPushButton::clicked, this, &CtrlGui::loadStyleSheet);
 
-    connect(ui->batteryPushButton, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
-    connect(ui->extremePushButton, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
-    connect(ui->perfomancePushButton, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
-    connect(ui->optimalPushButton, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
+    connect(tabPlusButton, &QPushButton::clicked, this, &CtrlGui::presetPlusPushButtonClicked);
 
-    for(int i = 0;i < 4;i++){
-        connect(apuForm[i]->savePushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
-        connect(apuForm[i]->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
-        connect(apuForm[i]->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
+    for(qsizetype i = 0;i < conf->presets->count();i++){
+        connect(tabButtonList->at(i), &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
 
-        connect(apuForm[i]->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
-        connect(apuForm[i]->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
+        connect(presetFormList->at(i)->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
+        connect(presetFormList->at(i)->presetNameEdit, &QLineEdit::textChanged, this, &CtrlGui::presetNameEditChanged);
+
+        connect(presetFormList->at(i)->savePushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
+        connect(presetFormList->at(i)->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
+        connect(presetFormList->at(i)->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
+
+        connect(presetFormList->at(i)->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
+        connect(presetFormList->at(i)->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
     }
 
     connect(ui_settings->savePushButton, &QPushButton::clicked, this, &CtrlGui::saveSettings);
@@ -158,50 +175,66 @@ void CtrlGui::setupConnections(){
 }
 
 void CtrlGui::loadPresets(){
-    presetStr **presetsBuffer = conf->presetsBuffer;
-    for(int i = 0;i < 4;i++){
-        apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i]->fanPresetId);
+    for(qsizetype i = 0;i < conf->presets->count();i++){
+        presetStr *presetBuffer = conf->presets->at(i);
+        int idx = presetBuffer->presetId;
+        Ui::CtrlGuiAPUForm *presetForm = nullptr;
 
-        apuForm[i]->tempLimitSpinBox->setValue(presetsBuffer[i]->tempLimitValue);
-        apuForm[i]->tempLimitCheckBox->setChecked(presetsBuffer[i]->tempLimitChecked);
-        apuForm[i]->apuSkinSpinBox->setValue(presetsBuffer[i]->apuSkinValue);
-        apuForm[i]->apuSkinCheckBox->setChecked(presetsBuffer[i]->apuSkinChecked);
-        apuForm[i]->stampLimitSpinBox->setValue(presetsBuffer[i]->stampLimitValue);
-        apuForm[i]->stampLimitCheckBox->setChecked(presetsBuffer[i]->stampLimitChecked);
-        apuForm[i]->fastLimitSpinBox->setValue(presetsBuffer[i]->fastLimitValue);
-        apuForm[i]->fastLimitCheckBox->setChecked(presetsBuffer[i]->fastLimitChecked);
-        apuForm[i]->fastTimeSpinBox->setValue(presetsBuffer[i]->fastTimeValue);
-        apuForm[i]->fastTimeCheckBox->setChecked(presetsBuffer[i]->fastTimeChecked);
-        apuForm[i]->slowLimitSpinBox->setValue(presetsBuffer[i]->slowLimitValue);
-        apuForm[i]->slowLimitCheckBox->setChecked(presetsBuffer[i]->slowLimitChecked);
-        apuForm[i]->slowTimeSpinBox->setValue(presetsBuffer[i]->slowTimeValue);
-        apuForm[i]->slowTimeCheckBox->setChecked(presetsBuffer[i]->slowTimeChecked);
+        for(qsizetype x = 0;x < presetFormList->count();x++)
+            if(presetFormList->at(x)->applyPushButton->property("idx") == idx){
+                presetForm = presetFormList->at(x);
+                break;
+            }
 
-        apuForm[i]->vrmCurrentSpinBox->setValue(presetsBuffer[i]->vrmCurrentValue);
-        apuForm[i]->vrmCurrentCheckBox->setChecked(presetsBuffer[i]->vrmCurrentChecked);
-        apuForm[i]->vrmMaxSpinBox->setValue(presetsBuffer[i]->vrmMaxValue);
-        apuForm[i]->vrmMaxCheckBox->setChecked(presetsBuffer[i]->vrmMaxChecked);
+        presetForm->fanComboBox->setCurrentIndex(presetBuffer->fanPresetId);
 
-        apuForm[i]->minFclkSpinBox->setValue(presetsBuffer[i]->minFclkValue);
-        apuForm[i]->minFclkCheckBox->setChecked(presetsBuffer[i]->minFclkChecked);
-        apuForm[i]->maxFclkSpinBox->setValue(presetsBuffer[i]->maxFclkValue);
-        apuForm[i]->maxFclkCheckBox->setChecked(presetsBuffer[i]->maxFclkChecked);
+        presetForm->tempLimitSpinBox->setValue(presetBuffer->tempLimitValue);
+        presetForm->tempLimitCheckBox->setChecked(presetBuffer->tempLimitChecked);
+        presetForm->apuSkinSpinBox->setValue(presetBuffer->apuSkinValue);
+        presetForm->apuSkinCheckBox->setChecked(presetBuffer->apuSkinChecked);
+        presetForm->stampLimitSpinBox->setValue(presetBuffer->stampLimitValue);
+        presetForm->stampLimitCheckBox->setChecked(presetBuffer->stampLimitChecked);
+        presetForm->fastLimitSpinBox->setValue(presetBuffer->fastLimitValue);
+        presetForm->fastLimitCheckBox->setChecked(presetBuffer->fastLimitChecked);
+        presetForm->fastTimeSpinBox->setValue(presetBuffer->fastTimeValue);
+        presetForm->fastTimeCheckBox->setChecked(presetBuffer->fastTimeChecked);
+        presetForm->slowLimitSpinBox->setValue(presetBuffer->slowLimitValue);
+        presetForm->slowLimitCheckBox->setChecked(presetBuffer->slowLimitChecked);
+        presetForm->slowTimeSpinBox->setValue(presetBuffer->slowTimeValue);
+        presetForm->slowTimeCheckBox->setChecked(presetBuffer->slowTimeChecked);
 
-        apuForm[i]->minGfxclkSpinBox->setValue(presetsBuffer[i]->minGfxclkValue);
-        apuForm[i]->minGfxclkCheckBox->setChecked(presetsBuffer[i]->minGfxclkChecked);
-        apuForm[i]->maxGfxclkSpinBox->setValue(presetsBuffer[i]->maxGfxclkValue);
-        apuForm[i]->maxGfxclkCheckBox->setChecked(presetsBuffer[i]->maxGfxclkChecked);
-        apuForm[i]->minSocclkSpinBox->setValue(presetsBuffer[i]->minSocclkValue);
-        apuForm[i]->minSocclkCheckBox->setChecked(presetsBuffer[i]->minSocclkChecked);
-        apuForm[i]->maxSocclkSpinBox->setValue(presetsBuffer[i]->maxSocclkValue);
-        apuForm[i]->maxSocclkCheckBox->setChecked(presetsBuffer[i]->maxSocclkChecked);
-        apuForm[i]->minVcnSpinBox->setValue(presetsBuffer[i]->minVcnValue);
-        apuForm[i]->minVcnCheckBox->setChecked(presetsBuffer[i]->minVcnChecked);
-        apuForm[i]->maxVcnSpinBox->setValue(presetsBuffer[i]->maxVcnValue);
-        apuForm[i]->maxVcnCheckBox->setChecked(presetsBuffer[i]->maxVcnChecked);
+        presetForm->vrmCurrentSpinBox->setValue(presetBuffer->vrmCurrentValue);
+        presetForm->vrmCurrentCheckBox->setChecked(presetBuffer->vrmCurrentChecked);
+        presetForm->vrmMaxSpinBox->setValue(presetBuffer->vrmMaxValue);
+        presetForm->vrmMaxCheckBox->setChecked(presetBuffer->vrmMaxChecked);
 
-        apuForm[i]->smuMaxPerformanceCheckBox->setChecked(presetsBuffer[i]->smuMaxPerfomance);
-        apuForm[i]->smuPowerSavingCheckBox->setChecked(presetsBuffer[i]->smuPowerSaving);
+        presetForm->minFclkSpinBox->setValue(presetBuffer->minFclkValue);
+        presetForm->minFclkCheckBox->setChecked(presetBuffer->minFclkChecked);
+        presetForm->maxFclkSpinBox->setValue(presetBuffer->maxFclkValue);
+        presetForm->maxFclkCheckBox->setChecked(presetBuffer->maxFclkChecked);
+
+        presetForm->minGfxclkSpinBox->setValue(presetBuffer->minGfxclkValue);
+        presetForm->minGfxclkCheckBox->setChecked(presetBuffer->minGfxclkChecked);
+        presetForm->maxGfxclkSpinBox->setValue(presetBuffer->maxGfxclkValue);
+        presetForm->maxGfxclkCheckBox->setChecked(presetBuffer->maxGfxclkChecked);
+        presetForm->minSocclkSpinBox->setValue(presetBuffer->minSocclkValue);
+        presetForm->minSocclkCheckBox->setChecked(presetBuffer->minSocclkChecked);
+        presetForm->maxSocclkSpinBox->setValue(presetBuffer->maxSocclkValue);
+        presetForm->maxSocclkCheckBox->setChecked(presetBuffer->maxSocclkChecked);
+        presetForm->minVcnSpinBox->setValue(presetBuffer->minVcnValue);
+        presetForm->minVcnCheckBox->setChecked(presetBuffer->minVcnChecked);
+        presetForm->maxVcnSpinBox->setValue(presetBuffer->maxVcnValue);
+        presetForm->maxVcnCheckBox->setChecked(presetBuffer->maxVcnChecked);
+
+        presetForm->smuMaxPerformanceCheckBox->setChecked(presetBuffer->smuMaxPerfomance);
+        presetForm->smuPowerSavingCheckBox->setChecked(presetBuffer->smuPowerSaving);
+
+        ui_settings->dcStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
+        ui_settings->acStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
+        ui_settings->epmBatterySaverComboBox->insertItem(idx, presetBuffer->presetName, idx);
+        ui_settings->epmBetterBatteryComboBox->insertItem(idx, presetBuffer->presetName, idx);
+        ui_settings->epmBalancedComboBox->insertItem(idx, presetBuffer->presetName, idx);
+        ui_settings->epmMaximumPerfomanceComboBox->insertItem(idx, presetBuffer->presetName, idx);
     }
 }
 
@@ -220,7 +253,6 @@ void CtrlGui::loadStyleSheet(){
                     QString strStyleSheet = attr.value().toString();
                     this->setStyleSheet(strStyleSheet);
                     settingFrame->setStyleSheet(strStyleSheet);
-                    //ui_infoWidget->setStyleSheet(strStyleSheet);
                 }
             }else{}
 
@@ -233,7 +265,7 @@ void CtrlGui::loadStyleSheet(){
         if (configReader.name() == QString("TabWidget"))
             foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui->tabbtnwidget->setStyleSheet(attr.value().toString());
+                    ui->scrollArea->setStyleSheet(attr.value().toString());
             }else{}
         //
         configReader.readNext();
@@ -243,7 +275,7 @@ void CtrlGui::loadStyleSheet(){
 
 void CtrlGui::savePreset(){
     ui->label->setText("RyzenAdjCtrl - Applying...");
-    int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+    int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
 
     if(!infoMessageShowed){
         QMessageBox msgBox;
@@ -252,60 +284,68 @@ void CtrlGui::savePreset(){
                        "\nDisable auto switcher in settings.");
         msgBox.exec();
         infoMessageShowed = true;
-        conf->settingsBuffer->showNotificationToDisableAutoSwitcher = true;
+        conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
         conf->saveSettings();
     }
 
-    presetStr **presetsBuffer = conf->presetsBuffer;
+    presetStr *presetBuffer;
+    for(qsizetype i = 0;i < conf->presets->count();i++)
+        if(conf->presets->at(i)->presetId == idx)
+            presetBuffer = conf->presets->at(i);
 
-    presetsBuffer[i]->fanPresetId = apuForm[i]->fanComboBox->currentIndex();
+    Ui::CtrlGuiAPUForm *presetForm;
+    for(qsizetype i = 0;i < presetFormList->count();i++)
+        if(presetFormList->at(i)->applyPushButton->property("idx").toInt() == idx)
+            presetForm = presetFormList->at(i);
 
-    presetsBuffer[i]->tempLimitValue = apuForm[i]->tempLimitSpinBox->value();
-    presetsBuffer[i]->tempLimitChecked = apuForm[i]->tempLimitCheckBox->isChecked();
-    presetsBuffer[i]->apuSkinValue = apuForm[i]->apuSkinSpinBox->value();
-    presetsBuffer[i]->apuSkinChecked = apuForm[i]->apuSkinCheckBox->isChecked();
-    presetsBuffer[i]->stampLimitValue = apuForm[i]->stampLimitSpinBox->value();
-    presetsBuffer[i]->stampLimitChecked = apuForm[i]->stampLimitCheckBox->isChecked();
-    presetsBuffer[i]->fastLimitValue = apuForm[i]->fastLimitSpinBox->value();
-    presetsBuffer[i]->fastLimitChecked = apuForm[i]->fastLimitCheckBox->isChecked();
-    presetsBuffer[i]->fastTimeValue = apuForm[i]->fastTimeSpinBox->value();
-    presetsBuffer[i]->fastTimeChecked = apuForm[i]->fastTimeCheckBox->isChecked();
-    presetsBuffer[i]->slowLimitValue = apuForm[i]->slowLimitSpinBox->value();
-    presetsBuffer[i]->slowLimitChecked = apuForm[i]->slowLimitCheckBox->isChecked();
-    presetsBuffer[i]->slowTimeValue = apuForm[i]->slowTimeSpinBox->value();
-    presetsBuffer[i]->slowTimeChecked = apuForm[i]->slowTimeCheckBox->isChecked();
+    presetBuffer->fanPresetId = presetForm->fanComboBox->currentIndex();
 
-    presetsBuffer[i]->vrmCurrentValue = apuForm[i]->vrmCurrentSpinBox->value();
-    presetsBuffer[i]->vrmCurrentChecked = apuForm[i]->vrmCurrentCheckBox->isChecked();
-    presetsBuffer[i]->vrmMaxValue = apuForm[i]->vrmMaxSpinBox->value();
-    presetsBuffer[i]->vrmMaxChecked = apuForm[i]->vrmMaxCheckBox->isChecked();
+    presetBuffer->tempLimitValue = presetForm->tempLimitSpinBox->value();
+    presetBuffer->tempLimitChecked = presetForm->tempLimitCheckBox->isChecked();
+    presetBuffer->apuSkinValue = presetForm->apuSkinSpinBox->value();
+    presetBuffer->apuSkinChecked = presetForm->apuSkinCheckBox->isChecked();
+    presetBuffer->stampLimitValue = presetForm->stampLimitSpinBox->value();
+    presetBuffer->stampLimitChecked = presetForm->stampLimitCheckBox->isChecked();
+    presetBuffer->fastLimitValue = presetForm->fastLimitSpinBox->value();
+    presetBuffer->fastLimitChecked = presetForm->fastLimitCheckBox->isChecked();
+    presetBuffer->fastTimeValue = presetForm->fastTimeSpinBox->value();
+    presetBuffer->fastTimeChecked = presetForm->fastTimeCheckBox->isChecked();
+    presetBuffer->slowLimitValue = presetForm->slowLimitSpinBox->value();
+    presetBuffer->slowLimitChecked = presetForm->slowLimitCheckBox->isChecked();
+    presetBuffer->slowTimeValue = presetForm->slowTimeSpinBox->value();
+    presetBuffer->slowTimeChecked = presetForm->slowTimeCheckBox->isChecked();
 
-    presetsBuffer[i]->minFclkValue = apuForm[i]->minFclkSpinBox->value();
-    presetsBuffer[i]->minFclkChecked = apuForm[i]->minFclkCheckBox->isChecked();
-    presetsBuffer[i]->maxFclkValue = apuForm[i]->maxFclkSpinBox->value();
-    presetsBuffer[i]->maxFclkChecked = apuForm[i]->maxFclkCheckBox->isChecked();
+    presetBuffer->vrmCurrentValue = presetForm->vrmCurrentSpinBox->value();
+    presetBuffer->vrmCurrentChecked = presetForm->vrmCurrentCheckBox->isChecked();
+    presetBuffer->vrmMaxValue = presetForm->vrmMaxSpinBox->value();
+    presetBuffer->vrmMaxChecked = presetForm->vrmMaxCheckBox->isChecked();
 
-    presetsBuffer[i]->minGfxclkValue = apuForm[i]->minGfxclkSpinBox->value();
-    presetsBuffer[i]->minGfxclkChecked = apuForm[i]->minGfxclkCheckBox->isChecked();
-    presetsBuffer[i]->maxGfxclkValue = apuForm[i]->maxGfxclkSpinBox->value();
-    presetsBuffer[i]->maxGfxclkChecked = apuForm[i]->maxGfxclkCheckBox->isChecked();
+    presetBuffer->minFclkValue = presetForm->minFclkSpinBox->value();
+    presetBuffer->minFclkChecked = presetForm->minFclkCheckBox->isChecked();
+    presetBuffer->maxFclkValue = presetForm->maxFclkSpinBox->value();
+    presetBuffer->maxFclkChecked = presetForm->maxFclkCheckBox->isChecked();
 
-    presetsBuffer[i]->minSocclkValue = apuForm[i]->minSocclkSpinBox->value();
-    presetsBuffer[i]->minSocclkChecked = apuForm[i]->minSocclkCheckBox->isChecked();
-    presetsBuffer[i]->maxSocclkValue = apuForm[i]->maxSocclkSpinBox->value();
-    presetsBuffer[i]->maxSocclkChecked = apuForm[i]->maxSocclkCheckBox->isChecked();
+    presetBuffer->minGfxclkValue = presetForm->minGfxclkSpinBox->value();
+    presetBuffer->minGfxclkChecked = presetForm->minGfxclkCheckBox->isChecked();
+    presetBuffer->maxGfxclkValue = presetForm->maxGfxclkSpinBox->value();
+    presetBuffer->maxGfxclkChecked = presetForm->maxGfxclkCheckBox->isChecked();
 
-    presetsBuffer[i]->minVcnValue = apuForm[i]->minVcnSpinBox->value();
-    presetsBuffer[i]->minVcnChecked = apuForm[i]->minVcnCheckBox->isChecked();
-    presetsBuffer[i]->maxVcnValue = apuForm[i]->maxVcnSpinBox->value();
-    presetsBuffer[i]->maxVcnChecked = apuForm[i]->maxVcnCheckBox->isChecked();
+    presetBuffer->minSocclkValue = presetForm->minSocclkSpinBox->value();
+    presetBuffer->minSocclkChecked = presetForm->minSocclkCheckBox->isChecked();
+    presetBuffer->maxSocclkValue = presetForm->maxSocclkSpinBox->value();
+    presetBuffer->maxSocclkChecked = presetForm->maxSocclkCheckBox->isChecked();
 
-    presetsBuffer[i]->smuMaxPerfomance = apuForm[i]->smuMaxPerformanceCheckBox->isChecked();
-    presetsBuffer[i]->smuPowerSaving = apuForm[i]->smuPowerSavingCheckBox->isChecked();
+    presetBuffer->minVcnValue = presetForm->minVcnSpinBox->value();
+    presetBuffer->minVcnChecked = presetForm->minVcnCheckBox->isChecked();
+    presetBuffer->maxVcnValue = presetForm->maxVcnSpinBox->value();
+    presetBuffer->maxVcnChecked = presetForm->maxVcnCheckBox->isChecked();
+
+    presetBuffer->smuMaxPerfomance = presetForm->smuMaxPerformanceCheckBox->isChecked();
+    presetBuffer->smuPowerSaving = presetForm->smuPowerSavingCheckBox->isChecked();
 
     conf->savePresets();
 
-    sendPreset(i, true);
+    sendPreset(idx, true);
 }
 
 void CtrlGui::applyPreset(){
@@ -319,7 +359,7 @@ void CtrlGui::applyPreset(){
                        "\nDisable auto switcher in settings.");
         msgBox.exec();
         infoMessageShowed = true;
-        conf->settingsBuffer->showNotificationToDisableAutoSwitcher = true;
+        conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
         conf->saveSettings();
     }
 
@@ -328,171 +368,187 @@ void CtrlGui::applyPreset(){
 
 void CtrlGui::cancelPreset(){
     ui->label->setText("RyzenAdjCtrl - Applying...");
-    int i = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
-    presetStr **presetsBuffer = conf->presetsBuffer;
+    int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
 
-    apuForm[i]->fanComboBox->setCurrentIndex(presetsBuffer[i]->fanPresetId);
+    presetStr *presetBuffer;
+    for(qsizetype i = 0;i < conf->presets->count();i++)
+        if(conf->presets->at(i)->presetId == idx)
+            presetBuffer = conf->presets->at(i);
 
-    apuForm[i]->tempLimitSpinBox->setValue(presetsBuffer[i]->tempLimitValue);
-    apuForm[i]->tempLimitCheckBox->setChecked(presetsBuffer[i]->tempLimitChecked);
-    apuForm[i]->apuSkinSpinBox->setValue(presetsBuffer[i]->apuSkinValue);
-    apuForm[i]->apuSkinCheckBox->setChecked(presetsBuffer[i]->apuSkinChecked);
-    apuForm[i]->stampLimitSpinBox->setValue(presetsBuffer[i]->stampLimitValue);
-    apuForm[i]->stampLimitCheckBox->setChecked(presetsBuffer[i]->stampLimitChecked);
-    apuForm[i]->fastLimitSpinBox->setValue(presetsBuffer[i]->fastLimitValue);
-    apuForm[i]->fastLimitCheckBox->setChecked(presetsBuffer[i]->fastLimitChecked);
-    apuForm[i]->fastTimeSpinBox->setValue(presetsBuffer[i]->fastTimeValue);
-    apuForm[i]->fastTimeCheckBox->setChecked(presetsBuffer[i]->fastTimeChecked);
-    apuForm[i]->slowLimitSpinBox->setValue(presetsBuffer[i]->slowLimitValue);
-    apuForm[i]->slowLimitCheckBox->setChecked(presetsBuffer[i]->slowLimitChecked);
-    apuForm[i]->slowTimeSpinBox->setValue(presetsBuffer[i]->slowTimeValue);
-    apuForm[i]->slowTimeCheckBox->setChecked(presetsBuffer[i]->slowTimeChecked);
+    Ui::CtrlGuiAPUForm *presetForm;
+    for(qsizetype i = 0;i < presetFormList->count();i++)
+        if(presetFormList->at(i)->applyPushButton->property("idx").toInt() == idx)
+            presetForm = presetFormList->at(i);
 
-    apuForm[i]->vrmCurrentSpinBox->setValue(presetsBuffer[i]->vrmCurrentValue);
-    apuForm[i]->vrmCurrentCheckBox->setChecked(presetsBuffer[i]->vrmCurrentChecked);
-    apuForm[i]->vrmMaxSpinBox->setValue(presetsBuffer[i]->vrmMaxValue);
-    apuForm[i]->vrmMaxCheckBox->setChecked(presetsBuffer[i]->vrmMaxChecked);
+    presetForm->fanComboBox->setCurrentIndex(presetBuffer->fanPresetId);
 
-    apuForm[i]->minFclkSpinBox->setValue(presetsBuffer[i]->minFclkValue);
-    apuForm[i]->minFclkCheckBox->setChecked(presetsBuffer[i]->minFclkChecked);
-    apuForm[i]->maxFclkSpinBox->setValue(presetsBuffer[i]->maxFclkValue);
-    apuForm[i]->maxFclkCheckBox->setChecked(presetsBuffer[i]->maxFclkChecked);
+    presetForm->tempLimitSpinBox->setValue(presetBuffer->tempLimitValue);
+    presetForm->tempLimitCheckBox->setChecked(presetBuffer->tempLimitChecked);
+    presetForm->apuSkinSpinBox->setValue(presetBuffer->apuSkinValue);
+    presetForm->apuSkinCheckBox->setChecked(presetBuffer->apuSkinChecked);
+    presetForm->stampLimitSpinBox->setValue(presetBuffer->stampLimitValue);
+    presetForm->stampLimitCheckBox->setChecked(presetBuffer->stampLimitChecked);
+    presetForm->fastLimitSpinBox->setValue(presetBuffer->fastLimitValue);
+    presetForm->fastLimitCheckBox->setChecked(presetBuffer->fastLimitChecked);
+    presetForm->fastTimeSpinBox->setValue(presetBuffer->fastTimeValue);
+    presetForm->fastTimeCheckBox->setChecked(presetBuffer->fastTimeChecked);
+    presetForm->slowLimitSpinBox->setValue(presetBuffer->slowLimitValue);
+    presetForm->slowLimitCheckBox->setChecked(presetBuffer->slowLimitChecked);
+    presetForm->slowTimeSpinBox->setValue(presetBuffer->slowTimeValue);
+    presetForm->slowTimeCheckBox->setChecked(presetBuffer->slowTimeChecked);
 
-    apuForm[i]->minGfxclkSpinBox->setValue(presetsBuffer[i]->minGfxclkValue);
-    apuForm[i]->minGfxclkCheckBox->setChecked(presetsBuffer[i]->minGfxclkChecked);
-    apuForm[i]->maxGfxclkSpinBox->setValue(presetsBuffer[i]->maxGfxclkValue);
-    apuForm[i]->maxGfxclkCheckBox->setChecked(presetsBuffer[i]->maxGfxclkChecked);
-    apuForm[i]->minSocclkSpinBox->setValue(presetsBuffer[i]->minSocclkValue);
-    apuForm[i]->minSocclkCheckBox->setChecked(presetsBuffer[i]->minSocclkChecked);
-    apuForm[i]->maxSocclkSpinBox->setValue(presetsBuffer[i]->maxSocclkValue);
-    apuForm[i]->maxSocclkCheckBox->setChecked(presetsBuffer[i]->maxSocclkChecked);
-    apuForm[i]->minVcnSpinBox->setValue(presetsBuffer[i]->minVcnValue);
-    apuForm[i]->minVcnCheckBox->setChecked(presetsBuffer[i]->minVcnChecked);
-    apuForm[i]->maxVcnSpinBox->setValue(presetsBuffer[i]->maxVcnValue);
-    apuForm[i]->maxVcnCheckBox->setChecked(presetsBuffer[i]->maxVcnChecked);
+    presetForm->vrmCurrentSpinBox->setValue(presetBuffer->vrmCurrentValue);
+    presetForm->vrmCurrentCheckBox->setChecked(presetBuffer->vrmCurrentChecked);
+    presetForm->vrmMaxSpinBox->setValue(presetBuffer->vrmMaxValue);
+    presetForm->vrmMaxCheckBox->setChecked(presetBuffer->vrmMaxChecked);
 
-    apuForm[i]->smuMaxPerformanceCheckBox->setChecked(presetsBuffer[i]->smuMaxPerfomance);
-    apuForm[i]->smuPowerSavingCheckBox->setChecked(presetsBuffer[i]->smuPowerSaving);
+    presetForm->minFclkSpinBox->setValue(presetBuffer->minFclkValue);
+    presetForm->minFclkCheckBox->setChecked(presetBuffer->minFclkChecked);
+    presetForm->maxFclkSpinBox->setValue(presetBuffer->maxFclkValue);
+    presetForm->maxFclkCheckBox->setChecked(presetBuffer->maxFclkChecked);
 
-    sendPreset(i, false);
+    presetForm->minGfxclkSpinBox->setValue(presetBuffer->minGfxclkValue);
+    presetForm->minGfxclkCheckBox->setChecked(presetBuffer->minGfxclkChecked);
+    presetForm->maxGfxclkSpinBox->setValue(presetBuffer->maxGfxclkValue);
+    presetForm->maxGfxclkCheckBox->setChecked(presetBuffer->maxGfxclkChecked);
+    presetForm->minSocclkSpinBox->setValue(presetBuffer->minSocclkValue);
+    presetForm->minSocclkCheckBox->setChecked(presetBuffer->minSocclkChecked);
+    presetForm->maxSocclkSpinBox->setValue(presetBuffer->maxSocclkValue);
+    presetForm->maxSocclkCheckBox->setChecked(presetBuffer->maxSocclkChecked);
+    presetForm->minVcnSpinBox->setValue(presetBuffer->minVcnValue);
+    presetForm->minVcnCheckBox->setChecked(presetBuffer->minVcnChecked);
+    presetForm->maxVcnSpinBox->setValue(presetBuffer->maxVcnValue);
+    presetForm->maxVcnCheckBox->setChecked(presetBuffer->maxVcnChecked);
+
+    presetForm->smuMaxPerformanceCheckBox->setChecked(presetBuffer->smuMaxPerfomance);
+    presetForm->smuPowerSavingCheckBox->setChecked(presetBuffer->smuPowerSaving);
+
+    sendPreset(idx, false);
 }
 
-void CtrlGui::sendPreset(int i, bool save){
+void CtrlGui::sendPreset(int idx, bool save){
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
     argsWriter.setAutoFormatting(true);
     argsWriter.writeStartDocument();
     argsWriter.writeStartElement("bufferToService");
+
+    Ui::CtrlGuiAPUForm *presetForm;
+    for(qsizetype i = 0;i < presetFormList->count();i++) {
+        if(presetFormList->at(i)->applyPushButton->property("idx").toInt() == idx)
+            presetForm = presetFormList->at(i);
+    }
     //
+
         if(save) {
             argsWriter.writeStartElement("save");
             argsWriter.writeEndElement();
         }
         argsWriter.writeStartElement("id");
-            argsWriter.writeAttribute("value", QString::number(i));
+            argsWriter.writeAttribute("value", QString::number(idx));
         argsWriter.writeEndElement();
 
-        if(apuForm[i]->tempLimitCheckBox->isChecked()) {
+        if(presetForm->tempLimitCheckBox->isChecked()) {
             argsWriter.writeStartElement("tempLimitValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->tempLimitSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->tempLimitSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->apuSkinCheckBox->isChecked()) {
+        if(presetForm->apuSkinCheckBox->isChecked()) {
             argsWriter.writeStartElement("apuSkinValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->apuSkinSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->apuSkinSpinBox->value()));
             argsWriter.writeEndElement();
         }
 
-        if(apuForm[i]->stampLimitCheckBox->isChecked()) {
+        if(presetForm->stampLimitCheckBox->isChecked()) {
             argsWriter.writeStartElement("stampLimitValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->stampLimitSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->stampLimitSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->fastLimitCheckBox->isChecked()) {
+        if(presetForm->fastLimitCheckBox->isChecked()) {
             argsWriter.writeStartElement("fastLimitValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->fastLimitSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->fastLimitSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->fastTimeCheckBox->isChecked()) {
+        if(presetForm->fastTimeCheckBox->isChecked()) {
             argsWriter.writeStartElement("fastTimeValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->fastTimeSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->fastTimeSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->slowLimitCheckBox->isChecked()) {
+        if(presetForm->slowLimitCheckBox->isChecked()) {
             argsWriter.writeStartElement("slowLimitValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->slowLimitSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->slowLimitSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->slowTimeCheckBox->isChecked()) {
+        if(presetForm->slowTimeCheckBox->isChecked()) {
             argsWriter.writeStartElement("slowTimeValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->slowTimeSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->slowTimeSpinBox->value()));
             argsWriter.writeEndElement();
         }
 
-        if(apuForm[i]->vrmCurrentCheckBox->isChecked()) {
+        if(presetForm->vrmCurrentCheckBox->isChecked()) {
             argsWriter.writeStartElement("vrmCurrentValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->vrmCurrentSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->vrmCurrentSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->vrmMaxCheckBox->isChecked()) {
+        if(presetForm->vrmMaxCheckBox->isChecked()) {
             argsWriter.writeStartElement("vrmMaxValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->vrmMaxSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->vrmMaxSpinBox->value()));
             argsWriter.writeEndElement();
         }
 
-        if(apuForm[i]->minFclkCheckBox->isChecked()) {
+        if(presetForm->minFclkCheckBox->isChecked()) {
             argsWriter.writeStartElement("minFclkValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->minFclkSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->minFclkSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->maxFclkCheckBox->isChecked()) {
+        if(presetForm->maxFclkCheckBox->isChecked()) {
             argsWriter.writeStartElement("maxFclkValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->maxFclkSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->maxFclkSpinBox->value()));
             argsWriter.writeEndElement();
         }
 
-        if(apuForm[i]->minGfxclkCheckBox->isChecked()) {
+        if(presetForm->minGfxclkCheckBox->isChecked()) {
             argsWriter.writeStartElement("minGfxclkValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->minGfxclkSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->minGfxclkSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->maxGfxclkCheckBox->isChecked()) {
+        if(presetForm->maxGfxclkCheckBox->isChecked()) {
             argsWriter.writeStartElement("maxGfxclkValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->maxGfxclkSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->maxGfxclkSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->minSocclkCheckBox->isChecked()) {
+        if(presetForm->minSocclkCheckBox->isChecked()) {
             argsWriter.writeStartElement("minSocclkValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->minSocclkSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->minSocclkSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->maxSocclkCheckBox->isChecked()) {
+        if(presetForm->maxSocclkCheckBox->isChecked()) {
             argsWriter.writeStartElement("maxSocclkValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->maxSocclkSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->maxSocclkSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->minVcnCheckBox->isChecked()) {
+        if(presetForm->minVcnCheckBox->isChecked()) {
             argsWriter.writeStartElement("minVcnValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->minVcnSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->minVcnSpinBox->value()));
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->maxVcnCheckBox->isChecked()) {
+        if(presetForm->maxVcnCheckBox->isChecked()) {
             argsWriter.writeStartElement("maxVcnValue");
-                argsWriter.writeAttribute("value", QString::number(apuForm[i]->maxVcnSpinBox->value()));
+                argsWriter.writeAttribute("value", QString::number(presetForm->maxVcnSpinBox->value()));
             argsWriter.writeEndElement();
         }
 
-        if(apuForm[i]->smuMaxPerformanceCheckBox->isChecked()) {
+        if(presetForm->smuMaxPerformanceCheckBox->isChecked()) {
             argsWriter.writeStartElement("tempLimitValue");
             argsWriter.writeEndElement();
         }
-        if(apuForm[i]->smuPowerSavingCheckBox->isChecked()) {
+        if(presetForm->smuPowerSavingCheckBox->isChecked()) {
             argsWriter.writeStartElement("tempLimitValue");
             argsWriter.writeEndElement();
         }
 
         argsWriter.writeStartElement("fanPresetId");
-            argsWriter.writeAttribute("value", QString::number(apuForm[i]->fanComboBox->currentIndex()));
+            argsWriter.writeAttribute("value", QString::number(presetForm->fanComboBox->currentIndex()));
         argsWriter.writeEndElement();
     //
     argsWriter.writeEndElement();
@@ -505,12 +561,17 @@ void CtrlGui::smuCheckBoxClicked(){
     int idx = reinterpret_cast<QCheckBox *>(sender())->property("idx").toInt();
     int idy = reinterpret_cast<QCheckBox *>(sender())->property("idy").toInt();
 
+    Ui::CtrlGuiAPUForm *presetForm;
+    for(qsizetype i = 0;i < presetFormList->count();i++)
+        if(presetFormList->at(i)->applyPushButton->property("idx").toInt() == idx)
+            presetForm = presetFormList->at(i);
+
     if(idy == 0) {
-        if(apuForm[idx]->smuMaxPerformanceCheckBox->isChecked())
-            apuForm[idx]->smuPowerSavingCheckBox->setChecked(false);
+        if(presetForm->smuMaxPerformanceCheckBox->isChecked())
+            presetForm->smuPowerSavingCheckBox->setChecked(false);
     } else {
-        if(apuForm[idx]->smuPowerSavingCheckBox->isChecked())
-            apuForm[idx]->smuMaxPerformanceCheckBox->setChecked(false);
+        if(presetForm->smuPowerSavingCheckBox->isChecked())
+            presetForm->smuMaxPerformanceCheckBox->setChecked(false);
     }
 }
 
@@ -522,27 +583,40 @@ CtrlGui::~CtrlGui()
 
 void CtrlGui::languageChange()
 {
-    QString idx = reinterpret_cast<QComboBox *>(sender())->currentText();
-    if(qtLanguageTranslator->load(QString("Language/CtrlGui_") + idx, ".")){
+    QString langid = reinterpret_cast<QComboBox *>(sender())->currentText();
+
+    Ui::CtrlGuiAPUForm *presetForm;
+
+    if(qtLanguageTranslator->load(QString("Language/CtrlGui_") + langid, ".")){
         qApp->installTranslator(qtLanguageTranslator);
         ui->retranslateUi(this);
-        apuForm[0]->retranslateUi(ui->batteryTab);
-        apuForm[1]->retranslateUi(ui->optimalTab);
-        apuForm[2]->retranslateUi(ui->perfomanceTab);
-        apuForm[3]->retranslateUi(ui->extremeTab);
+
+        for(qsizetype i = 0;i < presetFormList->count();i++){
+                presetForm = presetFormList->at(i);
+                for(qsizetype i = 0;i < tabWidgetsList->count();i++)
+                    if(tabWidgetsList->at(i)->property("idx").toInt()
+                            == presetFormList->at(i)->applyPushButton
+                            ->property("idx").toInt())
+                        presetForm->retranslateUi(tabWidgetsList->at(i));
+        }
     } else {
         qApp->removeTranslator(qtLanguageTranslator);
         ui->retranslateUi(this);
-        apuForm[0]->retranslateUi(ui->batteryTab);
-        apuForm[1]->retranslateUi(ui->optimalTab);
-        apuForm[2]->retranslateUi(ui->perfomanceTab);
-        apuForm[3]->retranslateUi(ui->extremeTab);
+
+        for(qsizetype i = 0;i < presetFormList->count();i++){
+                presetForm = presetFormList->at(i);
+                for(qsizetype i = 0;i < tabWidgetsList->count();i++)
+                    if(tabWidgetsList->at(i)->property("idx").toInt()
+                            == presetFormList->at(i)->applyPushButton
+                            ->property("idx").toInt())
+                        presetForm->retranslateUi(tabWidgetsList->at(i));
+        }
     }
 }
 
 void CtrlGui::saveSettings(){
     settingFrame->hide();
-    settingsStr* settings = conf->settingsBuffer;
+    settingsStr* settings = conf->getSettingsBuffer();
 
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
@@ -575,14 +649,14 @@ void CtrlGui::saveSettings(){
             argsWriter.writeAttribute("value", QString::number(settings->autoPresetSwitchAC));
         argsWriter.writeEndElement();
     }
-    if(settings->dcStatePresetId != ui_settings->dcStateComboBox->currentIndex()){
-        settings->dcStatePresetId = ui_settings->dcStateComboBox->currentIndex();
+    if(settings->dcStatePresetId != ui_settings->dcStateComboBox->currentData().toInt()){
+        settings->dcStatePresetId = ui_settings->dcStateComboBox->currentData().toInt();
         argsWriter.writeStartElement("dcStatePresetId");
             argsWriter.writeAttribute("value", QString::number(settings->dcStatePresetId));
         argsWriter.writeEndElement();
     }
-    if(settings->acStatePresetId != ui_settings->acStateComboBox->currentIndex()){
-        settings->acStatePresetId = ui_settings->acStateComboBox->currentIndex();
+    if(settings->acStatePresetId != ui_settings->acStateComboBox->currentData().toInt()){
+        settings->acStatePresetId = ui_settings->acStateComboBox->currentData().toInt();
         argsWriter.writeStartElement("acStatePresetId");
             argsWriter.writeAttribute("value", QString::number(settings->acStatePresetId));
         argsWriter.writeEndElement();
@@ -594,26 +668,26 @@ void CtrlGui::saveSettings(){
             argsWriter.writeAttribute("value", QString::number(settings->epmAutoPresetSwitch));
         argsWriter.writeEndElement();
     }
-    if(settings->epmBatterySaverPresetId != ui_settings->epmBatterySaverComboBox->currentIndex()){
-        settings->epmBatterySaverPresetId = ui_settings->epmBatterySaverComboBox->currentIndex();
+    if(settings->epmBatterySaverPresetId != ui_settings->epmBatterySaverComboBox->currentData().toInt()){
+        settings->epmBatterySaverPresetId = ui_settings->epmBatterySaverComboBox->currentData().toInt();
         argsWriter.writeStartElement("epmBatterySaverPresetId");
             argsWriter.writeAttribute("value", QString::number(settings->epmBatterySaverPresetId));
         argsWriter.writeEndElement();
     }
-    if(settings->epmBetterBatteryPresetId != ui_settings->epmBetterBatteryComboBox->currentIndex()){
-        settings->epmBetterBatteryPresetId = ui_settings->epmBetterBatteryComboBox->currentIndex();
+    if(settings->epmBetterBatteryPresetId != ui_settings->epmBetterBatteryComboBox->currentData().toInt()){
+        settings->epmBetterBatteryPresetId = ui_settings->epmBetterBatteryComboBox->currentData().toInt();
         argsWriter.writeStartElement("epmBetterBatteryPresetId");
             argsWriter.writeAttribute("value", QString::number(settings->epmBetterBatteryPresetId));
         argsWriter.writeEndElement();
     }
-    if(settings->epmBalancedPresetId != ui_settings->epmBalancedComboBox->currentIndex()){
-        settings->epmBalancedPresetId = ui_settings->epmBalancedComboBox->currentIndex();
+    if(settings->epmBalancedPresetId != ui_settings->epmBalancedComboBox->currentData().toInt()){
+        settings->epmBalancedPresetId = ui_settings->epmBalancedComboBox->currentData().toInt();
         argsWriter.writeStartElement("epmBalancedPresetId");
             argsWriter.writeAttribute("value", QString::number(settings->epmBalancedPresetId));
         argsWriter.writeEndElement();
     }
-    if(settings->epmMaximumPerfomancePresetId != ui_settings->epmMaximumPerfomanceComboBox->currentIndex()){
-        settings->epmMaximumPerfomancePresetId = ui_settings->epmMaximumPerfomanceComboBox->currentIndex();
+    if(settings->epmMaximumPerfomancePresetId != ui_settings->epmMaximumPerfomanceComboBox->currentData().toInt()){
+        settings->epmMaximumPerfomancePresetId = ui_settings->epmMaximumPerfomanceComboBox->currentData().toInt();
         argsWriter.writeStartElement("epmMaximumPerfomancePresetId");
             argsWriter.writeAttribute("value", QString::number(settings->epmMaximumPerfomancePresetId));
         argsWriter.writeEndElement();
@@ -629,7 +703,7 @@ void CtrlGui::saveSettings(){
 }
 
 void CtrlGui::readSettings(){
-    settingsStr *settings = conf->settingsBuffer;
+    settingsStr *settings = conf->getSettingsBuffer();
 
     ui_settings->useAgentGroupBox->setChecked(settings->useAgent);
     ui_settings->showNotificationsCheckBox->setChecked(settings->showNotifications);
@@ -642,14 +716,37 @@ void CtrlGui::readSettings(){
     ui_settings->reapplyDurationSpinBox->setValue(settings->autoPresetApplyDuration);
 
     ui_settings->acAutoPresetSwitchGroupBox->setChecked(settings->autoPresetSwitchAC);
-    ui_settings->dcStateComboBox->setCurrentIndex(settings->dcStatePresetId);
-    ui_settings->acStateComboBox->setCurrentIndex(settings->acStatePresetId);
 
     ui_settings->epmAutoPresetSwitchGroupBox->setChecked(settings->epmAutoPresetSwitch);
     ui_settings->epmBatterySaverComboBox->setCurrentIndex(settings->epmBatterySaverPresetId);
     ui_settings->epmBetterBatteryComboBox->setCurrentIndex(settings->epmBetterBatteryPresetId);
     ui_settings->epmBalancedComboBox->setCurrentIndex(settings->epmBalancedPresetId);
     ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(settings->epmMaximumPerfomancePresetId);
+
+
+    for(qsizetype i = 0;i < conf->presets->count();i++){
+        if(ui_settings->dcStateComboBox->itemData(i) == settings->dcStatePresetId)
+            ui_settings->dcStateComboBox->setCurrentIndex(i);
+
+        if(ui_settings->acStateComboBox->itemData(i) == settings->acStatePresetId)
+            ui_settings->acStateComboBox->setCurrentIndex(i);
+
+        if(ui_settings->epmBatterySaverComboBox->itemData(i)
+                == settings->epmBatterySaverPresetId)
+            ui_settings->epmBatterySaverComboBox->setCurrentIndex(i);
+
+        if(ui_settings->epmBetterBatteryComboBox->itemData(i)
+                == settings->epmBetterBatteryPresetId)
+            ui_settings->epmBetterBatteryComboBox->setCurrentIndex(i);
+
+        if(ui_settings->epmBalancedComboBox->itemData(i)
+                == settings->epmBalancedPresetId)
+            ui_settings->epmBalancedComboBox->setCurrentIndex(i);
+
+        if(ui_settings->epmMaximumPerfomanceComboBox->itemData(i)
+                == settings->epmMaximumPerfomancePresetId)
+            ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(i);
+    }
 }
 
 void CtrlGui::cancelSettings(){
@@ -729,67 +826,279 @@ void CtrlGui::settingsPushButtonClicked() {
 
 void CtrlGui::presetPushButtonClicked(){
     int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
-    switch (idx) {
-    case 0:
-        ui->batteryPushButton->setChecked(true);
-        ui->optimalPushButton->setChecked(false);
-        ui->perfomancePushButton->setChecked(false);
-        ui->extremePushButton->setChecked(false);
 
-        ui->optimalTab->setHidden(true);
-        ui->perfomanceTab->setHidden(true);
-        ui->extremeTab->setHidden(true);
+    for(int i = 0;i < tabWidgetsList->count();i++)
+        tabWidgetsList->at(i)->setHidden(true);
+    for(int i = 0;i < tabButtonList->count();i++)
+        tabButtonList->at(i)->setChecked(false);
 
-        ui->batteryTab->setHidden(false);
-        break;
-    case 1:
-        ui->batteryPushButton->setChecked(false);
-        ui->optimalPushButton->setChecked(true);
-        ui->perfomancePushButton->setChecked(false);
-        ui->extremePushButton->setChecked(false);
+    for(int i = 0;i < tabWidgetsList->count();i++)
+        if(tabWidgetsList->at(i)->property("idx").toInt() == idx)
+            tabWidgetsList->at(i)->setHidden(false);
+    for(int i = 0;i < tabButtonList->count();i++)
+        if(tabButtonList->at(i)->property("idx").toInt() == idx)
+            tabButtonList->at(i)->setChecked(true);
+}
 
-        ui->batteryTab->setHidden(true);
-        ui->perfomanceTab->setHidden(true);
-        ui->extremeTab->setHidden(true);
+void CtrlGui::presetPlusPushButtonClicked(){
+    //Remove + button and spacer
+    ui->scrollAreaWidgetContents->layout()->removeWidget(tabPlusButton);
+    ui->scrollAreaWidgetContents->layout()->removeItem(spacer);
+    //Create preset
+    int idx = conf->insertNewPreset();
+    presetStr *presetBuffer;
+    for(qsizetype x = 0;x < conf->presets->count();x++)
+        if(conf->presets->at(x)->presetId == idx)
+            presetBuffer = conf->presets->at(x);
+    //FONT
+    QFont font;
+    font.setPointSize(9);
+    font.setBold(true);
+    QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    //TAB WIDGET AND FORM
+    QWidget *widget = new QWidget;
+    widget->setProperty("idx",idx);
+    tabWidgetsList->emplaceBack(widget);
+    verticalLayout->addWidget(widget);
+    Ui::CtrlGuiAPUForm *presetForm = new Ui::CtrlGuiAPUForm;
+    presetForm->setupUi(widget);
+    presetFormList->emplaceBack(presetForm);
+    widget->setHidden(true);
+    //Write idx-es
+    presetForm->deletePushButton->setProperty("idx",idx);
+    presetForm->presetNameEdit->setText(presetBuffer->presetName);
+    presetForm->presetNameEdit->setProperty("idx",idx);
+    presetForm->savePushButton->setProperty("idx",idx);
+    presetForm->applyPushButton->setProperty("idx",idx);
+    presetForm->cancelPushButton->setProperty("idx",idx);
+    presetForm->fanComboBox->setProperty("idx",idx);
+    presetForm->smuMaxPerformanceCheckBox->setProperty("idx",idx);
+    presetForm->smuPowerSavingCheckBox->setProperty("idx",idx);
+    presetForm->smuMaxPerformanceCheckBox->setProperty("idy",0);
+    presetForm->smuPowerSavingCheckBox->setProperty("idy",1);
+    //TAB BUTTON
+    QPushButton *button = new QPushButton(presetBuffer->presetName);
+    button->setObjectName(QString::fromUtf8("tabPushButton") + QString::number(idx));
+    button->setMinimumSize(QSize(105, 23));
+    button->setFont(font);
+    button->setStyleSheet(QString::fromUtf8(""));
+    button->setCheckable(true);
+    button->setProperty("idx",idx);
+    button->setSizePolicy(sizePolicy);
+    ui->scrollAreaWidgetContents->layout()->addWidget(button);
+    tabButtonList->emplaceBack(button);
+    //Connections
+    connect(button, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
+    connect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
+    connect(presetForm->presetNameEdit, &QLineEdit::textChanged, this, &CtrlGui::presetNameEditChanged);
+    connect(presetForm->savePushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
+    connect(presetForm->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
+    connect(presetForm->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
+    connect(presetForm->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
+    connect(presetForm->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
+    //Replace + button and spacer
+    ui->scrollAreaWidgetContents->layout()->addWidget(tabPlusButton);
+    ui->scrollAreaWidgetContents->layout()->addItem(spacer);
+    //Get values from conf
+    presetForm->fanComboBox->setCurrentIndex(presetBuffer->fanPresetId);
+    presetForm->tempLimitSpinBox->setValue(presetBuffer->tempLimitValue);
+    presetForm->tempLimitCheckBox->setChecked(presetBuffer->tempLimitChecked);
+    presetForm->apuSkinSpinBox->setValue(presetBuffer->apuSkinValue);
+    presetForm->apuSkinCheckBox->setChecked(presetBuffer->apuSkinChecked);
+    presetForm->stampLimitSpinBox->setValue(presetBuffer->stampLimitValue);
+    presetForm->stampLimitCheckBox->setChecked(presetBuffer->stampLimitChecked);
+    presetForm->fastLimitSpinBox->setValue(presetBuffer->fastLimitValue);
+    presetForm->fastLimitCheckBox->setChecked(presetBuffer->fastLimitChecked);
+    presetForm->fastTimeSpinBox->setValue(presetBuffer->fastTimeValue);
+    presetForm->fastTimeCheckBox->setChecked(presetBuffer->fastTimeChecked);
+    presetForm->slowLimitSpinBox->setValue(presetBuffer->slowLimitValue);
+    presetForm->slowLimitCheckBox->setChecked(presetBuffer->slowLimitChecked);
+    presetForm->slowTimeSpinBox->setValue(presetBuffer->slowTimeValue);
+    presetForm->slowTimeCheckBox->setChecked(presetBuffer->slowTimeChecked);
+    presetForm->vrmCurrentSpinBox->setValue(presetBuffer->vrmCurrentValue);
+    presetForm->vrmCurrentCheckBox->setChecked(presetBuffer->vrmCurrentChecked);
+    presetForm->vrmMaxSpinBox->setValue(presetBuffer->vrmMaxValue);
+    presetForm->vrmMaxCheckBox->setChecked(presetBuffer->vrmMaxChecked);
+    presetForm->minFclkSpinBox->setValue(presetBuffer->minFclkValue);
+    presetForm->minFclkCheckBox->setChecked(presetBuffer->minFclkChecked);
+    presetForm->maxFclkSpinBox->setValue(presetBuffer->maxFclkValue);
+    presetForm->maxFclkCheckBox->setChecked(presetBuffer->maxFclkChecked);
+    presetForm->minGfxclkSpinBox->setValue(presetBuffer->minGfxclkValue);
+    presetForm->minGfxclkCheckBox->setChecked(presetBuffer->minGfxclkChecked);
+    presetForm->maxGfxclkSpinBox->setValue(presetBuffer->maxGfxclkValue);
+    presetForm->maxGfxclkCheckBox->setChecked(presetBuffer->maxGfxclkChecked);
+    presetForm->minSocclkSpinBox->setValue(presetBuffer->minSocclkValue);
+    presetForm->minSocclkCheckBox->setChecked(presetBuffer->minSocclkChecked);
+    presetForm->maxSocclkSpinBox->setValue(presetBuffer->maxSocclkValue);
+    presetForm->maxSocclkCheckBox->setChecked(presetBuffer->maxSocclkChecked);
+    presetForm->minVcnSpinBox->setValue(presetBuffer->minVcnValue);
+    presetForm->minVcnCheckBox->setChecked(presetBuffer->minVcnChecked);
+    presetForm->maxVcnSpinBox->setValue(presetBuffer->maxVcnValue);
+    presetForm->maxVcnCheckBox->setChecked(presetBuffer->maxVcnChecked);
+    presetForm->smuMaxPerformanceCheckBox->setChecked(presetBuffer->smuMaxPerfomance);
+    presetForm->smuPowerSavingCheckBox->setChecked(presetBuffer->smuPowerSaving);
+    //Set active
+    for(int i = 0;i < tabWidgetsList->count();i++)
+        tabWidgetsList->at(i)->setHidden(true);
+    for(int i = 0;i < tabButtonList->count();i++)
+        tabButtonList->at(i)->setChecked(false);
+    widget->setHidden(false);
+    button->setChecked(true);
+    //Save presets to file
+    conf->savePresets();
+    //Add items to settings
+    ui_settings->dcStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
+    ui_settings->acStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
+    ui_settings->epmBatterySaverComboBox->insertItem(idx, presetBuffer->presetName, idx);
+    ui_settings->epmBetterBatteryComboBox->insertItem(idx, presetBuffer->presetName, idx);
+    ui_settings->epmBalancedComboBox->insertItem(idx, presetBuffer->presetName, idx);
+    ui_settings->epmMaximumPerfomanceComboBox->insertItem(idx, presetBuffer->presetName, idx);
+}
 
-        ui->optimalTab->setHidden(false);
-        break;
-    case 2:
-        ui->batteryPushButton->setChecked(false);
-        ui->optimalPushButton->setChecked(false);
-        ui->perfomancePushButton->setChecked(true);
-        ui->extremePushButton->setChecked(false);
+void CtrlGui::presetDeletePushButtonClicked() {
+    int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+    if(conf->presets->count() != 1) {
 
-        ui->batteryTab->setHidden(true);
-        ui->optimalTab->setHidden(true);
-        ui->extremeTab->setHidden(true);
+        Ui::CtrlGuiAPUForm *presetForm;
+        for(qsizetype x = 0;x < presetFormList->count();x++)
+            if(presetFormList->at(x)->applyPushButton->property("idx") == idx){
+                presetForm = presetFormList->at(x);
+                break;
+            }
+        QPushButton *button;
+        for(qsizetype x = 0;x < tabButtonList->count();x++)
+            if(tabButtonList->at(x)->property("idx") == idx){
+                button = tabButtonList->at(x);
+                break;
+            }
+        QWidget *widget;
+        for(qsizetype x = 0;x < tabWidgetsList->count();x++)
+            if(tabWidgetsList->at(x)->property("idx") == idx){
+                widget = tabWidgetsList->at(x);
+                break;
+            }
+        presetStr *preset = nullptr;
+        for(qsizetype x = 0;x < conf->presets->count();x++)
+            if(conf->presets->at(x)->presetId == idx){
+                preset = conf->presets->at(x);
+                break;
+            }
 
-        ui->perfomanceTab->setHidden(false);
-        break;
-    case 3:
-        ui->batteryPushButton->setChecked(false);
-        ui->optimalPushButton->setChecked(false);
-        ui->perfomancePushButton->setChecked(false);
-        ui->extremePushButton->setChecked(true);
+        disconnect(button, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
+        disconnect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
+        disconnect(presetForm->presetNameEdit, &QLineEdit::textChanged, this, &CtrlGui::presetNameEditChanged);
 
-        ui->batteryTab->setHidden(true);
-        ui->optimalTab->setHidden(true);
-        ui->perfomanceTab->setHidden(true);
+        disconnect(presetForm->savePushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
+        disconnect(presetForm->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
+        disconnect(presetForm->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
 
-        ui->extremeTab->setHidden(false);
-        break;
-    default:
-        ui->batteryPushButton->setChecked(true);
-        ui->optimalPushButton->setChecked(false);
-        ui->perfomancePushButton->setChecked(false);
-        ui->extremePushButton->setChecked(false);
+        disconnect(presetForm->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
+        disconnect(presetForm->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
 
-        ui->optimalTab->setHidden(true);
-        ui->perfomanceTab->setHidden(true);
-        ui->extremeTab->setHidden(true);
+        ui->scrollAreaWidgetContents->layout()->removeWidget(button);
+        verticalLayout->removeWidget(widget);
 
-        ui->batteryTab->setHidden(false);
-        break;
+        tabButtonList->removeOne(button);
+        presetFormList->removeOne(presetForm);
+        tabWidgetsList->removeOne(widget);
+        conf->presets->removeOne(preset);
+
+        delete button;
+        delete presetForm;
+        delete widget;
+        delete preset;
+
+        conf->savePresets();
+        //Set active
+        if(conf->presets->count()>0){
+            for(int i = 0;i < tabWidgetsList->count();i++)
+                tabWidgetsList->at(i)->setHidden(true);
+            for(int i = 0;i < tabButtonList->count();i++)
+                tabButtonList->at(i)->setChecked(false);
+            tabWidgetsList->at(0)->setHidden(false);
+            tabButtonList->at(0)->setChecked(true);
+        }
+        //delete items from settings
+        for(qsizetype i = 0;i < ui_settings->dcStateComboBox->count();i++)
+            if(ui_settings->dcStateComboBox->itemData(i) == idx) {
+                if(ui_settings->dcStateComboBox->currentIndex() == idx) {
+                    ui_settings->dcStateComboBox->setCurrentIndex(0);
+                    ui_settings->savePushButton->click();
+                }
+                ui_settings->dcStateComboBox->removeItem(i);
+            }
+        for(qsizetype i = 0;i < ui_settings->acStateComboBox->count();i++)
+            if(ui_settings->acStateComboBox->itemData(i) == idx) {
+                if(ui_settings->acStateComboBox->currentIndex() == idx) {
+                    ui_settings->acStateComboBox->setCurrentIndex(0);
+                    ui_settings->savePushButton->click();
+                }
+                ui_settings->acStateComboBox->removeItem(i);
+            }
+        for(qsizetype i = 0;i < ui_settings->epmBatterySaverComboBox->count();i++)
+            if(ui_settings->epmBatterySaverComboBox->itemData(i) == idx) {
+                if(ui_settings->epmBatterySaverComboBox->currentIndex() == idx) {
+                    ui_settings->epmBatterySaverComboBox->setCurrentIndex(0);
+                    ui_settings->savePushButton->click();
+                }
+                ui_settings->epmBatterySaverComboBox->removeItem(i);
+            }
+        for(qsizetype i = 0;i < ui_settings->epmBetterBatteryComboBox->count();i++)
+            if(ui_settings->epmBetterBatteryComboBox->itemData(i) == idx) {
+                if(ui_settings->epmBetterBatteryComboBox->currentIndex() == idx) {
+                    ui_settings->epmBetterBatteryComboBox->setCurrentIndex(0);
+                    ui_settings->savePushButton->click();
+                }
+                ui_settings->epmBetterBatteryComboBox->removeItem(i);
+            }
+        for(qsizetype i = 0;i < ui_settings->epmBalancedComboBox->count();i++)
+            if(ui_settings->epmBalancedComboBox->itemData(i) == idx) {
+                if(ui_settings->epmBalancedComboBox->currentIndex() == idx) {
+                    ui_settings->epmBalancedComboBox->setCurrentIndex(0);
+                    ui_settings->savePushButton->click();
+                }
+                ui_settings->epmBalancedComboBox->removeItem(i);
+            }
+        for(qsizetype i = 0;i < ui_settings->epmMaximumPerfomanceComboBox->count();i++)
+            if(ui_settings->epmMaximumPerfomanceComboBox->itemData(i) == idx) {
+                if(ui_settings->epmMaximumPerfomanceComboBox->currentIndex() == idx) {
+                    ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(0);
+                    ui_settings->savePushButton->click();
+                }
+                ui_settings->epmMaximumPerfomanceComboBox->removeItem(i);
+            }
+    }
+}
+
+void CtrlGui::presetNameEditChanged(QString name){
+    int idx = reinterpret_cast<QLineEdit *>(sender())->property("idx").toInt();
+
+    for(qsizetype i = 0;i < conf->presets->count();i++)
+        if(conf->presets->at(i)->presetId == idx)
+            conf->presets->at(i)->presetName = name;
+
+    for(int i = 0;i < tabButtonList->count();i++)
+        if(tabButtonList->at(i)->property("idx").toInt() == idx)
+            tabButtonList->at(i)->setText(name);
+
+    for(qsizetype i = 0;i < conf->presets->count();i++){
+        if(ui_settings->dcStateComboBox->itemData(i) == idx)
+            ui_settings->dcStateComboBox->setItemText(i, name);
+
+        if(ui_settings->acStateComboBox->itemData(i) == idx)
+            ui_settings->acStateComboBox->setItemText(i, name);
+
+        if(ui_settings->epmBatterySaverComboBox->itemData(i) == idx)
+            ui_settings->epmBatterySaverComboBox->setItemText(i, name);
+
+        if(ui_settings->epmBetterBatteryComboBox->itemData(i) == idx)
+            ui_settings->epmBetterBatteryComboBox->setItemText(i, name);
+
+        if(ui_settings->epmBalancedComboBox->itemData(i) == idx)
+            ui_settings->epmBalancedComboBox->setItemText(i, name);
+
+        if(ui_settings->epmMaximumPerfomanceComboBox->itemData(i) == idx)
+            ui_settings->epmMaximumPerfomanceComboBox->setItemText(i, name);
     }
 }
 
@@ -1006,12 +1315,13 @@ void CtrlGui::decodeArgs(QByteArray args){
 
     if(currentPresetId != -1){
         QString message;
+        for(qsizetype i = 0;i < conf->presets->count();i++)
+            if(conf->presets->at(i)->presetId == currentPresetId)
+                message = conf->presets->at(i)->presetName;
         if (saved)
-            message = (conf->presetsBuffer[currentPresetId]->presetName
-                       + " is runing now.");
+            message += (" is runing now.");
         else
-            message = (conf->presetsBuffer[currentPresetId]->presetName
-                       + " NOT SAVED! is runing now.");
+            message += (" NOT SAVED! is runing now.");
         ui->label->setText("RyzenAdjCtrl - " + message);
         emit messageToAgent(message);
     }
