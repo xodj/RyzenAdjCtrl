@@ -298,7 +298,8 @@ void CtrlService::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("exit")){
             qDebug() << "Ricieved exit command";
             qDebug() << "RyzenAdj Service stoped";
-            this->~CtrlService();
+            cleanup_ryzenadj(adjEntryPoint);
+            exit(0);
         }
 
 
