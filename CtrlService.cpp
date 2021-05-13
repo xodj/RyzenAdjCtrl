@@ -111,7 +111,7 @@ void CtrlService::recieveArgs(){
 
 void CtrlService::decodeArgs(QByteArray args){
     qDebug()<<"Recieved args from GUI";
-    bool save = false;
+    bool save = false, apply = false, deletePreset = false;
     int id = -1;
     presetStr *recievedPreset = new presetStr;
     settingsStr *settingsBuffer = conf->getSettingsBuffer();
@@ -133,6 +133,11 @@ void CtrlService::decodeArgs(QByteArray args){
 
         if (argsReader.name() == QString("save"))
             save = true;
+        if (argsReader.name() == QString("apply"))
+            apply = true;
+        if (argsReader.name() == QString("delete"))
+            deletePreset = true;
+
         if (argsReader.name() == QString("id"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
@@ -415,15 +420,17 @@ void CtrlService::decodeArgs(QByteArray args){
         argsReader.readNext();
     }
 
-    if(id != -1) {
-        qDebug()<<"Preset ID: "<<id;
-        lastPresetId = id;
-        lastPreset = recievedPreset;
+    if(apply) {
         sendCurrentPresetIdToGui(id, save);
         loadPreset(recievedPreset);
-        if (save){
-            conf->setPresetBuffer(id, recievedPreset);
-        }
+    }
+    if (save){
+        conf->setPresetBuffer(id, recievedPreset);
+    }
+    if (deletePreset){
+        presetStr *preset = conf->getPresetBuffer(id);
+        conf->presets->removeOne(preset);
+        delete preset;
     }
 }
 
@@ -486,12 +493,14 @@ void CtrlService::reapplyPresetTimeout(){
     if(!settingsBuffer->autoPresetSwitchAC
        && !settingsBuffer->epmAutoPresetSwitch
        && lastPreset != nullptr) {
-        sendCurrentPresetIdToGui(lastPresetId, true);
+        //sendCurrentPresetIdToGui(lastPresetId, true);
         loadPreset(lastPreset);
     }
 }
 
 void CtrlService::loadPreset(presetStr *preset){
+    lastPreset = preset;
+    lastPresetId = preset->presetId;
     if(preset->fanPresetId > 0) {
         QString fanArguments;
         switch(preset->fanPresetId){
@@ -593,7 +602,6 @@ void CtrlService::atrofacSendCommand(QString arguments) {
 }
 
 void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
-    lastPresetId = presetId;
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
     argsWriter.setAutoFormatting(true);

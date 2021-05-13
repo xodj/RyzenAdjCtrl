@@ -444,6 +444,8 @@ void CtrlGui::sendPreset(int idx, bool save){
             argsWriter.writeStartElement("save");
             argsWriter.writeEndElement();
         }
+        argsWriter.writeStartElement("apply");
+        argsWriter.writeEndElement();
         argsWriter.writeStartElement("id");
             argsWriter.writeAttribute("value", QString::number(idx));
         argsWriter.writeEndElement();
@@ -1068,6 +1070,20 @@ void CtrlGui::presetDeletePushButtonClicked() {
                 ui_settings->epmMaximumPerfomanceComboBox->removeItem(i);
             }
     }
+    //send del command
+    QByteArray data;
+    QXmlStreamWriter argsWriter(&data);
+    argsWriter.setAutoFormatting(true);
+    argsWriter.writeStartDocument();
+    argsWriter.writeStartElement("bufferToService");
+    argsWriter.writeStartElement("delete");
+    argsWriter.writeEndElement();
+    argsWriter.writeStartElement("id");
+    argsWriter.writeAttribute("value", QString::number(idx));
+    argsWriter.writeEndElement();
+    argsWriter.writeEndElement();
+    argsWriter.writeEndDocument();
+    sendArgsToService(data);
 }
 
 void CtrlGui::presetNameEditChanged(QString name){
