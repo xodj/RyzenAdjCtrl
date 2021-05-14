@@ -759,7 +759,7 @@ void CtrlGui::cancelSettings(){
 
 void CtrlGui::startService(){
     QProcess process;
-    QString runas = ("" + qApp->arguments().value(0) + " startup");
+    QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
 }
 
