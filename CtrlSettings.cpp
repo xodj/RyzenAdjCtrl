@@ -11,11 +11,15 @@ CtrlSettings::CtrlSettings()
     presets = new QList<presetStr*>;
 
     QFile configQFile("Config.xml");
-    if (!configQFile.exists()) saveSettings();
-    else openSettings();
+    if (!configQFile.exists()){
+        qDebug()<<"RyzenAdjCtrl Settings Create New Settings File.";
+        saveSettings();
+    } else
+        openSettings();
 
     QFile presetsQFile("Presets.xml");
     if (!presetsQFile.exists()) {
+        qDebug()<<"RyzenAdjCtrl Settings Create New Presets File.";
         QString presetNames[4] = {"Battery Saver","Better Battery",
                                   "Balanced","Perfomance"};
         presetStr *preset;
@@ -28,11 +32,13 @@ CtrlSettings::CtrlSettings()
         savePresets();
     }
     else openPresets();
+    qDebug() << "RyzenAdjCtrl Settings started";
 }
 
 CtrlSettings::~CtrlSettings() {
     saveSettings();
     savePresets();
+    qDebug() << "RyzenAdjCtrl Settings desroyed";
 }
 
 bool CtrlSettings::saveSettings() {
@@ -93,6 +99,7 @@ bool CtrlSettings::saveSettings() {
     xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
     configQFile.close();
+    qDebug() << "RyzenAdjCtrl Settings Saved";
     return true;
 }
 
@@ -201,6 +208,7 @@ bool CtrlSettings::openSettings(){
         xmlReader.readNext();
     }
     configQFile.close();
+    qDebug() << "RyzenAdjCtrl Settings Opened";
     return true;
 }
 
@@ -345,6 +353,7 @@ bool CtrlSettings::savePresets() {
     xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
     presetsQFile.close();
+    qDebug() << "RyzenAdjCtrl Settings Presets Saved";
     return true;
 }
 
@@ -573,5 +582,6 @@ bool CtrlSettings::openPresets(){
     }
     presets->emplaceBack(presetReadBuffer);
     presetsQFile.close();
+    qDebug() << "RyzenAdjCtrl Settings Presets Opened";
     return true;
 }

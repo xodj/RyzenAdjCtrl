@@ -54,6 +54,6 @@ void CtrlAgent::notificationToTray(QString message){
     if(conf->getSettingsBuffer()->showNotifications)
         if(lastMessage != message) {
             lastMessage = message;
-            this->showMessage("RyzenAdjCtrl", message);
+            this->showMessage("Preset Switch", message);
     }
 }

@@ -31,7 +31,6 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
     if(settingsBuffer->autoPresetApplyDurationChecked)
         reapplyPresetTimer->start(settingsBuffer->autoPresetApplyDuration * 1000);
 
-    qDebug() << "RyzenAdj Service started";
     acCallback = new CtrlACCallback;
     if(settingsBuffer->autoPresetSwitchAC)
         connect(acCallback, &CtrlACCallback::currentACStateChanged,
@@ -46,6 +45,8 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
 
     takeCurrentInfoTimer = new QTimer;
     takeCurrentInfoTimer->connect(takeCurrentInfoTimer, &QTimer::timeout, this, &CtrlService::takeCurrentInfo);
+
+    qDebug() << "RyzenAdjCtrl Service started";
 }
 
 CtrlService::~CtrlService() {
@@ -54,6 +55,7 @@ CtrlService::~CtrlService() {
 }
 
 void CtrlService::initPmTable(){
+    qDebug() << "RyzenAdjCtrl Service initPmTable";
     adjEntryPoint = init_ryzenadj();
     init_table(adjEntryPoint);
     refresh_table(adjEntryPoint);
@@ -92,6 +94,10 @@ void CtrlService::initPmTable(){
     ss<< std::hex << get_table_ver(adjEntryPoint);
     pmTable.pmTableVersion = QString::fromLatin1(ss.str());
     pmTable.ryzenAdjVersion = QString::number(RYZENADJ_REVISION_VER) + "." + QString::number(RYZENADJ_MAJOR_VER) + "." + QString::number(RYZENADJ_MINIOR_VER);
+    qDebug() << "RyzenAdjCtrl Service pmTable.ryzenFamily" << pmTable.ryzenFamily;
+    qDebug() << "RyzenAdjCtrl Service pmTable.biosVersion" << pmTable.biosVersion;
+    qDebug() << "RyzenAdjCtrl Service pmTable.pmTableVersion" << pmTable.pmTableVersion;
+    qDebug() << "RyzenAdjCtrl Service pmTable.ryzenAdjVersion" << pmTable.ryzenAdjVersion;
 }
 
 void CtrlService::recieveArgs(){
@@ -110,9 +116,9 @@ void CtrlService::recieveArgs(){
 }
 
 void CtrlService::decodeArgs(QByteArray args){
-    qDebug()<<"Recieved args from GUI";
+    qDebug()<<"RyzenAdjCtrl Service Recieved args from GUI";
     bool save = false, apply = false, deletePreset = false;
-    int id = -1;
+    int presetId = -1;
     presetStr *recievedPreset = new presetStr;
     settingsStr *settingsBuffer = conf->getSettingsBuffer();
 
@@ -125,24 +131,24 @@ void CtrlService::decodeArgs(QByteArray args){
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value") {
                     currentInfoTimeoutChanged(attr.value().toInt());
-                    qDebug() << "ryzenAdjInfoTimeout" << attr.value().toInt();
+                    qDebug() << "RyzenAdjCtrl Service Recieved ryzenAdjInfoTimeout" << attr.value().toInt();
                 }
             }else{}
 
 
-
+        if (argsReader.name() == QString("id"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    presetId = attr.value().toInt();
+                    recievedPreset->presetId = presetId;
+                }
+            }else{}
         if (argsReader.name() == QString("save"))
             save = true;
         if (argsReader.name() == QString("apply"))
             apply = true;
         if (argsReader.name() == QString("delete"))
             deletePreset = true;
-
-        if (argsReader.name() == QString("id"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value")
-                    id = attr.value().toInt();
-            }else{}
 
 
         if (argsReader.name() == QString("tempLimitValue"))
@@ -296,8 +302,8 @@ void CtrlService::decodeArgs(QByteArray args){
 
 
         if (argsReader.name() == QString("exit")){
-            qDebug() << "Ricieved exit command";
-            qDebug() << "RyzenAdj Service stoped";
+            qDebug() << "RyzenAdjCtrl Service Recieved Exit Command";
+            qDebug() << "RyzenAdjCtrl Service Stoped";
             cleanup_ryzenadj(adjEntryPoint);
             exit(0);
         }
@@ -309,7 +315,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 if (attr.name().toString() == "value"){
                         settingsBuffer->autoPresetApplyDurationChecked
                                 = attr.value().toInt();
-                        qDebug() << "autoPresetApplyDurationChecked set to "
+                        qDebug() << "RyzenAdjCtrl Service Recieved autoPresetApplyDurationChecked set to "
                                  << settingsBuffer->autoPresetApplyDurationChecked;
                         reapplyPresetTimer->stop();
                         if(settingsBuffer->autoPresetApplyDurationChecked)
@@ -322,7 +328,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 if (attr.name().toString() == "value"){
                         settingsBuffer->autoPresetApplyDuration
                                 = attr.value().toInt();
-                        qDebug() << "autoPresetApplyDuration set to "
+                        qDebug() << "RyzenAdjCtrl Service Recieved autoPresetApplyDuration set to "
                                  << settingsBuffer->autoPresetApplyDuration;
                         reapplyPresetTimer->stop();
                         if(settingsBuffer->autoPresetApplyDurationChecked)
@@ -336,7 +342,7 @@ void CtrlService::decodeArgs(QByteArray args){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->autoPresetSwitchAC
                                     = attr.value().toInt();
-                            qDebug() << "autoPresetSwitchAC set to "
+                            qDebug() << "RyzenAdjCtrl Service Recieved autoPresetSwitchAC set to "
                                      << settingsBuffer->autoPresetSwitchAC;
                             disconnect(acCallback,&CtrlACCallback::currentACStateChanged,
                                        this, &CtrlService::currentACStateChanged);
@@ -350,7 +356,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->dcStatePresetId = attr.value().toInt();
-                            qDebug() << "dcStatePresetId set to "
+                            qDebug() << "RyzenAdjCtrl Service Recieved dcStatePresetId set to "
                                      << settingsBuffer->dcStatePresetId;
                             reapplyPresetTimeout();
                         }
@@ -359,7 +365,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->acStatePresetId = attr.value().toInt();
-                            qDebug() << "acStatePresetId set to "
+                            qDebug() << "RyzenAdjCtrl Service Recieved acStatePresetId set to "
                                      << settingsBuffer->acStatePresetId;
                             reapplyPresetTimeout();
                         }
@@ -370,7 +376,7 @@ void CtrlService::decodeArgs(QByteArray args){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmAutoPresetSwitch
                                     = attr.value().toInt();
-                            qDebug() << "epmAutoPresetSwitch set to "
+                            qDebug() << "RyzenAdjCtrl Service Recieved epmAutoPresetSwitch set to "
                                      << settingsBuffer->epmAutoPresetSwitch;
                             disconnect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                                     this, &CtrlService::epmIdChanged);
@@ -384,7 +390,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmBatterySaverPresetId = attr.value().toInt();
-                            qDebug() << "epmBatterySaverPresetId set to "
+                            qDebug() << "RyzenAdjCtrl Service Recieved epmBatterySaverPresetId set to "
                                      << settingsBuffer->epmBatterySaverPresetId;
                             reapplyPresetTimeout();
                         }
@@ -393,7 +399,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmBetterBatteryPresetId = attr.value().toInt();
-                            qDebug() << "epmBetterBatteryPresetId set to "
+                            qDebug() << "RyzenAdjCtrl Service Recieved epmBetterBatteryPresetId set to "
                                      << settingsBuffer->epmBetterBatteryPresetId;
                             reapplyPresetTimeout();
                         }
@@ -402,7 +408,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmBalancedPresetId = attr.value().toInt();
-                            qDebug() << "epmBalancedPresetId set to "
+                            qDebug() << "RyzenAdjCtrl Service Recieved epmBalancedPresetId set to "
                                      << settingsBuffer->epmBalancedPresetId;
                             reapplyPresetTimeout();
                         }
@@ -411,7 +417,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmMaximumPerfomancePresetId = attr.value().toInt();
-                            qDebug() << "epmMaximumPerfomancePresetId set to "
+                            qDebug() << "RyzenAdjCtrl Service Recieved epmMaximumPerfomancePresetId set to "
                                      << settingsBuffer->epmMaximumPerfomancePresetId;
                             reapplyPresetTimeout();
                         }
@@ -422,26 +428,29 @@ void CtrlService::decodeArgs(QByteArray args){
     }
 
     if(apply) {
-        sendCurrentPresetIdToGui(id, save);
+        qDebug() << "RyzenAdjCtrl Service Recieved Apply Preset" << presetId;
+        sendCurrentPresetIdToGui(presetId, save);
+        lastPresetSaved = save;
         loadPreset(recievedPreset);
     }
     if (save){
-        conf->setPresetBuffer(id, recievedPreset);
+        qDebug() << "RyzenAdjCtrl Service Recieved Save Preset" << presetId;
+        conf->setPresetBuffer(presetId, recievedPreset);
     }
     if (deletePreset){
-        presetStr *preset = conf->getPresetBuffer(id);
-        conf->presets->removeOne(preset);
-        delete preset;
+        qDebug() << "RyzenAdjCtrl Service Recieved Delete Preset" << presetId;
+        conf->deletePreset(presetId);
     }
 }
 
 void CtrlService::currentACStateChanged(ACState state){
     settingsStr *settingsBuffer = conf->getSettingsBuffer();
     currentACState = state;
-    qDebug() << "Current state:"
+    qDebug() << "RyzenAdjCtrl Service Current state:"
              << ((state == Battery) ? "DC State" : "AC State");
 
     if(settingsBuffer->autoPresetSwitchAC){
+        lastPresetSaved = true;
         sendCurrentPresetIdToGui((state == Battery)
                                  ? (settingsBuffer->dcStatePresetId)
                                  : (settingsBuffer->acStatePresetId), true);
@@ -477,99 +486,96 @@ void CtrlService::epmIdChanged(epmMode EPMode){
         strEPMode = "ERROR!";
         break;
     }
-    qDebug() << "Current EPM:" << strEPMode;
+    qDebug() << "RyzenAdjCtrl Service Current EPM" << strEPMode;
 
     if(settingsBuffer->epmAutoPresetSwitch && epmPresetId != -1){
-        qDebug()<<"Load preset ID:" << epmPresetId << "...";
+        lastPresetSaved = true;
         sendCurrentPresetIdToGui(epmPresetId, true);
         loadPreset(conf->getPresetBuffer(epmPresetId));
     }
 }
 
 void CtrlService::reapplyPresetTimeout(){
-    settingsStr *settingsBuffer = conf->getSettingsBuffer();
-    qDebug() << "Reapply Preset Timeout";
-    acCallback->emitCurrentACState();
-    epmCallback->emitCurrentEPMState();
-    if(!settingsBuffer->autoPresetSwitchAC
-       && !settingsBuffer->epmAutoPresetSwitch
-       && lastPreset != nullptr) {
-        //sendCurrentPresetIdToGui(lastPresetId, true);
+    qDebug() << "RyzenAdjCtrl Service Reapply Preset Timeout";
+    if(lastPreset != nullptr) {
+        sendCurrentPresetIdToGui(lastPreset->presetId, lastPresetSaved);
         loadPreset(lastPreset);
     }
 }
 
 void CtrlService::loadPreset(presetStr *preset){
-    lastPreset = preset;
-    lastPresetId = preset->presetId;
-    if(preset->fanPresetId > 0) {
-        QString fanArguments;
-        switch(preset->fanPresetId){
-        case 1:
-            fanArguments = "plan windows";
-            break;
-        case 2:
-            fanArguments = "plan silent";
-            break;
-        case 3:
-            fanArguments = "plan performance";
-            break;
-        case 4:
-            fanArguments = "plan turbo";
-            break;
-        case 5:
-            fanArguments = "fan --plan windows --cpu 30c:0%,40c:5%,50c:10%,60c:20%,70c:35%,80c:55%,90c:65%,100c:65% --gpu 30c:0%,40c:5%,50c:10%,60c:20%,70c:35%,80c:55%,90c:65%,100c:65%";
-            break;
+    if(preset != nullptr){
+        qDebug() << "RyzenAdjCtrl Service Load Preset"<<preset->presetId;
+        lastPreset = preset;
+
+        if(preset->fanPresetId > 0) {
+            QString fanArguments;
+            switch(preset->fanPresetId){
+            case 1:
+                fanArguments = "plan windows";
+                break;
+            case 2:
+                fanArguments = "plan silent";
+                break;
+            case 3:
+                fanArguments = "plan performance";
+                break;
+            case 4:
+                fanArguments = "plan turbo";
+                break;
+            case 5:
+                fanArguments = "fan --plan windows --cpu 30c:0%,40c:5%,50c:10%,60c:20%,70c:35%,80c:55%,90c:65%,100c:65% --gpu 30c:0%,40c:5%,50c:10%,60c:20%,70c:35%,80c:55%,90c:65%,100c:65%";
+                break;
+            }
+            atrofacSendCommand(fanArguments);
         }
-        atrofacSendCommand(fanArguments);
-    }
 
 
-    if(preset->tempLimitChecked)
-        set_tctl_temp(adjEntryPoint, preset->tempLimitValue);
-    if(preset->apuSkinChecked)
-        set_apu_skin_temp_limit(adjEntryPoint, preset->apuSkinValue);
+        if(preset->tempLimitChecked)
+            set_tctl_temp(adjEntryPoint, preset->tempLimitValue);
+        if(preset->apuSkinChecked)
+            set_apu_skin_temp_limit(adjEntryPoint, preset->apuSkinValue);
 
-    if(preset->stampLimitChecked)
-        set_stapm_limit(adjEntryPoint, preset->stampLimitValue * 1000);
-    if(preset->fastLimitChecked)
-        set_fast_limit(adjEntryPoint, preset->fastLimitValue * 1000);
-    if(preset->fastTimeChecked)
-        set_stapm_time(adjEntryPoint, preset->fastTimeValue);
-    if(preset->slowLimitChecked)
-        set_slow_limit(adjEntryPoint, preset->slowLimitValue * 1000);
-    if(preset->slowTimeChecked)
-        set_slow_time(adjEntryPoint, preset->slowTimeValue);
+        if(preset->stampLimitChecked)
+            set_stapm_limit(adjEntryPoint, preset->stampLimitValue * 1000);
+        if(preset->fastLimitChecked)
+            set_fast_limit(adjEntryPoint, preset->fastLimitValue * 1000);
+        if(preset->fastTimeChecked)
+            set_stapm_time(adjEntryPoint, preset->fastTimeValue);
+        if(preset->slowLimitChecked)
+            set_slow_limit(adjEntryPoint, preset->slowLimitValue * 1000);
+        if(preset->slowTimeChecked)
+            set_slow_time(adjEntryPoint, preset->slowTimeValue);
 
-    if(preset->vrmCurrentChecked)
-        set_vrm_current(adjEntryPoint, preset->vrmCurrentValue * 1000);
-    if(preset->vrmMaxChecked)
-        set_vrmmax_current(adjEntryPoint, preset->vrmMaxValue * 1000);
+        if(preset->vrmCurrentChecked)
+            set_vrm_current(adjEntryPoint, preset->vrmCurrentValue * 1000);
+        if(preset->vrmMaxChecked)
+            set_vrmmax_current(adjEntryPoint, preset->vrmMaxValue * 1000);
 
-    if(preset->maxFclkChecked)
-        set_max_fclk_freq(adjEntryPoint, preset->maxFclkValue);
-    if(preset->minFclkChecked)
-        set_min_fclk_freq(adjEntryPoint, preset->minFclkValue);
+        if(preset->maxFclkChecked)
+            set_max_fclk_freq(adjEntryPoint, preset->maxFclkValue);
+        if(preset->minFclkChecked)
+            set_min_fclk_freq(adjEntryPoint, preset->minFclkValue);
 
-    if(preset->minGfxclkChecked)
-        set_max_gfxclk_freq(adjEntryPoint, preset->minGfxclkValue);
-    if(preset->maxGfxclkChecked)
-        set_min_gfxclk_freq(adjEntryPoint, preset->maxGfxclkValue);
-    if(preset->maxSocclkChecked)
-        set_max_socclk_freq(adjEntryPoint, preset->maxSocclkValue);
-    if(preset->minSocclkChecked)
-        set_min_socclk_freq(adjEntryPoint, preset->minSocclkValue);
-    if(preset->maxVcnChecked)
-        set_max_vcn(adjEntryPoint, preset->maxVcnValue);
-    if(preset->minVcnChecked)
-        set_min_vcn(adjEntryPoint, preset->minVcnValue);
+        if(preset->minGfxclkChecked)
+            set_max_gfxclk_freq(adjEntryPoint, preset->minGfxclkValue);
+        if(preset->maxGfxclkChecked)
+            set_min_gfxclk_freq(adjEntryPoint, preset->maxGfxclkValue);
+        if(preset->maxSocclkChecked)
+            set_max_socclk_freq(adjEntryPoint, preset->maxSocclkValue);
+        if(preset->minSocclkChecked)
+            set_min_socclk_freq(adjEntryPoint, preset->minSocclkValue);
+        if(preset->maxVcnChecked)
+            set_max_vcn(adjEntryPoint, preset->maxVcnValue);
+        if(preset->minVcnChecked)
+            set_min_vcn(adjEntryPoint, preset->minVcnValue);
 
-    if(preset->smuPowerSaving)
-        set_power_saving(adjEntryPoint);
-    if(preset->smuMaxPerfomance)
-        set_max_performance(adjEntryPoint);
+        if(preset->smuPowerSaving)
+            set_power_saving(adjEntryPoint);
+        if(preset->smuMaxPerfomance)
+            set_max_performance(adjEntryPoint);
 
-    /*set_vrmsoc_current(adjEntryPoint, preset->);
+        /*set_vrmsoc_current(adjEntryPoint, preset->);
     set_vrmsocmax_current(adjEntryPoint, preset->);
     set_psi0_current(adjEntryPoint, preset->);
     set_psi0soc_current(adjEntryPoint, preset->);
@@ -579,30 +585,30 @@ void CtrlService::loadPreset(presetStr *preset){
     set_dgpu_skin_temp_limit(adjEntryPoint, preset->);
     set_apu_slow_limit(adjEntryPoint, preset->);
     set_skin_temp_power_limit(adjEntryPoint ry, preset->);*/
+    }
 }
 
 #include <QProcess>
 
 void CtrlService::atrofacSendCommand(QString arguments) {
-    qDebug()<<"atrofac Commandline: "<<arguments;
+    qDebug() << "RyzenAdjCtrl Service atrofac Commandline: "<<arguments;
     QStringList argumentsList = arguments.split(" ",Qt::SkipEmptyParts);
     QProcess process;
     QString output, error;
     for(int i = 0; i < 3; i++){
-        qDebug() << "atrofac-cli.exe exec with" << argumentsList;
+        qDebug() << "RyzenAdjCtrl Service atrofac-cli.exe exec with" << argumentsList;
         process.start("Binaries/atrofac-cli.exe", argumentsList);
         if( !process.waitForStarted() || !process.waitForFinished())
             return;
-        output = process.readAllStandardOutput();
         error = process.readAllStandardError();
-        qDebug() << "atrofac output:" << output;
-        qDebug() << "atrofac error:" << error;
+        qDebug() << "RyzenAdjCtrl Service atrofac output:" << error;
         if (!error.contains("Err"))
             break;
     }
 }
 
 void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
+    qDebug() << "RyzenAdjCtrl Service Send Current Loaded Preset ID to GUI" << presetId << "Saved" << saved;
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
     argsWriter.setAutoFormatting(true);

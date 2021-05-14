@@ -70,8 +70,8 @@ void CtrlGui::setupUi(){
     tabButtonList = new QList<QPushButton*>;
     QPushButton *button;
 
-    for(qsizetype i = 0;i < conf->presets->count();i++){
-        presetStr *preset = conf->presets->at(i);
+    for(qsizetype i = 0;i < conf->getPresetsCount();i++){
+        const presetStr *preset = conf->getPresetsList()->at(i);
         int idx = preset->presetId;
 
         widget = new QWidget;
@@ -153,7 +153,7 @@ void CtrlGui::setupConnections(){
 
     connect(tabPlusButton, &QPushButton::clicked, this, &CtrlGui::presetPlusPushButtonClicked);
 
-    for(qsizetype i = 0;i < conf->presets->count();i++){
+    for(qsizetype i = 0;i < conf->getPresetsCount();i++){
         connect(tabButtonList->at(i), &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
 
         connect(presetFormList->at(i)->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
@@ -175,8 +175,8 @@ void CtrlGui::setupConnections(){
 }
 
 void CtrlGui::loadPresets(){
-    for(qsizetype i = 0;i < conf->presets->count();i++){
-        presetStr *presetBuffer = conf->presets->at(i);
+    for(qsizetype i = 0;i < conf->getPresetsCount();i++){
+        const presetStr *presetBuffer = conf->getPresetsList()->at(i);
         int idx = presetBuffer->presetId;
         Ui::CtrlGuiAPUForm *presetForm = nullptr;
 
@@ -288,10 +288,7 @@ void CtrlGui::savePreset(){
         conf->saveSettings();
     }
 
-    presetStr *presetBuffer;
-    for(qsizetype i = 0;i < conf->presets->count();i++)
-        if(conf->presets->at(i)->presetId == idx)
-            presetBuffer = conf->presets->at(i);
+    presetStr *presetBuffer = conf->getPresetBuffer(idx);
 
     Ui::CtrlGuiAPUForm *presetForm;
     for(qsizetype i = 0;i < presetFormList->count();i++)
@@ -370,10 +367,7 @@ void CtrlGui::cancelPreset(){
     ui->label->setText("RyzenAdjCtrl - Applying...");
     int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
 
-    presetStr *presetBuffer;
-    for(qsizetype i = 0;i < conf->presets->count();i++)
-        if(conf->presets->at(i)->presetId == idx)
-            presetBuffer = conf->presets->at(i);
+    presetStr *presetBuffer = conf->getPresetBuffer(idx);
 
     Ui::CtrlGuiAPUForm *presetForm;
     for(qsizetype i = 0;i < presetFormList->count();i++)
@@ -726,7 +720,7 @@ void CtrlGui::readSettings(){
     ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(settings->epmMaximumPerfomancePresetId);
 
 
-    for(qsizetype i = 0;i < conf->presets->count();i++){
+    for(qsizetype i = 0;i < conf->getPresetsCount();i++){
         if(ui_settings->dcStateComboBox->itemData(i) == settings->dcStatePresetId)
             ui_settings->dcStateComboBox->setCurrentIndex(i);
 
@@ -848,10 +842,7 @@ void CtrlGui::presetPlusPushButtonClicked(){
     ui->scrollAreaWidgetContents->layout()->removeItem(spacer);
     //Create preset
     int idx = conf->insertNewPreset();
-    presetStr *presetBuffer;
-    for(qsizetype x = 0;x < conf->presets->count();x++)
-        if(conf->presets->at(x)->presetId == idx)
-            presetBuffer = conf->presets->at(x);
+    presetStr *presetBuffer = conf->getPresetBuffer(idx);
     //FONT
     QFont font;
     font.setPointSize(9);
@@ -959,7 +950,7 @@ void CtrlGui::presetPlusPushButtonClicked(){
 
 void CtrlGui::presetDeletePushButtonClicked() {
     int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
-    if(conf->presets->count() != 1) {
+    if(conf->getPresetsCount() != 1) {
 
         Ui::CtrlGuiAPUForm *presetForm;
         for(qsizetype x = 0;x < presetFormList->count();x++)
@@ -973,18 +964,13 @@ void CtrlGui::presetDeletePushButtonClicked() {
                 button = tabButtonList->at(x);
                 break;
             }
-        QWidget *widget;
+        QWidget *widget = nullptr;
         for(qsizetype x = 0;x < tabWidgetsList->count();x++)
             if(tabWidgetsList->at(x)->property("idx") == idx){
                 widget = tabWidgetsList->at(x);
                 break;
             }
-        presetStr *preset = nullptr;
-        for(qsizetype x = 0;x < conf->presets->count();x++)
-            if(conf->presets->at(x)->presetId == idx){
-                preset = conf->presets->at(x);
-                break;
-            }
+        presetStr *preset = conf->getPresetBuffer(idx);
 
         disconnect(button, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
         disconnect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
@@ -1003,16 +989,15 @@ void CtrlGui::presetDeletePushButtonClicked() {
         tabButtonList->removeOne(button);
         presetFormList->removeOne(presetForm);
         tabWidgetsList->removeOne(widget);
-        conf->presets->removeOne(preset);
+        conf->deletePreset(idx);
 
         delete button;
         delete presetForm;
         delete widget;
-        delete preset;
 
         conf->savePresets();
         //Set active
-        if(conf->presets->count()>0){
+        if(conf->getPresetsCount()>0){
             for(int i = 0;i < tabWidgetsList->count();i++)
                 tabWidgetsList->at(i)->setHidden(true);
             for(int i = 0;i < tabButtonList->count();i++)
@@ -1089,15 +1074,13 @@ void CtrlGui::presetDeletePushButtonClicked() {
 void CtrlGui::presetNameEditChanged(QString name){
     int idx = reinterpret_cast<QLineEdit *>(sender())->property("idx").toInt();
 
-    for(qsizetype i = 0;i < conf->presets->count();i++)
-        if(conf->presets->at(i)->presetId == idx)
-            conf->presets->at(i)->presetName = name;
+    conf->getPresetBuffer(idx)->presetName = name;
 
     for(int i = 0;i < tabButtonList->count();i++)
         if(tabButtonList->at(i)->property("idx").toInt() == idx)
             tabButtonList->at(i)->setText(name);
 
-    for(qsizetype i = 0;i < conf->presets->count();i++){
+    for(qsizetype i = 0;i < conf->getPresetsCount();i++){
         if(ui_settings->dcStateComboBox->itemData(i) == idx)
             ui_settings->dcStateComboBox->setItemText(i, name);
 
@@ -1330,14 +1313,10 @@ void CtrlGui::decodeArgs(QByteArray args){
     }
 
     if(currentPresetId != -1){
-        QString message;
-        for(qsizetype i = 0;i < conf->presets->count();i++)
-            if(conf->presets->at(i)->presetId == currentPresetId)
-                message = conf->presets->at(i)->presetName;
-        if (saved)
-            message += (" is runing now.");
-        else
-            message += (" NOT SAVED! is runing now.");
+        QString message = conf->getPresetBuffer(currentPresetId)->presetName;
+        if (!saved)
+            message += (" NOT SAVED!");
+        message += (" preset is runing now.");
         ui->label->setText("RyzenAdjCtrl - " + message);
         emit messageToAgent(message);
     }

@@ -73,8 +73,9 @@ private:
 
     ACState currentACState;
     epmMode currentEPMode;
-    int lastPresetId = -1;
+
     presetStr *lastPreset = nullptr;
+    bool lastPresetSaved = true;
 
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToGui;

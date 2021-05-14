@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-PROJECT(RyzenAdjCtrl VERSION 0.3.2.438 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.3.2.451 LANGUAGES CXX)
 
 set(STR_CTRL_VERSION ${RyzenAdjCtrl_VERSION})
 string(REPLACE "." "." RC_SPLIT ${STR_CTRL_VERSION})
@@ -47,6 +47,7 @@ set(RyzenAdjCtrl_SOURCES
     CtrlService.cpp
     CtrlSettings.cpp
     ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc
+    RyzenAdjCtrl.rc.in
     )
 
 set(RyzenAdjCtrl_QRC

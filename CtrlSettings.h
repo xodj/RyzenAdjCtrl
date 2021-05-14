@@ -2,6 +2,7 @@
 #define CTRLSETTINGS_H
 
 #include <QObject>
+#include <QDebug>
 
 enum enumFanPresetId {
     None = 0,
@@ -95,19 +96,33 @@ public:
     bool openPresets();
 
     settingsStr *getSettingsBuffer(){
+        qDebug()<<"RyzenAdjCtrl Settings Get Settings";
         return &settingsBuffer;
     }
 
+    const QList<presetStr*> *getPresetsList(){
+        //qDebug()<<"RyzenAdjCtrl Settings Get Presets List";
+        return presets;
+    }
+
+    qsizetype getPresetsCount(){
+        //qDebug()<<"RyzenAdjCtrl Settings Get Presets Count";
+        return presets->count();
+    }
+
     bool setPresetBuffer(int idx, presetStr *preset){
+        qDebug()<<"RyzenAdjCtrl Settings Set Preset ID" << idx << preset->presetName;
         presetStr *presetBuffer = getPresetBuffer(idx);
-        if(presetBuffer == nullptr){
-            insertNewPreset(idx, preset);
-        } else
-            presetBuffer = preset;
+
+        if(presetBuffer != nullptr)
+            presets->removeOne(presetBuffer);
+
+        insertNewPreset(idx, preset);
         return true;
     }
 
     presetStr *getPresetBuffer(int idx){
+        qDebug()<<"RyzenAdjCtrl Settings Get Preset ID" << idx;
         presetStr *presetBuffer = nullptr;
         for(qsizetype i = 0;i < presets->count();i++)
             if(presets->at(i)->presetId == idx)
@@ -116,9 +131,12 @@ public:
     }
 
     int insertNewPreset(int newidx = -1, presetStr *newPreset = nullptr){
-        if(newPreset == nullptr)
+        qDebug()<<"RyzenAdjCtrl Settings Insert New Preset ID" << newidx;
+        if(newPreset == nullptr) {
             newPreset = new presetStr;
-        if(newidx == -1){
+            newPreset->presetName = "New preset";
+        }
+        if(newidx == -1) {
             newidx = presets->count();
             for(;;){
                 newidx++;
@@ -127,15 +145,21 @@ public:
             }
         }
         newPreset->presetId = newidx;
-        newPreset->presetName = "New preset";
         presets->emplaceBack(newPreset);
         return newidx;
     }
 
-    QList<presetStr*> *presets;
+    bool deletePreset(int idx){
+        qDebug()<<"RyzenAdjCtrl Settings Delete Preset ID" << idx;
+        presetStr *preset = getPresetBuffer(idx);
+        presets->removeOne(preset);
+        delete preset;
+        return true;
+    }
 
 private:
     settingsStr settingsBuffer;
+    QList<presetStr*> *presets;
 
 };
 
