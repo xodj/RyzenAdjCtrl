@@ -12,6 +12,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <iostream>
+#include <QDir>
 
 #define logFileSizeTreshold 10000000
 
@@ -54,6 +55,13 @@ void exitCommand(QSharedMemory *bufferToService) {
 }
 
 void checkLogsSize() {
+    QDir dir("Config");
+    if (!dir.exists())
+        dir.mkpath(".");
+    dir.setPath("Logs");
+    if (!dir.exists())
+        dir.mkpath(".");
+
     QFile log("Logs/RyzenAdjCtrl - Gui.log");
     if(log.size() > logFileSizeTreshold)
         log.remove("Logs/RyzenAdjCtrl - Gui.log");
