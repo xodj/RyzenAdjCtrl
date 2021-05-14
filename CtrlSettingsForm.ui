@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>303</width>
-    <height>451</height>
+    <height>434</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -478,21 +478,6 @@
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_8">
-      <item>
-       <widget class="QLabel" name="label_5">
-        <property name="font">
-         <font>
-          <pointsize>8</pointsize>
-          <weight>50</weight>
-          <italic>true</italic>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Need to restart RyzenAdjCtrl.</string>
-        </property>
-       </widget>
-      </item>
       <item>
        <widget class="QCheckBox" name="showNotificationsCheckBox">
         <property name="text">

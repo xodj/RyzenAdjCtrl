@@ -101,12 +101,12 @@ public:
     }
 
     const QList<presetStr*> *getPresetsList(){
-        //qDebug()<<"RyzenAdjCtrl Settings Get Presets List";
+        qDebug()<<"RyzenAdjCtrl Settings Get Presets List";
         return presets;
     }
 
     qsizetype getPresetsCount(){
-        //qDebug()<<"RyzenAdjCtrl Settings Get Presets Count";
+        qDebug()<<"RyzenAdjCtrl Settings Get Presets Count";
         return presets->count();
     }
 

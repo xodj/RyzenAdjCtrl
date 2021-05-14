@@ -1,9 +1,7 @@
 #include "CtrlAgent.h"
 
-CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
+CtrlAgent::CtrlAgent(CtrlSettings *conf)
     : QSystemTrayIcon(new QSystemTrayIcon),
-      bufferToService(bufferToService),
-      bufferToGui(bufferToGui),
       conf(conf)
 {
     QIcon icon(":/main/amd_icon.ico");
@@ -14,13 +12,13 @@ CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, QSharedMemory *bufferToGui,
 
     QAction *action = new QAction("Open RyzenAdjCtrl", this);
     action->setIcon(icon);
-    connect(action, SIGNAL(triggered()), this, SLOT(openCtrl()));
+    connect(action, SIGNAL(triggered()), this, SIGNAL(showCtrlGui()));
     trayMenu->addAction(action);
 
     action = new QAction("Close", this);
     QIcon exitIcon(":/main/application-exit.png");
     action->setIcon(exitIcon);
-    connect(action, SIGNAL(triggered()), this, SLOT(closeAgent()));
+    connect(action, SIGNAL(triggered()), this, SIGNAL(closeCtrlGui()));
     trayMenu->addAction(action);
 
     this->setContextMenu(trayMenu);
@@ -28,27 +26,20 @@ CtrlAgent::CtrlAgent(QSharedMemory *bufferToService, QSharedMemory *bufferToGui,
 
     connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-
-    gui = new CtrlGuiX(bufferToService, bufferToGui, conf);
-    connect(gui, &CtrlGuiX::messageToAgent, this, &CtrlAgent::notificationToTray);
 }
 
-CtrlAgent::~CtrlAgent(){}
-
-void CtrlAgent::openCtrl(){
-    if (gui == nullptr) {
-        gui = new CtrlGuiX(bufferToService, bufferToGui, conf);
-    }
-    gui->show();
+CtrlAgent::~CtrlAgent(){
+    disconnect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
 
 void CtrlAgent::iconActivated(QSystemTrayIcon::ActivationReason reason){
     if(reason == ActivationReason::DoubleClick){
-        openCtrl();
+        emit showCtrlGui();
+    } else if(reason == ActivationReason::Trigger){
+        emit showCtrlMiniGui();
     }
 }
-
-void CtrlAgent::closeAgent(){ exit(0); }
 
 void CtrlAgent::notificationToTray(QString message){
     if(conf->getSettingsBuffer()->showNotifications)

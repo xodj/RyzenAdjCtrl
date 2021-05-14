@@ -36,7 +36,11 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     readSettings();
     setupConnections();
     loadStyleSheet();
+
     this->resize(602, 441);
+
+    if(!conf->getSettingsBuffer()->useAgent)
+        this->show();
 
     QTimer *bufferToService_refresh_timer = new QTimer;
     connect(bufferToService_refresh_timer, &QTimer::timeout,
@@ -696,6 +700,8 @@ void CtrlGui::saveSettings(){
     sendArgsToService(data);
 
     conf->saveSettings();
+
+    useAgent(settings->useAgent);
 }
 
 void CtrlGui::readSettings(){
@@ -718,7 +724,6 @@ void CtrlGui::readSettings(){
     ui_settings->epmBetterBatteryComboBox->setCurrentIndex(settings->epmBetterBatteryPresetId);
     ui_settings->epmBalancedComboBox->setCurrentIndex(settings->epmBalancedPresetId);
     ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(settings->epmMaximumPerfomancePresetId);
-
 
     for(qsizetype i = 0;i < conf->getPresetsCount();i++){
         if(ui_settings->dcStateComboBox->itemData(i) == settings->dcStatePresetId)
@@ -743,6 +748,8 @@ void CtrlGui::readSettings(){
                 == settings->epmMaximumPerfomancePresetId)
             ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(i);
     }
+
+    useAgent(settings->useAgent);
 }
 
 void CtrlGui::cancelSettings(){
@@ -970,7 +977,6 @@ void CtrlGui::presetDeletePushButtonClicked() {
                 widget = tabWidgetsList->at(x);
                 break;
             }
-        presetStr *preset = conf->getPresetBuffer(idx);
 
         disconnect(button, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
         disconnect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
@@ -1318,6 +1324,35 @@ void CtrlGui::decodeArgs(QByteArray args){
             message += (" NOT SAVED!");
         message += (" preset is runing now.");
         ui->label->setText("RyzenAdjCtrl - " + message);
-        emit messageToAgent(message);
+
+        if(ui_agent != nullptr
+                && conf->getSettingsBuffer()->useAgent
+                && conf->getSettingsBuffer()->showNotifications)
+            ui_agent->notificationToTray(message);
     }
 }
+
+void CtrlGui::closeEvent(QCloseEvent *event) {
+    if (conf->getSettingsBuffer()->useAgent){
+        QEvent *ev = (QEvent*)event;
+        ev->ignore();
+        this->hide();
+    }
+}
+
+void CtrlGui::useAgent(bool use){
+    if (use && ui_agent == nullptr){
+        qDebug()<<"Create CtrlAgent";
+        ui_agent = new CtrlAgent(conf);
+        connect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
+        connect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
+    } else if(ui_agent != nullptr) {
+        qDebug()<<"Delete CtrlAgent";
+        disconnect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
+        disconnect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
+        delete ui_agent;
+        ui_agent = nullptr;
+    }
+}
+
+void CtrlGui::exitFromAgent(){ exit(0); }

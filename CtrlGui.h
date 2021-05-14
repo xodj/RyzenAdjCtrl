@@ -8,6 +8,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QPushButton>
 #include "CtrlSettings.h"
+#include "CtrlAgent.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CtrlGui;
@@ -23,8 +24,6 @@ class CtrlGui : public QMainWindow
 public:
     CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf);
     ~CtrlGui();
-signals:
-    void messageToAgent(QString message);
 
 private:
     void setupUi();
@@ -61,6 +60,9 @@ private:
     void recieveArgs();
     void decodeArgs(QByteArray args);
 
+    void useAgent(bool use);
+    void exitFromAgent();
+
     bool infoMessageShowed = false;
 
     Ui::CtrlGui *ui;
@@ -71,6 +73,7 @@ private:
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToGui;
     CtrlSettings *conf;
+    CtrlAgent *ui_agent = nullptr;
 
     QList<Ui::CtrlGuiAPUForm*> *presetFormList;
     QVBoxLayout *verticalLayout;
@@ -83,5 +86,8 @@ private:
     QString biosVersion;
     QString pmTableVersion;
     QString ryzenAdjVersion;
+
+protected:
+    virtual void closeEvent(QCloseEvent *event);
 };
 #endif // CTRLGUI_H

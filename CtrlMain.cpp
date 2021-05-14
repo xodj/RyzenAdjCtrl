@@ -15,8 +15,10 @@
 
 #define logFileSizeTreshold 10000000
 
-void serviceMessageHandler(QtMsgType, const QMessageLogContext &, const QString &msg){
-    QFile log("RyzenAdjCtrl - Service.log");
+QString fileName = "RyzenAdjCtrl - Service.log";
+
+void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
+    QFile log(fileName);
     QDateTime dt = QDateTime::currentDateTime();
     log.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&log);
@@ -25,55 +27,16 @@ void serviceMessageHandler(QtMsgType, const QMessageLogContext &, const QString 
     std::cout << msg.toStdString() << std::endl;
 }
 
-void guiMessageHandler(QtMsgType, const QMessageLogContext &, const QString &msg){
-    QFile log("RyzenAdjCtrl - Gui.log");
-    QDateTime dt = QDateTime::currentDateTime();
-    log.open(QIODevice::WriteOnly | QIODevice::Append);
-    QTextStream ts(&log);
-    ts << dt.toString("dd.MM.yyyy hh:mm:ss ") << msg << '\n';
-    log.close();
-    std::cout << msg.toStdString() << std::endl;
-}
-
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-
-    QFile log("RyzenAdjCtrl - Gui.log");
-    if(log.size() > logFileSizeTreshold)
-        log.remove("RyzenAdjCtrl - Gui.log");
-    log.setFileName("RyzenAdjCtrl - Service.log");
-    if(log.size() > logFileSizeTreshold)
-        log.remove("RyzenAdjCtrl - Service.log");
-
-    QString qSharedMemoryKey = sharedMemoryKey;
-    QSharedMemory alreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
-    QSharedMemory serviceAlreadyRunning("serviceAlreadyRunning:" + qSharedMemoryKey);
-    QSharedMemory *bufferToService = new QSharedMemory("bufferToService:" + qSharedMemoryKey);
-    QSharedMemory *bufferToGui = new QSharedMemory("bufferToGui:" + qSharedMemoryKey);
-
-    CtrlSettings *conf = new CtrlSettings;
-
-    if(a.arguments().contains("startup")) {
-        qInstallMessageHandler(serviceMessageHandler);
-        if(serviceAlreadyRunning.attach()){
-            qDebug() << "The service is already running.";
-            return 1;
-        } else {
-            serviceAlreadyRunning.create(1);
-            (new CtrlService(bufferToService, bufferToGui, conf));
-        }
-    } else if(a.arguments().contains("exit")){
-        qInstallMessageHandler(serviceMessageHandler);
-        qDebug() << "Exit message from cli";
+void exitCommand(QSharedMemory *bufferToService) {
+        qDebug() << "Exit Message From CLI";
         QByteArray data;
         QXmlStreamWriter argsWriter(&data);
         argsWriter.setAutoFormatting(true);
         argsWriter.writeStartDocument();
         argsWriter.writeStartElement("bufferToService");
         //
-            argsWriter.writeStartElement("exit");
-            argsWriter.writeEndElement();
+        argsWriter.writeStartElement("exit");
+        argsWriter.writeEndElement();
         //
         argsWriter.writeEndElement();
         argsWriter.writeEndDocument();
@@ -88,17 +51,51 @@ int main(int argc, char *argv[])
             bufferToService->detach();
         }
         exit(0);
+}
+
+void checkLogsSize() {
+    QFile log("RyzenAdjCtrl - Gui.log");
+    if(log.size() > logFileSizeTreshold)
+        log.remove("RyzenAdjCtrl - Gui.log");
+    log.setFileName("RyzenAdjCtrl - Service.log");
+    if(log.size() > logFileSizeTreshold)
+        log.remove("RyzenAdjCtrl - Service.log");
+}
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+
+    checkLogsSize();
+    qInstallMessageHandler(messageHandler);
+
+    QString qSharedMemoryKey = sharedMemoryKey;
+    QSharedMemory *bufferToService = new QSharedMemory("bufferToService:" + qSharedMemoryKey);
+
+    if(a.arguments().contains("exit")){ exitCommand(bufferToService); }
+
+    QSharedMemory alreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
+    QSharedMemory serviceAlreadyRunning("serviceAlreadyRunning:" + qSharedMemoryKey);
+    QSharedMemory *bufferToGui = new QSharedMemory("bufferToGui:" + qSharedMemoryKey);
+
+    if(a.arguments().contains("startup")) {
+        if(serviceAlreadyRunning.attach()){
+            qDebug() << "Service Is Already Running.";
+            qDebug() << "Exit.";
+            return 1;
+        } else {
+            serviceAlreadyRunning.create(1);
+            (new CtrlService(bufferToService, bufferToGui, new CtrlSettings));
+        }
     } else {
-        qInstallMessageHandler(guiMessageHandler);
+        fileName = "RyzenAdjCtrl - Gui.log";
         if(alreadyRunning.attach()){
-            qDebug() << "The application is already running.";
+            qDebug() << "Application Is Already Running.";
+            qDebug() << "Exit.";
             return 1;
         } else {
             alreadyRunning.create(1);
-            if (conf->getSettingsBuffer()->useAgent)
-                (new CtrlAgent(bufferToService, bufferToGui, conf))->show();
-            else
-                (new CtrlGui(bufferToService, bufferToGui, conf))->show();
+            new CtrlGui(bufferToService, bufferToGui, new CtrlSettings);
         }
     }
     return a.exec();
