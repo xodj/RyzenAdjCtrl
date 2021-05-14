@@ -10,14 +10,14 @@ CtrlSettings::CtrlSettings()
 {
     presets = new QList<presetStr*>;
 
-    QFile configQFile("Config.xml");
+    QFile configQFile("Config/Config.xml");
     if (!configQFile.exists()){
         qDebug()<<"RyzenAdjCtrl Settings Create New Settings File.";
         saveSettings();
     } else
         openSettings();
 
-    QFile presetsQFile("Presets.xml");
+    QFile presetsQFile("Config/Presets.xml");
     if (!presetsQFile.exists()) {
         qDebug()<<"RyzenAdjCtrl Settings Create New Presets File.";
         QString presetNames[4] = {"Battery Saver","Better Battery",
@@ -42,7 +42,7 @@ CtrlSettings::~CtrlSettings() {
 }
 
 bool CtrlSettings::saveSettings() {
-    QFile configQFile("Config.xml");
+    QFile configQFile("Config/Config.xml");
     configQFile.open(QIODevice::WriteOnly);
     QXmlStreamWriter xmlWriter(&configQFile);
     xmlWriter.setAutoFormatting(true);
@@ -104,7 +104,7 @@ bool CtrlSettings::saveSettings() {
 }
 
 bool CtrlSettings::openSettings(){
-    QFile configQFile("Config.xml");
+    QFile configQFile("Config/Config.xml");
     configQFile.open(QIODevice::ReadOnly | QIODevice::Text);
     QXmlStreamReader xmlReader;
     xmlReader.setDevice(&configQFile);
@@ -213,7 +213,7 @@ bool CtrlSettings::openSettings(){
 }
 
 bool CtrlSettings::savePresets() {
-    QFile presetsQFile("Presets.xml");
+    QFile presetsQFile("Config/Presets.xml");
     presetsQFile.open(QIODevice::WriteOnly);
     QXmlStreamWriter xmlWriter(&presetsQFile);
     xmlWriter.setAutoFormatting(true);
@@ -358,7 +358,7 @@ bool CtrlSettings::savePresets() {
 }
 
 bool CtrlSettings::openPresets(){
-    QFile presetsQFile("Presets.xml");
+    QFile presetsQFile("Config/Presets.xml");
     presetsQFile.open(QIODevice::ReadOnly | QIODevice::Text);
 
     QXmlStreamReader xmlReader;

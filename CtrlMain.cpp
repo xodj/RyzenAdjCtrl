@@ -15,7 +15,7 @@
 
 #define logFileSizeTreshold 10000000
 
-QString fileName = "RyzenAdjCtrl - Service.log";
+QString fileName = "Logs/RyzenAdjCtrl - Service.log";
 
 void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
     QFile log(fileName);
@@ -54,12 +54,12 @@ void exitCommand(QSharedMemory *bufferToService) {
 }
 
 void checkLogsSize() {
-    QFile log("RyzenAdjCtrl - Gui.log");
+    QFile log("Logs/RyzenAdjCtrl - Gui.log");
     if(log.size() > logFileSizeTreshold)
-        log.remove("RyzenAdjCtrl - Gui.log");
-    log.setFileName("RyzenAdjCtrl - Service.log");
+        log.remove("Logs/RyzenAdjCtrl - Gui.log");
+    log.setFileName("Logs/RyzenAdjCtrl - Service.log");
     if(log.size() > logFileSizeTreshold)
-        log.remove("RyzenAdjCtrl - Service.log");
+        log.remove("Logs/RyzenAdjCtrl - Service.log");
 }
 
 int main(int argc, char *argv[])
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
             (new CtrlService(bufferToService, bufferToGui, new CtrlSettings));
         }
     } else {
-        fileName = "RyzenAdjCtrl - Gui.log";
+        fileName = "Logs/RyzenAdjCtrl - Gui.log";
         if(alreadyRunning.attach()){
             qDebug() << "Application Is Already Running.";
             qDebug() << "Exit.";

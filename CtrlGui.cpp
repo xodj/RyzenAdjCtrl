@@ -243,7 +243,7 @@ void CtrlGui::loadPresets(){
 }
 
 void CtrlGui::loadStyleSheet(){
-    QFile configQFile("StyleSheet.xml");
+    QFile configQFile("Config/StyleSheet.xml");
     configQFile.open(QIODevice::ReadOnly | QIODevice::Text);
     QXmlStreamReader configReader;
     configReader.setDevice(&configQFile);
