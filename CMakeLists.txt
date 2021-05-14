@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.16.0)
 
 PROJECT(RyzenAdjCtrl VERSION 0.3.2.472 LANGUAGES CXX)
 
+string(RANDOM LENGTH 512 RANDOM_DATA)
+message("\n\n${RANDOM_DATA}\n\n")
+configure_file(CtrlConfig.h.in ${PROJECT_BINARY_DIR}/CtrlConfig.h)
+
+
 set(STR_CTRL_VERSION ${RyzenAdjCtrl_VERSION})
 string(REPLACE "." "." RC_SPLIT ${STR_CTRL_VERSION})
 string(REPLACE "." ";" RC_SPLIT ${RC_SPLIT})
@@ -32,7 +37,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
 set(RyzenAdjCtrl_HEADERS
     CtrlAgent.h
-    CtrlConfig.h
+    ${PROJECT_BINARY_DIR}/CtrlConfig.h
+    CtrlConfig.h.in
     CtrlEPMCallback.h
     CtrlGui.h
     CtrlService.h

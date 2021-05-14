@@ -1,0 +1,7 @@
+#ifndef CTRLCONFIG_H
+#define CTRLCONFIG_H
+
+#define sharedMemoryKey \
+"${RANDOM_DATA}"
+
+#endif // CTRLCONFIG_H
