@@ -28,7 +28,7 @@ void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
     std::cout << msg.toStdString() << std::endl;
 }
 
-void exitCommand(QSharedMemory *bufferToService) {
+int exitCommand(QSharedMemory *bufferToService) {
         qDebug() << "Exit Message From CLI";
         QByteArray data;
         QXmlStreamWriter argsWriter(&data);
@@ -50,8 +50,11 @@ void exitCommand(QSharedMemory *bufferToService) {
                 bufferToService->unlock();
             }
             bufferToService->detach();
+            return 0;
+        } else {
+            qDebug()<<"Service is not started.";
+            return 1;
         }
-        exit(0);
 }
 
 void checkLogsSize() {
@@ -70,11 +73,81 @@ void checkLogsSize() {
         log.remove("Logs/RyzenAdjCtrl - Service.log");
 }
 
-int installService(){
+bool checkService(){
     QProcess process;
-    QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");
-    process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
-    return 0;
+    QStringList powerShellCLI = {
+        "Get-ScheduledTask -TaskName \"Startup RyzenAdjCtrl\"\n",
+        "exit\n"
+                                };
+    qDebug()<<powerShellCLI;
+    process.start("powershell", powerShellCLI);
+    for(;!process.waitForStarted();){}
+    for(;!process.waitForFinished();){}
+    QString error = process.readAllStandardError();
+    QString output = process.readAllStandardOutput();
+    qDebug() << "\nRyzenAdjCtrl Check Service error:\n\n" << error;
+    qDebug() << "\nRyzenAdjCtrl Check Service output:\n\n" << output;
+
+    return (error.size() > 1);
+}
+
+void installService(){
+    QString exePath = qApp->arguments().value(0);
+
+    QByteArray workDir = exePath.toLatin1();
+    qsizetype lastSlash = 0;
+    for(qsizetype i = 0;i < workDir.size();i++){
+        if(workDir[i] == QByteArray("\\")[0])
+            lastSlash = i + 1;
+    }
+    workDir.remove(lastSlash, workDir.size() - lastSlash);
+
+    QProcess process;
+    QStringList powerShellCLI = {
+        "$Trigger= New-ScheduledTaskTrigger -AtLogon\n",
+        "$Action= New-ScheduledTaskAction -Execute \"" + exePath + "\" -Argument \"startup\" -WorkingDirectory \"" + QString(workDir) + "\"\n",
+        "$task_settings= New-ScheduledTaskSettingsSet -DontStopIfGoingOnBatteries "
+        "-AllowStartIfOnBatteries -DontStopOnIdleEnd  -ExecutionTimeLimit  (New-TimeSpan) "
+        "-RestartCount 10 -RestartInterval (New-TimeSpan -Minutes 1)\n",
+        "Register-ScheduledTask -TaskName \"Startup RyzenAdjCtrl\" -Trigger $Trigger -Action $Action -RunLevel Highest -Force  -Settings $task_settings\n",
+        "Start-ScheduledTask \"Startup RyzenAdjCtrl\"\n",
+        "exit\n", "-verb", "runas"
+                                };
+    qDebug()<<powerShellCLI;
+    process.start("powershell", powerShellCLI);
+    for(;!process.waitForStarted();){}
+    for(;!process.waitForFinished();){}
+    QString error = process.readAllStandardError();
+    QString output = process.readAllStandardOutput();
+    qDebug() << "\nRyzenAdjCtrl Install Service error:\n\n" << error;
+    qDebug() << "\nRyzenAdjCtrl Install Service output:\n\n" << output;
+
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setText("RyzenAdjCtrl Service Installed\n");
+    msgBox.exec();
+}
+
+void uninstallService(){
+    QProcess process;
+    QStringList powerShellCLI = {
+     /* "Stop-ScheduledTask -TaskName \"Startup RyzenAdjCtrl\"", */
+        "Unregister-ScheduledTask \"Startup RyzenAdjCtrl\" -Confirm:$false\n",
+        "exit\n"
+                                };
+    qDebug()<<powerShellCLI;
+    process.start("powershell", powerShellCLI);
+    for(;!process.waitForStarted();){}
+    for(;!process.waitForFinished();){}
+    QString error = process.readAllStandardError();
+    QString output = process.readAllStandardOutput();
+    qDebug() << "\nRyzenAdjCtrl Uninstall Service error:\n\n" << error;
+    qDebug() << "\nRyzenAdjCtrl Uninstall Service output:\n\n" << output;
+
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setText("RyzenAdjCtrl Service Uninstalled\n");
+    msgBox.exec();
 }
 
 int main(int argc, char *argv[])
@@ -87,7 +160,14 @@ int main(int argc, char *argv[])
     QString qSharedMemoryKey = sharedMemoryKey;
     QSharedMemory *bufferToService = new QSharedMemory("bufferToService:" + qSharedMemoryKey);
 
-    if(a.arguments().contains("exit")){ exitCommand(bufferToService); }
+    if(a.arguments().contains("exit"))
+        return exitCommand(bufferToService);
+    if(a.arguments().contains("install")){
+        exitCommand(bufferToService);
+        if(checkService()) installService();
+        else uninstallService();
+        return 0;
+    }
 
     QSharedMemory alreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
     QSharedMemory serviceAlreadyRunning("serviceAlreadyRunning:" + qSharedMemoryKey);

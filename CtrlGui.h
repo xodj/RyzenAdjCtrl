@@ -46,6 +46,7 @@ private:
     void cancelSettings();
 
     void startService();
+    void installService();
 
     void infoPushButtonClicked();
     void sendRyzenAdjInfo(QString value = "0");

@@ -206,6 +206,22 @@ background-color: rgb(128, 128, 128);
 }
 QPushButton:checked {
 background-color: rgb(192, 192, 192);
+}
+
+QPushButton::flat {
+color: rgb(255,255,255);
+border: none;
+background-color: none;
+}
+QPushButton::flat:hover {
+color: rgb(255,64,64);
+border: none;
+background-color: none;
+}
+QPushButton::flat:pressed {
+color: rgb(128,0,0);
+border: none;
+background-color: none;
 }"/>
 
 <TopWidget value="QWidget {

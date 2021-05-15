@@ -176,6 +176,8 @@ void CtrlGui::setupConnections(){
     connect(ui_settings->epmAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
     connect(ui_settings->acAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
     connect(ui_infoWidget->spinBox, &QSpinBox::textChanged, this, &CtrlGui::sendRyzenAdjInfo);
+
+    connect(ui_settings->installPushButton, &QPushButton::clicked, this, &CtrlGui::installService);
 }
 
 void CtrlGui::loadPresets(){
@@ -756,6 +758,12 @@ void CtrlGui::cancelSettings(){
 void CtrlGui::startService(){
     QProcess process;
     QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");
+    process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
+}
+
+void CtrlGui::installService(){
+    QProcess process;
+    QString runas = ("\"" + qApp->arguments().value(0) + "\" install");
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
 }
 
