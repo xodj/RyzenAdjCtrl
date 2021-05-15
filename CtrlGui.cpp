@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QObject>
+#include <QScroller>
 
 #define bufferToGui_refresh_time 33
 
@@ -37,7 +38,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     setupConnections();
     loadStyleSheet();
 
-    this->resize(602, 441);
+    this->resize(800, 450);
 
     if(!conf->getSettingsBuffer()->useAgent)
         this->show();
@@ -47,8 +48,6 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
             this, &CtrlGui::recieveArgs);
     bufferToService_refresh_timer->start(bufferToGui_refresh_time);
 }
-
-#include <QScroller>
 
 void CtrlGui::setupUi(){
     ui->setupUi(this);
@@ -80,7 +79,7 @@ void CtrlGui::setupUi(){
 
         widget = new QWidget;
         widget->setProperty("idx",idx);
-        tabWidgetsList->insert(i, widget);
+        tabWidgetsList->append(widget);
         verticalLayout->addWidget(widget);
         presetForm = new Ui::CtrlGuiAPUForm;
         presetForm->setupUi(widget);
@@ -104,8 +103,8 @@ void CtrlGui::setupUi(){
         presetForm->smuMaxPerformanceCheckBox->setProperty("idy",0);
         presetForm->smuPowerSavingCheckBox->setProperty("idy",1);
 
-        presetFormList->insert(i, presetForm);
-        //
+        presetFormList->append(presetForm);
+
         button = new QPushButton(preset->presetName);
 
         button->setObjectName(QString::fromUtf8("tabPushButton") + QString::number(i));
@@ -120,7 +119,7 @@ void CtrlGui::setupUi(){
 
         ui->scrollAreaWidgetContents->layout()->addWidget(button);
 
-        tabButtonList->insert(i, button);
+        tabButtonList->append(button);
     }
 
     tabPlusButton = new QPushButton("+");
@@ -150,7 +149,7 @@ void CtrlGui::setupUi(){
 }
 
 void CtrlGui::setupConnections(){
-    connect(ui->comboBox, &QComboBox::currentIndexChanged, this, &CtrlGui::languageChange);
+    connect(ui->comboBox, &QComboBox::currentTextChanged, this, &CtrlGui::languageChange);
     connect(ui->infoPushButton, &QPushButton::clicked, this, &CtrlGui::infoPushButtonClicked);
     connect(ui->settingsPushButton, &QPushButton::clicked, this, &CtrlGui::settingsPushButtonClicked);
     connect(ui->rssPushButton, &QPushButton::clicked, this, &CtrlGui::loadStyleSheet);
@@ -176,6 +175,7 @@ void CtrlGui::setupConnections(){
 
     connect(ui_settings->epmAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
     connect(ui_settings->acAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
+    connect(ui_infoWidget->spinBox, &QSpinBox::textChanged, this, &CtrlGui::sendRyzenAdjInfo);
 }
 
 void CtrlGui::loadPresets(){
@@ -577,14 +577,10 @@ void CtrlGui::smuCheckBoxClicked(){
 
 CtrlGui::~CtrlGui()
 {
-    disconnect(ui->comboBox, &QComboBox::currentIndexChanged, this, &CtrlGui::languageChange);
     delete ui;
 }
 
-void CtrlGui::languageChange()
-{
-    QString langid = reinterpret_cast<QComboBox *>(sender())->currentText();
-
+void CtrlGui::languageChange(QString langid){
     Ui::CtrlGuiAPUForm *presetForm;
 
     if(qtLanguageTranslator->load(QString("Language/CtrlGui_") + langid, ".")){
@@ -779,18 +775,14 @@ void CtrlGui::sendArgsToService(QByteArray arguments){
 }
 
 void CtrlGui::infoPushButtonClicked() {
-    if(ui->infoDockWidget->isHidden()){
-        ui->infoDockWidget->setHidden(false);
-        sendRyzenAdjInfo(ui_infoWidget->spinBox->value());
-        ui_infoWidget->spinBox->connect(ui_infoWidget->spinBox, &QSpinBox::valueChanged,
-                                        this, &CtrlGui::sendRyzenAdjInfo);
-    } else {
-        ui->infoDockWidget->setHidden(true);
-        sendRyzenAdjInfo(0);
-    }
+    ui->infoDockWidget->setHidden(ui->infoDockWidget->isVisible());
+    sendRyzenAdjInfo();
 }
 
-void CtrlGui::sendRyzenAdjInfo(int value){
+void CtrlGui::sendRyzenAdjInfo(QString value){
+    if(ui->infoDockWidget->isVisible())
+        value = QString::number(ui_infoWidget->spinBox->value());
+
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
     argsWriter.setAutoFormatting(true);
@@ -798,7 +790,7 @@ void CtrlGui::sendRyzenAdjInfo(int value){
     argsWriter.writeStartElement("bufferToService");
     //
         argsWriter.writeStartElement("ryzenAdjInfoTimeout");
-            argsWriter.writeAttribute("value", QString::number(value));
+            argsWriter.writeAttribute("value", value);
         argsWriter.writeEndElement();
     //
     argsWriter.writeEndElement();
@@ -858,11 +850,11 @@ void CtrlGui::presetPlusPushButtonClicked(){
     //TAB WIDGET AND FORM
     QWidget *widget = new QWidget;
     widget->setProperty("idx",idx);
-    tabWidgetsList->emplaceBack(widget);
+    tabWidgetsList->append(widget);
     verticalLayout->addWidget(widget);
     Ui::CtrlGuiAPUForm *presetForm = new Ui::CtrlGuiAPUForm;
     presetForm->setupUi(widget);
-    presetFormList->emplaceBack(presetForm);
+    presetFormList->append(presetForm);
     widget->setHidden(true);
     //Write idx-es
     presetForm->deletePushButton->setProperty("idx",idx);
@@ -886,7 +878,7 @@ void CtrlGui::presetPlusPushButtonClicked(){
     button->setProperty("idx",idx);
     button->setSizePolicy(sizePolicy);
     ui->scrollAreaWidgetContents->layout()->addWidget(button);
-    tabButtonList->emplaceBack(button);
+    tabButtonList->append(button);
     //Connections
     connect(button, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
     connect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);

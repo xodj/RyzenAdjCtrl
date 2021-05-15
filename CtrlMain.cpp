@@ -70,6 +70,13 @@ void checkLogsSize() {
         log.remove("Logs/RyzenAdjCtrl - Service.log");
 }
 
+int installService(){
+    QProcess process;
+    QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");
+    process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

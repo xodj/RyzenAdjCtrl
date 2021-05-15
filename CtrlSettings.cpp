@@ -7,18 +7,17 @@
 #include <QDebug>
 
 CtrlSettings::CtrlSettings()
+    : presets(new QList<presetStr*>),
+      configQFile(new QFile("Config/Config.xml")),
+      presetsQFile(new QFile("Config/Presets.xml"))
 {
-    presets = new QList<presetStr*>;
-
-    QFile configQFile("Config/Config.xml");
-    if (!configQFile.exists()){
+    if (!configQFile->exists()){
         qDebug()<<"RyzenAdjCtrl Settings Create New Settings File.";
         saveSettings();
     } else
         openSettings();
 
-    QFile presetsQFile("Config/Presets.xml");
-    if (!presetsQFile.exists()) {
+    if (!presetsQFile->exists()) {
         qDebug()<<"RyzenAdjCtrl Settings Create New Presets File.";
         QString presetNames[4] = {"Battery Saver","Better Battery",
                                   "Balanced","Perfomance"};
@@ -27,7 +26,7 @@ CtrlSettings::CtrlSettings()
             preset = new presetStr;
             preset->presetId = i;
             preset->presetName = presetNames[i];
-            presets->emplaceBack(preset);
+            presets->append(preset);
         }
         savePresets();
     }
@@ -42,9 +41,8 @@ CtrlSettings::~CtrlSettings() {
 }
 
 bool CtrlSettings::saveSettings() {
-    QFile configQFile("Config/Config.xml");
-    configQFile.open(QIODevice::WriteOnly);
-    QXmlStreamWriter xmlWriter(&configQFile);
+    configQFile->open(QIODevice::WriteOnly);
+    QXmlStreamWriter xmlWriter(configQFile);
     xmlWriter.setAutoFormatting(true);
     xmlWriter.writeStartDocument();
     xmlWriter.writeStartElement("Settings");
@@ -98,16 +96,15 @@ bool CtrlSettings::saveSettings() {
     //
     xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
-    configQFile.close();
+    configQFile->close();
     qDebug() << "RyzenAdjCtrl Settings Saved";
     return true;
 }
 
 bool CtrlSettings::openSettings(){
-    QFile configQFile("Config/Config.xml");
-    configQFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    configQFile->open(QIODevice::ReadOnly | QIODevice::Text);
     QXmlStreamReader xmlReader;
-    xmlReader.setDevice(&configQFile);
+    xmlReader.setDevice(configQFile);
     xmlReader.readNext();
     while(!xmlReader.atEnd())
     {
@@ -207,15 +204,14 @@ bool CtrlSettings::openSettings(){
         //
         xmlReader.readNext();
     }
-    configQFile.close();
+    configQFile->close();
     qDebug() << "RyzenAdjCtrl Settings Opened";
     return true;
 }
 
 bool CtrlSettings::savePresets() {
-    QFile presetsQFile("Config/Presets.xml");
-    presetsQFile.open(QIODevice::WriteOnly);
-    QXmlStreamWriter xmlWriter(&presetsQFile);
+    presetsQFile->open(QIODevice::WriteOnly);
+    QXmlStreamWriter xmlWriter(presetsQFile);
     xmlWriter.setAutoFormatting(true);
     xmlWriter.writeStartDocument();
     xmlWriter.writeStartElement("Presets");
@@ -352,17 +348,16 @@ bool CtrlSettings::savePresets() {
     //
     xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
-    presetsQFile.close();
+    presetsQFile->close();
     qDebug() << "RyzenAdjCtrl Settings Presets Saved";
     return true;
 }
 
 bool CtrlSettings::openPresets(){
-    QFile presetsQFile("Config/Presets.xml");
-    presetsQFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    presetsQFile->open(QIODevice::ReadOnly | QIODevice::Text);
 
     QXmlStreamReader xmlReader;
-    xmlReader.setDevice(&presetsQFile);
+    xmlReader.setDevice(presetsQFile);
     xmlReader.readNext();
     presetStr *presetReadBuffer = new presetStr;
     presetReadBuffer->presetId = -1;
@@ -374,7 +369,7 @@ bool CtrlSettings::openPresets(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value") {
                     if(presetReadBuffer->presetId != -1)
-                        presets->emplaceBack(presetReadBuffer);
+                        presets->append(presetReadBuffer);
                     presetReadBuffer = new presetStr;
                     presetReadBuffer->presetId = attr.value().toString().toInt();
                 }
@@ -580,8 +575,70 @@ bool CtrlSettings::openPresets(){
         //
         xmlReader.readNext();
     }
-    presets->emplaceBack(presetReadBuffer);
-    presetsQFile.close();
+    presets->append(presetReadBuffer);
+    presetsQFile->close();
     qDebug() << "RyzenAdjCtrl Settings Presets Opened";
+    return true;
+}
+
+settingsStr* CtrlSettings::getSettingsBuffer() {
+    qDebug() << "RyzenAdjCtrl Settings Get Settings";
+    return &settingsBuffer;
+}
+
+const QList<presetStr*>* CtrlSettings::getPresetsList() {
+    qDebug() << "RyzenAdjCtrl Settings Get Presets List";
+    return presets;
+}
+
+qsizetype CtrlSettings::getPresetsCount() {
+    qDebug() << "RyzenAdjCtrl Settings Get Presets Count";
+    return presets->count();
+}
+
+bool CtrlSettings::setPresetBuffer(int idx, presetStr* preset) {
+    qDebug() << "RyzenAdjCtrl Settings Set Preset ID" << idx << preset->presetName;
+    presetStr* presetBuffer = getPresetBuffer(idx);
+
+    if (presetBuffer != nullptr)
+        presets->removeOne(presetBuffer);
+
+    insertNewPreset(idx, preset);
+    return true;
+}
+
+presetStr* CtrlSettings::getPresetBuffer(int idx) {
+    qDebug() << "RyzenAdjCtrl Settings Get Preset ID" << idx;
+    presetStr* presetBuffer = nullptr;
+    for (qsizetype i = 0; i < presets->count(); i++)
+        if (presets->at(i)->presetId == idx)
+            presetBuffer = presets->at(i);
+    return presetBuffer;
+}
+
+int CtrlSettings::insertNewPreset(int newidx, presetStr* newPreset) {
+    qDebug() << "RyzenAdjCtrl Settings Insert New Preset ID" << newidx;
+    if (newPreset == nullptr) {
+        newPreset = new presetStr;
+        newPreset->presetName = "New preset";
+    }
+    if (newidx == -1) {
+        newidx = presets->count();
+        for (;;) {
+            newidx++;
+            if (getPresetBuffer(newidx) == nullptr)
+                break;
+        }
+    }
+    newPreset->presetId = newidx;
+    presets->append(newPreset);
+    return newidx;
+}
+
+bool CtrlSettings::deletePreset(int idx) {
+    qDebug() << "RyzenAdjCtrl Settings Delete Preset ID" << idx;
+    presetStr* preset = getPresetBuffer(idx);
+    presets->removeOne(preset);
+    delete preset;
     return true;
 }

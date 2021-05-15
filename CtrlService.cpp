@@ -92,7 +92,7 @@ void CtrlService::initPmTable(){
     pmTable.biosVersion = QString::number(get_bios_if_ver(adjEntryPoint));
     std::stringstream ss;
     ss<< std::hex << get_table_ver(adjEntryPoint);
-    pmTable.pmTableVersion = QString::fromLatin1(ss.str());
+    pmTable.pmTableVersion = QString::fromStdString(ss.str());
     pmTable.ryzenAdjVersion = QString::number(RYZENADJ_REVISION_VER) + "." + QString::number(RYZENADJ_MAJOR_VER) + "." + QString::number(RYZENADJ_MINIOR_VER);
     qDebug() << "RyzenAdjCtrl Service pmTable.ryzenFamily" << pmTable.ryzenFamily;
     qDebug() << "RyzenAdjCtrl Service pmTable.biosVersion" << pmTable.biosVersion;

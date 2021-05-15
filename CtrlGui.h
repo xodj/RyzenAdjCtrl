@@ -31,7 +31,7 @@ private:
     void loadPresets();
     void loadStyleSheet();
 
-    void languageChange();
+    void languageChange(QString langid);
 
     void savePreset();
     void applyPreset();
@@ -48,7 +48,7 @@ private:
     void startService();
 
     void infoPushButtonClicked();
-    void sendRyzenAdjInfo(int value);
+    void sendRyzenAdjInfo(QString value = "0");
 
     void settingsPushButtonClicked();
     void presetPushButtonClicked();
