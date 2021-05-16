@@ -1,0 +1,129 @@
+[Setup] 
+AppId={{D1E0507C-61B0-4BC3-9FE4-23088D68151F}
+AppName=RyzenAdjCtrl
+AppVersion=${STR_CTRL_VERSION}
+AppPublisher=xo.dj@ya.ru
+WizardStyle=modern
+DefaultDirName={userappdata}\RyzenAdjCtrl
+DefaultGroupName=RyzenAdjCtrl
+UninstallDisplayIcon={app}\RyzenAdjCtrl.exe
+Compression=lzma2
+SolidCompression=yes
+ArchitecturesInstallIn64BitMode=x64
+DisableWelcomePage=no
+LicenseFile=LICENSE
+//PrivilegesRequired=lowest 
+PrivilegesRequired=admin 
+DisableDirPage=no
+DisableProgramGroupPage=no
+OutputBaseFilename=RyzenAdjCtrl-v.${STR_CTRL_VERSION}-Setup
+VersionInfoVersion=${STR_CTRL_VERSION}
+//CloseApplications=no
+
+//[Languages]
+//Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: "LICENSE";
+//Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"; LicenseFile: "LICENSE"
+
+[Files]
+Source: "Appfolder\Binaries\atrofac-cli.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Config\StyleSheet.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\ImageFormats\qico.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Platforms\qwindows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Styles\qwindowsvistastyle.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_checked.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_checked_disabled.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_checked_focus.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_unchecked.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_unchecked_disabled.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_unchecked_focus.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\down_arrow.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\down_arrow_disabled.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\up_arrow.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Theme\up_arrow_disabled.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\inpoutx64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\libryzenadj.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Qt6Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Qt6Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Qt6Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\RyzenAdjCtrl.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\WinRing0x64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\WinRing0x64.sys"; DestDir: "{app}"; Flags: ignoreversion
+
+[Icons]
+Name: "{group}\RyzenAdjCtrl"; Filename: "{app}\RyzenAdjCtrl.exe"
+Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
+Name: "{userdesktop}\RyzenAdjCtrl"; Filename: "{app}\RyzenAdjCtrl.exe"; Tasks: desktopicon 
+Name: "{userstartup}\RyzenAdjCtrl"; Filename: "{app}\RyzenAdjCtrl.exe"; Tasks: addAutoStart
+
+[Tasks]
+Name: "addWindowsTask"; Description: "Autorun RyzenAdjCtrl Service at start"; GroupDescription: "Autorun:"; 
+Name: "addAutoStart"; Description: "Autorun RyzenAdjCtrl GUI at start"; GroupDescription: "Autorun:";
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+[Run] 
+Filename: {app}\RyzenAdjCtrl.exe; Parameters: "install"; StatusMsg: RyzenAdjCtrl Service windows tasks is installing. Please wait... Tasks: addWindowsTask
+//Filename: powershell; Parameters: "start-process {app}\RyzenAdjCtrl.exe install -verb runas"; StatusMsg: RyzenAdjCtrl Service windows tasks is installing. Please wait... Tasks: addWindowsTask
+Filename: "{app}\RyzenAdjCtrl.exe"; Description: "Launch RyzenAdjCtrl"; Flags: postinstall nowait skipifsilent
+[UninstallRun]  
+Filename: {app}\RyzenAdjCtrl.exe; Parameters: "uninstall";
+//Filename: powershell; Parameters: "start-process {app}\RyzenAdjCtrl.exe uninstall -verb runas";
+
+[Code]
+{ ///////////////////////////////////////////////////////////////////// }
+function GetUninstallString(): String;
+var
+  sUnInstPath: String;
+  sUnInstallString: String;
+begin
+  sUnInstPath := ExpandConstant('Software\Microsoft\Windows\CurrentVersion\Uninstall\{{D1E0507C-61B0-4BC3-9FE4-23088D68151F}_is1');
+  sUnInstallString := '';
+  if not RegQueryStringValue(HKLM, sUnInstPath, 'UninstallString', sUnInstallString) then
+    RegQueryStringValue(HKCU, sUnInstPath, 'UninstallString', sUnInstallString);
+  Result := sUnInstallString;
+end;
+
+
+{ ///////////////////////////////////////////////////////////////////// }
+function IsUpgrade(): Boolean;
+begin
+  Result := (GetUninstallString() <> '');
+end;
+
+
+{ ///////////////////////////////////////////////////////////////////// }
+function UnInstallOldVersion(): Integer;
+var
+  sUnInstallString: String;
+  iResultCode: Integer;
+begin
+{ Return Values: }
+{ 1 - uninstall string is empty }
+{ 2 - error executing the UnInstallString }
+{ 3 - successfully executed the UnInstallString }
+
+  { default return value }
+  Result := 0;
+
+  { get the uninstall string of the old app }
+  sUnInstallString := GetUninstallString();
+  if sUnInstallString <> '' then begin
+    sUnInstallString := RemoveQuotes(sUnInstallString);
+    if Exec(sUnInstallString, '/SILENT /NORESTART /SUPPRESSMSGBOXES','', SW_HIDE, ewWaitUntilTerminated, iResultCode) then
+      Result := 3
+    else
+      Result := 2;
+  end else
+    Result := 1;
+end;
+
+{ ///////////////////////////////////////////////////////////////////// }
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if (CurStep=ssInstall) then
+  begin
+    if (IsUpgrade()) then
+    begin
+      UnInstallOldVersion();
+    end;
+  end;
+end;

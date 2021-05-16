@@ -15,6 +15,8 @@ list(GET RC_SPLIT 1 CTRL_MAJOR_VERSION)
 list(GET RC_SPLIT 2 CTRL_MINOR_VERSION)
 list(GET RC_SPLIT 3 CTRL_PATCH_VERSION)
 configure_file(RyzenAdjCtrl.rc.in ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc)
+#Place version to Inno Setup Project
+configure_file(RyzenAdjCtrl.iss.in ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss)
 #Cmake+Qt default args
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
@@ -49,6 +51,8 @@ set(RyzenAdjCtrl_SOURCES
     CtrlSettings.cpp
     ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc
     RyzenAdjCtrl.rc.in
+    ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss
+    RyzenAdjCtrl.iss.in
     )
 set(RyzenAdjCtrl_QRC
     RyzenAdjRes.qrc
@@ -73,13 +77,54 @@ add_executable(RyzenAdjCtrl
 #Link libraries
 target_link_libraries(RyzenAdjCtrl PUBLIC
     Qt${QT_VERSION_MAJOR}::Widgets
-    ${CMAKE_CURRENT_SOURCE_DIR}/RyzenAdj/build/${CMAKE_BUILD_TYPE}/libryzenadj.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.lib
     )
 #Set show or not CLI
 set_target_properties(RyzenAdjCtrl
     PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
     LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+set_target_properties(RyzenAdjCtrl
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/APPFOLDER")
 #Add include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/RyzenAdj)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+#COPY DEPS FOR RELEASE BUILD AND MAKE INSTALL
+if(CMAKE_BUILD_TYPE MATCHES "Release")
+message("\nIt's Release.\nCopy deps...")
+configure_file(Appfolder/Config/StyleSheet.xml ${PROJECT_BINARY_DIR}/Appfolder/Config/StyleSheet.xml COPYONLY)
+configure_file(Appfolder/Theme/checkbox_checked.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_checked.png COPYONLY)
+configure_file(Appfolder/Theme/checkbox_checked_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_checked_disabled.png COPYONLY)
+configure_file(Appfolder/Theme/checkbox_checked_focus.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_checked_focus.png COPYONLY)
+configure_file(Appfolder/Theme/checkbox_unchecked.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_unchecked.png COPYONLY)
+configure_file(Appfolder/Theme/checkbox_unchecked_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_unchecked_disabled.png COPYONLY)
+configure_file(Appfolder/Theme/checkbox_unchecked_focus.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_unchecked_focus.png COPYONLY)
+configure_file(Appfolder/Theme/down_arrow.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/down_arrow.png COPYONLY)
+configure_file(Appfolder/Theme/down_arrow_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/down_arrow_disabled.png COPYONLY)
+configure_file(Appfolder/Theme/up_arrow.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/up_arrow.png COPYONLY)
+configure_file(Appfolder/Theme/up_arrow_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/up_arrow_disabled.png COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../atrofac/bin/atrofac-cli.exe ${PROJECT_BINARY_DIR}/Appfolder/Binaries/atrofac-cli.exe COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.dll ${PROJECT_BINARY_DIR}/Appfolder/libryzenadj.dll COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/win32/inpoutx64.dll ${PROJECT_BINARY_DIR}/Appfolder/inpoutx64.dll COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/win32/WinRing0x64.dll ${PROJECT_BINARY_DIR}/Appfolder/WinRing0x64.dll COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/win32/WinRing0x64.sys ${PROJECT_BINARY_DIR}/Appfolder/WinRing0x64.sys COPYONLY)
+IF(${QT_VERSION_MAJOR} MATCHES 6)
+message("Copy Qt6 deps...\n")
+configure_file(${CMAKE_PREFIX_PATH}/bin/Qt6Core.dll ${PROJECT_BINARY_DIR}/Appfolder/Qt6Core.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/bin/Qt6Gui.dll ${PROJECT_BINARY_DIR}/Appfolder/Qt6Gui.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/bin/Qt6Widgets.dll ${PROJECT_BINARY_DIR}/Appfolder/Qt6Widgets.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/plugins/imageformats/qico.dll ${PROJECT_BINARY_DIR}/Appfolder/ImageFormats/qico.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/plugins/platforms/qwindows.dll ${PROJECT_BINARY_DIR}/Appfolder/Platforms/qwindows.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/plugins/styles/qwindowsvistastyle.dll ${PROJECT_BINARY_DIR}/Appfolder/Styles/qwindowsvistastyle.dll COPYONLY)
+ENDIF(${QT_VERSION_MAJOR} MATCHES 6)
+IF(${QT_VERSION_MAJOR} MATCHES 5)
+message("Copy Qt5 deps...\n")
+configure_file(${CMAKE_PREFIX_PATH}/bin/Qt5Core.dll ${PROJECT_BINARY_DIR}/Appfolder/Qt5Core.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/bin/Qt5Gui.dll ${PROJECT_BINARY_DIR}/Appfolder/Qt5Gui.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/bin/Qt5Widgets.dll ${PROJECT_BINARY_DIR}/Appfolder/Qt5Widgets.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/plugins/imageformats/qico.dll ${PROJECT_BINARY_DIR}/Appfolder/ImageFormats/qico.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/plugins/platforms/qwindows.dll ${PROJECT_BINARY_DIR}/Appfolder/Platforms/qwindows.dll COPYONLY)
+configure_file(${CMAKE_PREFIX_PATH}/plugins/styles/qwindowsvistastyle.dll ${PROJECT_BINARY_DIR}/Appfolder/Styles/qwindowsvistastyle.dll COPYONLY)
+ENDIF(${QT_VERSION_MAJOR} MATCHES 5)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/LICENSE ${PROJECT_BINARY_DIR}/LICENSE COPYONLY)
+ENDIF(CMAKE_BUILD_TYPE MATCHES "Release")

@@ -95,8 +95,8 @@ void installService(){
     QString exePath = qApp->arguments().value(0);
 
     QByteArray workDir = exePath.toLatin1();
-    qsizetype lastSlash = 0;
-    for(qsizetype i = 0;i < workDir.size();i++){
+    int lastSlash = 0;
+    for(int i = 0;i < workDir.size();i++){
         if(workDir[i] == QByteArray("\\")[0])
             lastSlash = i + 1;
     }
