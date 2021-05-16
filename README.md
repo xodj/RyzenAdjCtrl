@@ -27,9 +27,11 @@ RyzenAdj https://github.com/FlyGoat/RyzenAdj,
 
 atrofac-cli https://github.com/cronosun/atrofac,
 
-Qt6 https://www.qt.io/download-open-source,
+Qt https://www.qt.io/download-open-source,
 
 VS2019 https://visualstudio.microsoft.com/,
+
+Inno Setup https://github.com/jrsoftware/issrc,
 
 AMD Trade Mark.
 
