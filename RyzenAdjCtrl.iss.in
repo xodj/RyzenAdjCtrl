@@ -25,21 +25,21 @@ VersionInfoVersion=${STR_CTRL_VERSION}
 //Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"; LicenseFile: "LICENSE"
 
 [Files]
-Source: "Appfolder\Binaries\atrofac-cli.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Config\StyleSheet.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\ImageFormats\qico.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Platforms\qwindows.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Styles\qwindowsvistastyle.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\checkbox_checked.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\checkbox_checked_disabled.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\checkbox_checked_focus.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\checkbox_unchecked.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\checkbox_unchecked_disabled.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\checkbox_unchecked_focus.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\down_arrow.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\down_arrow_disabled.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\up_arrow.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Theme\up_arrow_disabled.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Binaries\atrofac-cli.exe"; DestDir: "{app}\Binaries\"; Flags: ignoreversion
+Source: "Appfolder\Config\StyleSheet.xml"; DestDir: "{app}\Config\"; Flags: ignoreversion
+Source: "Appfolder\ImageFormats\qico.dll"; DestDir: "{app}\ImageFormats\"; Flags: ignoreversion
+Source: "Appfolder\Platforms\qwindows.dll"; DestDir: "{app}\Platforms\"; Flags: ignoreversion
+Source: "Appfolder\Styles\qwindowsvistastyle.dll"; DestDir: "{app}\Styles\"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_checked.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_checked_disabled.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_checked_focus.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_unchecked.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_unchecked_disabled.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\checkbox_unchecked_focus.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\down_arrow.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\down_arrow_disabled.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\up_arrow.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
+Source: "Appfolder\Theme\up_arrow_disabled.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
 Source: "Appfolder\inpoutx64.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\libryzenadj.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\Qt6Core.dll"; DestDir: "{app}"; Flags: ignoreversion
