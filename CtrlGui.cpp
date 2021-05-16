@@ -763,7 +763,7 @@ void CtrlGui::startService(){
 
 void CtrlGui::installService(){
     QProcess process;
-    QString runas = ("\"" + qApp->arguments().value(0) + "\" install");
+    QString runas = ("\"" + qApp->arguments().value(0) + "\" check");
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
 }
 
@@ -1341,17 +1341,22 @@ void CtrlGui::closeEvent(QCloseEvent *event) {
 }
 
 void CtrlGui::useAgent(bool use){
-    if (use && ui_agent == nullptr){
-        qDebug()<<"Create CtrlAgent";
-        ui_agent = new CtrlAgent(conf);
-        connect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
-        connect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
-    } else if(ui_agent != nullptr) {
-        qDebug()<<"Delete CtrlAgent";
-        disconnect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
-        disconnect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
-        delete ui_agent;
-        ui_agent = nullptr;
+    qDebug()<<"CtrlAgent"<<use;
+    if(use){
+        if(ui_agent == nullptr){
+            qDebug()<<"Create CtrlAgent";
+            ui_agent = new CtrlAgent(conf);
+            connect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
+            connect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
+        }
+    } else {
+        if(ui_agent != nullptr) {
+            qDebug()<<"Delete CtrlAgent";
+            disconnect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
+            disconnect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
+            delete ui_agent;
+            ui_agent = nullptr;
+        }
     }
 }
 

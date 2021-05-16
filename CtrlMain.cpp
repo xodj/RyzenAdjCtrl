@@ -162,12 +162,23 @@ int main(int argc, char *argv[])
 
     if(a.arguments().contains("exit"))
         return exitCommand(bufferToService);
-    if(a.arguments().contains("install")){
+    if(a.arguments().contains("check")){
         exitCommand(bufferToService);
         if(checkService()) installService();
         else uninstallService();
         return 0;
     }
+    if(a.arguments().contains("install")){
+        exitCommand(bufferToService);
+        installService();
+        return 0;
+    }
+    if(a.arguments().contains("uninstall")){
+        exitCommand(bufferToService);
+        uninstallService();
+        return 0;
+    }
+
 
     QSharedMemory alreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
     QSharedMemory serviceAlreadyRunning("serviceAlreadyRunning:" + qSharedMemoryKey);
