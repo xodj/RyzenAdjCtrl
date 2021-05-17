@@ -517,13 +517,7 @@ void CtrlService::loadPreset(presetStr *preset){
                 fanArguments = "plan silent";
                 break;
             case 3:
-                fanArguments = "plan performance";
-                break;
-            case 4:
                 fanArguments = "plan turbo";
-                break;
-            case 5:
-                fanArguments = "fan --plan windows --cpu 30c:0%,40c:5%,50c:10%,60c:20%,70c:35%,80c:55%,90c:65%,100c:65% --gpu 30c:0%,40c:5%,50c:10%,60c:20%,70c:35%,80c:55%,90c:65%,100c:65%";
                 break;
             }
             atrofacSendCommand(fanArguments);

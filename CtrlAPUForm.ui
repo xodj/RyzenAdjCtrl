@@ -890,17 +890,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Perfomance</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
               <string>Turbo</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Manual</string>
              </property>
             </item>
            </widget>
