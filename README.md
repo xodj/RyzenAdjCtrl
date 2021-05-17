@@ -25,7 +25,7 @@ GUI for RyzenAdj.
 # Contains:
 RyzenAdj https://github.com/FlyGoat/RyzenAdj,
 
-atrofac-cli https://github.com/cronosun/atrofac,
+atrofac-cli https://github.com/cronosun/atrofac (not using after 0.3.4.492),
 
 Qt https://www.qt.io/download-open-source,
 
