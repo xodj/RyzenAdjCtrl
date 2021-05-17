@@ -51,7 +51,6 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
 
 CtrlService::~CtrlService() {
     cleanup_ryzenadj(adjEntryPoint);
-    exit(0);
 }
 
 void CtrlService::initPmTable(){
