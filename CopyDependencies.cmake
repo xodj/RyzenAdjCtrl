@@ -27,7 +27,6 @@ configure_file(Appfolder/Theme/down_arrow.png ${PROJECT_BINARY_DIR}/Appfolder/Th
 configure_file(Appfolder/Theme/down_arrow_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/down_arrow_disabled.png COPYONLY)
 configure_file(Appfolder/Theme/up_arrow.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/up_arrow.png COPYONLY)
 configure_file(Appfolder/Theme/up_arrow_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/up_arrow_disabled.png COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../atrofac/bin/atrofac-cli.exe ${PROJECT_BINARY_DIR}/Appfolder/Binaries/atrofac-cli.exe COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.dll ${PROJECT_BINARY_DIR}/Appfolder/libryzenadj.dll COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/win32/inpoutx64.dll ${PROJECT_BINARY_DIR}/Appfolder/inpoutx64.dll COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/win32/WinRing0x64.dll ${PROJECT_BINARY_DIR}/Appfolder/WinRing0x64.dll COPYONLY)
