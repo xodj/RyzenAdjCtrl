@@ -2,21 +2,9 @@ cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
 PROJECT(RyzenAdjCtrl VERSION 0.3.3.487 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
-#Generate key for shared memory
+#Generate and place key for shared memory in CtrlConfig.h
 string(RANDOM LENGTH 512 RANDOM_DATA)
 configure_file(CtrlConfig.h.in ${PROJECT_BINARY_DIR}/CtrlConfig.h)
-#Place version to .rc
-set(STR_CTRL_VERSION ${RyzenAdjCtrl_VERSION})
-string(REPLACE "." "." RC_SPLIT ${STR_CTRL_VERSION})
-string(REPLACE "." ";" RC_SPLIT ${RC_SPLIT})
-message("\nRyzenAdjCtrl is now: ${STR_CTRL_VERSION}\n")
-list(GET RC_SPLIT 0 CTRL_VERSION)
-list(GET RC_SPLIT 1 CTRL_MAJOR_VERSION)
-list(GET RC_SPLIT 2 CTRL_MINOR_VERSION)
-list(GET RC_SPLIT 3 CTRL_PATCH_VERSION)
-configure_file(RyzenAdjCtrl.rc.in ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc)
-#Place version to Inno Setup Project
-configure_file(RyzenAdjCtrl.iss.in ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss)
 #Cmake+Qt default args
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
@@ -49,10 +37,6 @@ set(RyzenAdjCtrl_SOURCES
     CtrlMain.cpp
     CtrlService.cpp
     CtrlSettings.cpp
-    ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc
-    RyzenAdjCtrl.rc.in
-    ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss
-    RyzenAdjCtrl.iss.in
     )
 set(RyzenAdjCtrl_QRC
     RyzenAdjRes.qrc
@@ -66,6 +50,28 @@ set(RyzenAdjCtrl_UI
 set(RyzenAdjCtrl_TS_FILES
     Appfolder/Language/RyzenAdjCtrl_ru_RU.ts
     )
+#Only Windows Sources
+if(WIN32)
+    #Place version to .rc
+    set(STR_CTRL_VERSION ${RyzenAdjCtrl_VERSION})
+    string(REPLACE "." "." RC_SPLIT ${STR_CTRL_VERSION})
+    string(REPLACE "." ";" RC_SPLIT ${RC_SPLIT})
+    message("\nRyzenAdjCtrl is now: ${STR_CTRL_VERSION}\n")
+    list(GET RC_SPLIT 0 CTRL_VERSION)
+    list(GET RC_SPLIT 1 CTRL_MAJOR_VERSION)
+    list(GET RC_SPLIT 2 CTRL_MINOR_VERSION)
+    list(GET RC_SPLIT 3 CTRL_PATCH_VERSION)
+    configure_file(RyzenAdjCtrl.rc.in ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc)
+    #Place version to Inno Setup Project
+    configure_file(RyzenAdjCtrl.iss.in ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss)
+    set(RyzenAdjCtrl_SOURCES
+        ${RyzenAdjCtrl_SOURCES}
+        ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc
+        RyzenAdjCtrl.rc.in
+        ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss
+        RyzenAdjCtrl.iss.in
+        )
+endif(WIN32)
 #Add project exec
 add_executable(RyzenAdjCtrl
         ${RyzenAdjCtrl_SOURCES}
@@ -90,4 +96,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 #COPY DEPS FOR WIN MSVC
+if(WIN32)
 include(CopyDependencies.cmake)
+endif(WIN32)
