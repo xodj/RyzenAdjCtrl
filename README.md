@@ -7,6 +7,7 @@ GUI for RyzenAdj.
 - Avaliable swithing presets by Effective Power Mode
 - Avaliable swithing presets by AC Power Mode
 - Agent with notifications
+- For ASUS (ROG or TUF) users have "Armory Crate" profile switch
 
 # Usage:
 > Service started automaticaly after GUI started, or run it as task:
