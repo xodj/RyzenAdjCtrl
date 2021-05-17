@@ -8,6 +8,7 @@
 #include "CtrlSettings.h"
 #include "CtrlEPMCallback.h"
 #include "lib/ryzenadj.h"
+#include "CtrlArmour.h"
 
 #include <QDebug>
 
@@ -57,8 +58,6 @@ private:
 
     void loadPreset(presetStr *preset);
 
-    void atrofacSendCommand(QString arguments);
-
     void sendCurrentPresetIdToGui(int presetId, bool saved);
     void sendArgsToGui(QByteArray arguments);
 
@@ -68,6 +67,7 @@ private:
 
     ryzen_access adjEntryPoint;
     PMTable pmTable;
+    CtrlArmour *armour;
 
     QTimer *takeCurrentInfoTimer;
 

@@ -12,7 +12,8 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
     : QObject(nullptr),
       bufferToService(bufferToService),
       bufferToGui(bufferToGui),
-      conf(conf)
+      conf(conf),
+      armour(new CtrlArmour)
 {
     initPmTable();
 
@@ -508,19 +509,7 @@ void CtrlService::loadPreset(presetStr *preset){
         lastPreset = preset;
 
         if(preset->fanPresetId > 0) {
-            QString fanArguments;
-            switch(preset->fanPresetId){
-            case 1:
-                fanArguments = "plan windows";
-                break;
-            case 2:
-                fanArguments = "plan silent";
-                break;
-            case 3:
-                fanArguments = "plan turbo";
-                break;
-            }
-            atrofacSendCommand(fanArguments);
+            armour->sendArmourThrottlePlan((preset->fanPresetId) - 1);
         }
 
 
@@ -578,25 +567,6 @@ void CtrlService::loadPreset(presetStr *preset){
     set_dgpu_skin_temp_limit(adjEntryPoint, preset->);
     set_apu_slow_limit(adjEntryPoint, preset->);
     set_skin_temp_power_limit(adjEntryPoint ry, preset->);*/
-    }
-}
-
-#include <QProcess>
-
-void CtrlService::atrofacSendCommand(QString arguments) {
-    qDebug() << "RyzenAdjCtrl Service atrofac Commandline: "<<arguments;
-    QStringList argumentsList = arguments.split(" ",Qt::SkipEmptyParts);
-    QProcess process;
-    QString output, error;
-    for(int i = 0; i < 3; i++){
-        qDebug() << "RyzenAdjCtrl Service atrofac-cli.exe exec with" << argumentsList;
-        process.start("Binaries/atrofac-cli.exe", argumentsList);
-        if( !process.waitForStarted() || !process.waitForFinished())
-            return;
-        error = process.readAllStandardError();
-        qDebug() << "RyzenAdjCtrl Service atrofac output:" << error;
-        if (!error.contains("Err"))
-            break;
     }
 }
 

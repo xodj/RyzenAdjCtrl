@@ -843,7 +843,7 @@
           </font>
          </property>
          <property name="title">
-          <string>ASUS ROG FAN Preset</string>
+          <string>ASUS Armory Crate Preset</string>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -885,12 +885,12 @@
             </item>
             <item>
              <property name="text">
-              <string>Silent</string>
+              <string>Turbo</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Turbo</string>
+              <string>Silent</string>
              </property>
             </item>
            </widget>
