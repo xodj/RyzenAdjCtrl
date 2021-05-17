@@ -71,6 +71,9 @@ if(WIN32)
         ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss
         RyzenAdjCtrl.iss.in
         )
+    set(RyzenAdjLib
+        ${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.lib
+        )
 endif(WIN32)
 #Add project exec
 add_executable(RyzenAdjCtrl
@@ -83,7 +86,7 @@ add_executable(RyzenAdjCtrl
 #Link libraries
 target_link_libraries(RyzenAdjCtrl PUBLIC
     Qt${QT_VERSION_MAJOR}::Widgets
-    ${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.lib
+    ${RyzenAdjLib}
     )
 #Set show or not CLI
 set_target_properties(RyzenAdjCtrl
