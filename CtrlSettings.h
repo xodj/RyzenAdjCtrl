@@ -64,7 +64,7 @@ struct presetStr {
 };
 
 struct settingsStr {
-    bool useAgent = false;
+    bool useAgent = true;
     bool showNotifications = true;
 
     bool showReloadStyleSheetButton = false;
