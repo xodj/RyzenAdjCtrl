@@ -23,16 +23,6 @@ GUI for RyzenAdj.
 - [Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.28.29914](https://github.com/xodj/RyzenAdjCtrl/releases/download/0.1.0.41/VC_redist.x64.exe)
 
 # Contains:
-[RyzenAdj](https://github.com/FlyGoat/RyzenAdj),
-
-[atrofac-cli](https://github.com/cronosun/atrofac)(not using after 0.3.4.492),
-
-[Qt](https://www.qt.io/download-open-source),
-
-[VS2019](https://visualstudio.microsoft.com/),
-
-[Inno Setup](https://github.com/jrsoftware/issrc),
-
-AMD Trade Mark.
+[RyzenAdj](https://github.com/FlyGoat/RyzenAdj), [atrofac-cli (not using after 0.3.4.492)](https://github.com/cronosun/atrofac), [Qt](https://www.qt.io/download-open-source), [VS2019](https://visualstudio.microsoft.com/), [Inno Setup](https://github.com/jrsoftware/issrc), AMD Trade Mark (as program icon).
 
 # Distributed by GPL-3 license.
