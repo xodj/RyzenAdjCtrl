@@ -19,20 +19,19 @@ GUI for RyzenAdj.
 > SERVICE MUST RUN WITH ADMINISTRATOR PRIVILEGES
 
 # Requirements:
-- Windows 10 Fall Creators Update (version 1709 16299.64) or later
-- PowerShell
-- MS VCRedist 142 https://github.com/xodj/RyzenAdjCtrl/releases/download/0.1.0.41/VC_redist.x64.exe
+- Windows 10 Fall Creators Update - 1709 16299.64 or later
+- [Microsoft Visual C++ 2015-2019 Redistributable (x64) - 14.28.29914](https://github.com/xodj/RyzenAdjCtrl/releases/download/0.1.0.41/VC_redist.x64.exe)
 
 # Contains:
-RyzenAdj https://github.com/FlyGoat/RyzenAdj,
+[RyzenAdj](https://github.com/FlyGoat/RyzenAdj),
 
-atrofac-cli https://github.com/cronosun/atrofac (not using after 0.3.4.492),
+[atrofac-cli](https://github.com/cronosun/atrofac)(not using after 0.3.4.492),
 
-Qt https://www.qt.io/download-open-source,
+[Qt](https://www.qt.io/download-open-source),
 
-VS2019 https://visualstudio.microsoft.com/,
+[VS2019](https://visualstudio.microsoft.com/),
 
-Inno Setup https://github.com/jrsoftware/issrc,
+[Inno Setup](https://github.com/jrsoftware/issrc),
 
 AMD Trade Mark.
 
