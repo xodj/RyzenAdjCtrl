@@ -19,9 +19,9 @@ GUI for RyzenAdj.
 > SERVICE MUST RUN WITH ADMINISTRATOR PRIVILEGES
 
 # Requirements:
+- Windows 10 Fall Creators Update (version 1709 16299.64) or later
 - PowerShell
-- MSVC https://github.com/xodj/RyzenAdjCtrl/releases/download/0.1.0.41/VC_redist.x64.exe
-- Windows 10, version 1703 or later
+- MS VCRedist 142 https://github.com/xodj/RyzenAdjCtrl/releases/download/0.1.0.41/VC_redist.x64.exe
 
 # Contains:
 RyzenAdj https://github.com/FlyGoat/RyzenAdj,
