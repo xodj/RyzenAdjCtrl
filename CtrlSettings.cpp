@@ -1,9 +1,6 @@
 #include "CtrlSettings.h"
-#include <QFile>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
-#include <QRegularExpression>
-
 #include <QDebug>
 
 CtrlSettings::CtrlSettings()
@@ -92,6 +89,17 @@ bool CtrlSettings::saveSettings() {
         xmlWriter.writeEndElement();
         xmlWriter.writeStartElement("epmMaximumPerfomancePresetId");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.epmMaximumPerfomancePresetId));
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("hideNotSupportedVariables");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.hideNotSupportedVariables));
+        xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("apuFamilyIdx");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.apuFamilyIdx));
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("showArmourPlugin");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showArmourPlugin));
         xmlWriter.writeEndElement();
     //
     xmlWriter.writeEndElement();
@@ -199,6 +207,26 @@ bool CtrlSettings::openSettings(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     settingsBuffer.epmMaximumPerfomancePresetId =
+                            attr.value().toString().toInt();
+            }else{}
+
+        if (xmlReader.name() == QString("hideNotSupportedVariables"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    settingsBuffer.hideNotSupportedVariables =
+                            attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("apuFamilyIdx"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    settingsBuffer.apuFamilyIdx =
+                            attr.value().toString().toInt();
+            }else{}
+
+        if (xmlReader.name() == QString("showArmourPlugin"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    settingsBuffer.showArmourPlugin =
                             attr.value().toString().toInt();
             }else{}
         //

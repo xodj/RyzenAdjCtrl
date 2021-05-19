@@ -1,9 +1,5 @@
 #include "CtrlService.h"
 #include <QXmlStreamReader>
-#include <QFile>
-#include <QDateTime>
-#include <iostream>
-#include <Windows.h>
 
 #define buffer_size 512
 #define bufferToService_refresh_time 33
@@ -61,9 +57,6 @@ void CtrlService::initPmTable(){
     refresh_table(adjEntryPoint);
 
     switch(get_cpu_family(adjEntryPoint)){
-    case -1:
-        pmTable.ryzenFamily = "Unknown";
-        break;
     case 0:
         pmTable.ryzenFamily = "Raven";
         break;
@@ -81,9 +74,6 @@ void CtrlService::initPmTable(){
         break;
     case 5:
         pmTable.ryzenFamily = "Lucienne";
-        break;
-    case 6:
-        pmTable.ryzenFamily = "Unknown";
         break;
     default:
         pmTable.ryzenFamily = "Unknown";
@@ -299,6 +289,77 @@ void CtrlService::decodeArgs(QByteArray args){
                 if (attr.name().toString() == "value")
                     recievedPreset->fanPresetId = attr.value().toInt();
             }else{}
+        //NEW VARS
+        if (argsReader.name() == QString("vrmSocCurrent"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->vrmSocCurrentChecked = true;
+                    recievedPreset->vrmSocCurrent = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("vrmSocMax"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->vrmSocMaxChecked = true;
+                    recievedPreset->vrmSocMax = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("psi0Current"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->psi0CurrentChecked = true;
+                    recievedPreset->psi0Current = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("psi0SocCurrent"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->psi0SocCurrentChecked = true;
+                    recievedPreset->psi0SocCurrent = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("maxLclk"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->maxLclkChecked = true;
+                    recievedPreset->maxLclk = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("minLclk"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->minLclkChecked = true;
+                    recievedPreset->minLclk = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("prochotDeassertionRamp"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->prochotDeassertionRampChecked = true;
+                    recievedPreset->prochotDeassertionRamp = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("dgpuSkinTempLimit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->dgpuSkinTempLimitChecked = true;
+                    recievedPreset->dgpuSkinTempLimit = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("apuSlowLimit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->apuSlowLimitChecked = true;
+                    recievedPreset->apuSlowLimit = attr.value().toInt();
+                }
+            }else{}
+        if (argsReader.name() == QString("skinTempPowerLimit"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value"){
+                    recievedPreset->skinTempPowerLimitChecked = true;
+                    recievedPreset->skinTempPowerLimit = attr.value().toInt();
+                }
+            }else{}
 
 
         if (argsReader.name() == QString("exit")){
@@ -436,6 +497,9 @@ void CtrlService::decodeArgs(QByteArray args){
     if (save){
         qDebug() << "RyzenAdjCtrl Service Recieved Save Preset" << presetId;
         conf->setPresetBuffer(presetId, recievedPreset);
+        if(recievedPreset->presetId == lastPreset->presetId)
+            lastPresetSaved = save;
+        reapplyPresetTimeout();
     }
     if (deletePreset){
         qDebug() << "RyzenAdjCtrl Service Recieved Delete Preset" << presetId;
@@ -557,17 +621,33 @@ void CtrlService::loadPreset(presetStr *preset){
         if(preset->smuMaxPerfomance)
             set_max_performance(adjEntryPoint);
 
-        /*set_vrmsoc_current(adjEntryPoint, preset->);
-    set_vrmsocmax_current(adjEntryPoint, preset->);
-    set_psi0_current(adjEntryPoint, preset->);
-    set_psi0soc_current(adjEntryPoint, preset->);
-    set_max_lclk(adjEntryPoint, preset->);
-    set_min_lclk(adjEntryPoint, preset->);
-    set_prochot_deassertion_ramp(adjEntryPoint ry, preset->);
-    set_dgpu_skin_temp_limit(adjEntryPoint, preset->);
-    set_apu_slow_limit(adjEntryPoint, preset->);
-    set_skin_temp_power_limit(adjEntryPoint ry, preset->);*/
-    }
+        //NEW VARS
+        if(preset->vrmSocCurrentChecked)
+            set_vrmsoc_current(adjEntryPoint, preset->vrmSocCurrent * 1000);
+        if(preset->vrmSocMaxChecked)
+            set_vrmsocmax_current(adjEntryPoint, preset->vrmSocMax * 1000);
+
+        if(preset->psi0CurrentChecked)
+            set_psi0_current(adjEntryPoint, preset->psi0Current * 1000);
+        if(preset->psi0SocCurrentChecked)
+            set_psi0soc_current(adjEntryPoint, preset->psi0SocCurrent * 1000);
+
+        if(preset->maxLclkChecked)
+            set_max_lclk(adjEntryPoint, preset->maxLclk);
+        if(preset->minLclkChecked)
+            set_min_lclk(adjEntryPoint, preset->minLclk);
+
+        if(preset->prochotDeassertionRampChecked)
+            set_prochot_deassertion_ramp(adjEntryPoint, preset->prochotDeassertionRamp);
+
+        if(preset->dgpuSkinTempLimitChecked)
+            set_dgpu_skin_temp_limit(adjEntryPoint, preset->dgpuSkinTempLimit);
+        if(preset->apuSlowLimitChecked)
+            set_apu_slow_limit(adjEntryPoint, preset->apuSlowLimit * 1000);
+        if(preset->skinTempPowerLimitChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->skinTempPowerLimit);
+    } else
+        qDebug()<<"Try to load nullptr (deleted) preset!";
 }
 
 void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
@@ -626,6 +706,9 @@ void CtrlService::takeCurrentInfo() {
     pmTable.dgpu_skin_temp_value = QString::number(get_dgpu_skin_temp_value(adjEntryPoint));
     pmTable.stapm_time = QString::number(get_stapm_time(adjEntryPoint));
     pmTable.slow_time = QString::number(get_slow_time(adjEntryPoint));
+    //NEW VARS
+    pmTable.psi0_current = QString::number(get_psi0_current(adjEntryPoint));
+    pmTable.psi0soc_current = QString::number(get_psi0soc_current(adjEntryPoint));
 
     sendCurrentInfoToGui();
 }
@@ -721,6 +804,13 @@ void CtrlService::sendCurrentInfoToGui(){
         argsWriter.writeEndElement();
         argsWriter.writeStartElement("slow_time");
             argsWriter.writeAttribute("value", pmTable.slow_time);
+        argsWriter.writeEndElement();
+        //NEW VARS
+        argsWriter.writeStartElement("psi0_current");
+            argsWriter.writeAttribute("value", pmTable.psi0_current);
+        argsWriter.writeEndElement();
+        argsWriter.writeStartElement("psi0soc_current");
+            argsWriter.writeAttribute("value", pmTable.psi0soc_current);
         argsWriter.writeEndElement();
     //
     argsWriter.writeEndElement();

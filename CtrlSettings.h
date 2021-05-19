@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QFile>
-#include <QDebug>
+#include "CtrlConfig.h"
 
 enum enumFanPresetId {
     None = 0,
@@ -22,7 +22,7 @@ struct presetStr {
 
     int tempLimitValue = 85;
     bool tempLimitChecked = false;
-    int apuSkinValue = 105;
+    int apuSkinValue = 85;
     bool apuSkinChecked = false;
 
     int stampLimitValue = 25;
@@ -61,6 +61,31 @@ struct presetStr {
 
     bool smuMaxPerfomance = false;
     bool smuPowerSaving = false;
+    //NEW VARS
+    int vrmSocCurrent = 10;
+    bool vrmSocCurrentChecked = false;
+    int vrmSocMax = 13;
+    bool vrmSocMaxChecked = false;
+
+    int psi0Current = 13;
+    bool psi0CurrentChecked = false;
+    int psi0SocCurrent = 5;
+    bool psi0SocCurrentChecked = false;
+
+    int maxLclk = 1200;
+    bool maxLclkChecked = false;
+    int minLclk = 400;
+    bool minLclkChecked = false;
+
+    int prochotDeassertionRamp = 2;
+    bool prochotDeassertionRampChecked = false;
+
+    int dgpuSkinTempLimit = 85;
+    bool dgpuSkinTempLimitChecked = false;
+    int apuSlowLimit = 25;
+    bool apuSlowLimitChecked = false;
+    int skinTempPowerLimit = 25;
+    bool skinTempPowerLimitChecked = false;
 };
 
 struct settingsStr {
@@ -82,6 +107,43 @@ struct settingsStr {
     int epmBetterBatteryPresetId = 1;
     int epmBalancedPresetId = 2;
     int epmMaximumPerfomancePresetId = 3;
+
+    bool hideNotSupportedVariables = false;
+    int apuFamilyIdx = 0;
+
+    bool showArmourPlugin = false;
+};
+
+struct hideShow {
+    int shwStapmLimit;
+    int shwFastLimit;
+    int shwSlowLimit;
+    int shwSlowTime;
+    int shwStapmTime;
+    int shwTctlTemp;
+    int shwVrmCurrent;
+    int shwVrmSocCurrent;
+    int shwVrmMaxCurrent;
+    int shwVrmSocMaxCurrent;
+    int shwPsi0Current;
+    int shwPsi0SocCurrent;
+    int shwMaxSocclkFrequency;
+    int shwMinSocclkFrequency;
+    int shwMaxFclkFrequency;
+    int shwMinFclkFrequency;
+    int shwMaxVcn;
+    int shwMinVcn;
+    int shwMaxLclk;
+    int shwMinLclk;
+    int shwMaxGfxclk;
+    int shwMinGfxclk;
+    int shwProchotDeassertionRamp;
+    int shwApuSkinTemp;
+    int shwDgpuSkinTemp;
+    int shwApuSlowLimit;
+    int shwSkinTempLimit;
+    int shwPowerSaving;
+    int shwMaxPerformance;
 };
 
 class CtrlSettings : public QObject
@@ -105,6 +167,26 @@ public:
     int insertNewPreset(int newidx = -1, presetStr* newPreset = nullptr);
     bool deletePreset(int idx);
 
+    hideShow *hideShowWarnPresetVariable(int idx){
+        switch(idx){
+        case 0:
+            return &shwpvRaven;
+        case 1:
+            return &shwpvPicasso;
+        case 2:
+            return &shwpvRenoir;
+        case 3:
+            return &shwpvCezanne;
+        case 4:
+            return &shwpvDali;
+        case 5:
+            return &shwpvLucienne;
+        default:
+            return &shwpvShowAll;
+        }
+        return &shwpvShowAll;
+    }
+
 private:
     settingsStr settingsBuffer;
     QList<presetStr*> *presets;
@@ -112,6 +194,229 @@ private:
     QFile *configQFile;
     QFile *presetsQFile;
 
+    hideShow shwpvRaven = {
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+    };
+
+    hideShow shwpvPicasso = {
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+    };
+
+    hideShow shwpvRenoir = {
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1
+    };
+
+    hideShow shwpvCezanne = {
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1
+    };
+
+    hideShow shwpvDali = {
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+    };
+
+    hideShow shwpvLucienne = {
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+    };
+
+    hideShow shwpvShowAll = {
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+    };
 };
 
 #endif // CTRLSETTINGS_H

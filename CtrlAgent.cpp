@@ -1,4 +1,6 @@
 #include "CtrlAgent.h"
+#include <QtWidgets/QMenu>
+#include <QAction>
 
 CtrlAgent::CtrlAgent(CtrlSettings *conf)
     : QSystemTrayIcon(new QSystemTrayIcon),
@@ -8,7 +10,8 @@ CtrlAgent::CtrlAgent(CtrlSettings *conf)
     this->setIcon(icon);
     this->setToolTip("RyzenAdjCtrl" "\n"
                      "");
-    trayMenu = new QMenu;
+
+    QMenu *trayMenu = new QMenu;
 
     QAction *action = new QAction("Open RyzenAdjCtrl", this);
     action->setIcon(icon);

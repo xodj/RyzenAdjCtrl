@@ -1,9 +1,7 @@
 #ifndef CTRLAGENT_H
 #define CTRLAGENT_H
 
-#include <QSystemTrayIcon>
-#include <QMenu>
-#include <QAction>
+#include <QtWidgets/QSystemTrayIcon>
 #include "CtrlSettings.h"
 
 class CtrlAgent : public QSystemTrayIcon
@@ -26,7 +24,6 @@ private slots:
 private:
     QString lastMessage;
 
-    QMenu *trayMenu;
     CtrlSettings *conf;
 };
 

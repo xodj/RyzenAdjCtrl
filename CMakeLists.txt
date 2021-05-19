@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenAdjCtrl VERSION 0.3.4.492 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.3.6.575 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
 #Generate and place key for shared memory in CtrlConfig.h
 string(RANDOM LENGTH 512 RANDOM_DATA)
@@ -30,6 +30,8 @@ set(RyzenAdjCtrl_HEADERS
     CtrlService.h
     CtrlSettings.h
     CtrlArmour.h
+    CtrlSpinBox.h
+    CtrlComboBox.h
     )
 set(RyzenAdjCtrl_SOURCES
     CtrlAgent.cpp

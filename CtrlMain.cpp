@@ -1,18 +1,17 @@
 #include <QApplication>
+#include <QDateTime>
+#include <QDebug>
+#include <QDir>
+#include <QFile>
 #include <QMessageBox>
+#include <QProcess>
 #include <QSharedMemory>
 #include <QXmlStreamWriter>
+#include <iostream>
 #include "CtrlConfig.h"
 #include "CtrlSettings.h"
 #include "CtrlService.h"
 #include "CtrlGui.h"
-#include "CtrlAgent.h"
-
-#include <QDebug>
-#include <QFile>
-#include <QDateTime>
-#include <iostream>
-#include <QDir>
 
 #define logFileSizeTreshold 10000000
 
@@ -29,7 +28,7 @@ void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
 }
 
 int exitCommand(QSharedMemory *bufferToService) {
-        qDebug() << "Exit Message From CLI";
+        qDebug() << "Ctrl Main - Exit Message From CLI";
         QByteArray data;
         QXmlStreamWriter argsWriter(&data);
         argsWriter.setAutoFormatting(true);
@@ -52,7 +51,7 @@ int exitCommand(QSharedMemory *bufferToService) {
             bufferToService->detach();
             return 0;
         } else {
-            qDebug()<<"Service is not started.";
+            qDebug()<<"Ctrl Main - Service is not started.";
             return 1;
         }
 }
@@ -85,8 +84,8 @@ bool checkService(){
     for(;!process.waitForFinished();){}
     QString error = process.readAllStandardError();
     QString output = process.readAllStandardOutput();
-    qDebug() << "\nRyzenAdjCtrl Check Service error:\n\n" << error;
-    qDebug() << "\nRyzenAdjCtrl Check Service output:\n\n" << output;
+    qDebug() << "\nCtrl Main - RyzenAdjCtrl Check Service error:\n\n" << error;
+    qDebug() << "\nCtrl Main - RyzenAdjCtrl Check Service output:\n\n" << output;
 
     return (error.size() > 1);
 }
@@ -119,8 +118,8 @@ void installService(){
     for(;!process.waitForFinished();){}
     QString error = process.readAllStandardError();
     QString output = process.readAllStandardOutput();
-    qDebug() << "\nRyzenAdjCtrl Install Service error:\n\n" << error;
-    qDebug() << "\nRyzenAdjCtrl Install Service output:\n\n" << output;
+    qDebug() << "\nCtrl Main - RyzenAdjCtrl Install Service error:\n\n" << error;
+    qDebug() << "\nCtrl Main - RyzenAdjCtrl Install Service output:\n\n" << output;
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Information);
@@ -141,8 +140,8 @@ void uninstallService(){
     for(;!process.waitForFinished();){}
     QString error = process.readAllStandardError();
     QString output = process.readAllStandardOutput();
-    qDebug() << "\nRyzenAdjCtrl Uninstall Service error:\n\n" << error;
-    qDebug() << "\nRyzenAdjCtrl Uninstall Service output:\n\n" << output;
+    qDebug() << "\nCtrl Main - RyzenAdjCtrl Uninstall Service error:\n\n" << error;
+    qDebug() << "\nCtrl Main - RyzenAdjCtrl Uninstall Service output:\n\n" << output;
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Information);
@@ -186,8 +185,8 @@ int main(int argc, char *argv[])
 
     if(a.arguments().contains("startup")) {
         if(serviceAlreadyRunning.attach()){
-            qDebug() << "Service Is Already Running.";
-            qDebug() << "Exit.";
+            qDebug() << "Ctrl Main - Service Is Already Running.";
+            qDebug() << "Ctrl Main - Exit.";
             return 1;
         } else {
             serviceAlreadyRunning.create(1);
@@ -196,8 +195,8 @@ int main(int argc, char *argv[])
     } else {
         fileName = "Logs/RyzenAdjCtrl - Gui.log";
         if(alreadyRunning.attach()){
-            qDebug() << "Application Is Already Running.";
-            qDebug() << "Exit.";
+            qDebug() << "Ctrl Main - Application Is Already Running.";
+            qDebug() << "Ctrl Main - Exit.";
             return 1;
         } else {
             alreadyRunning.create(1);

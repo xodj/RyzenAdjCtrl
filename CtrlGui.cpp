@@ -4,14 +4,13 @@
 #include "ui_CtrlSettingsForm.h"
 #include "ui_CtrlInfoWidget.h"
 #include <QDebug>
-#include <QFile>
-#include <QDialogButtonBox>
 #include <QXmlStreamWriter>
 #include <QTimer>
 #include <QMessageBox>
 #include <QProcess>
-#include <QObject>
-#include <QScroller>
+#include <QtWidgets/QScroller>
+#include <QDesktopServices>
+#include <QUrl>
 
 #define bufferToGui_refresh_time 33
 
@@ -38,7 +37,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
     setupConnections();
     loadStyleSheet();
 
-    this->resize(800, 450);
+    this->resize(600, 450);
 
     if(!conf->getSettingsBuffer()->useAgent)
         this->show();
@@ -91,7 +90,8 @@ void CtrlGui::setupUi(){
         presetForm->presetNameEdit->setText(preset->presetName);
         presetForm->presetNameEdit->setProperty("idx",idx);
 
-        presetForm->savePushButton->setProperty("idx",idx);
+        presetForm->saveApplyPushButton->setProperty("idx",idx);
+        presetForm->saveOnlyPushButton->setProperty("idx",idx);
         presetForm->applyPushButton->setProperty("idx",idx);
         presetForm->cancelPushButton->setProperty("idx",idx);
 
@@ -162,7 +162,8 @@ void CtrlGui::setupConnections(){
         connect(presetFormList->at(i)->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
         connect(presetFormList->at(i)->presetNameEdit, &QLineEdit::textChanged, this, &CtrlGui::presetNameEditChanged);
 
-        connect(presetFormList->at(i)->savePushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
+        connect(presetFormList->at(i)->saveApplyPushButton, &QPushButton::clicked, this, &CtrlGui::saveApplyPreset);
+        connect(presetFormList->at(i)->saveOnlyPushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
         connect(presetFormList->at(i)->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
         connect(presetFormList->at(i)->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
 
@@ -178,6 +179,8 @@ void CtrlGui::setupConnections(){
     connect(ui_infoWidget->spinBox, &QSpinBox::textChanged, this, &CtrlGui::sendRyzenAdjInfo);
 
     connect(ui_settings->installPushButton, &QPushButton::clicked, this, &CtrlGui::installService);
+
+    connect(ui_settings->openAdvancedInfoUrlPushButton, &QPushButton::clicked, this, &CtrlGui::openAdvancedInfoUrl);
 }
 
 void CtrlGui::loadPresets(){
@@ -235,6 +238,33 @@ void CtrlGui::loadPresets(){
         presetForm->smuMaxPerformanceCheckBox->setChecked(presetBuffer->smuMaxPerfomance);
         presetForm->smuPowerSavingCheckBox->setChecked(presetBuffer->smuPowerSaving);
 
+        //NEW VARS
+        presetForm->vrmSocCurrentSpinBox->setValue(presetBuffer->vrmSocCurrent);
+        presetForm->vrmSocCurrentCheckBox->setChecked(presetBuffer->vrmSocCurrentChecked);
+        presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
+        presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
+
+        presetForm->psi0CurrentSpinBox->setValue(presetBuffer->psi0Current);
+        presetForm->psi0CurrentCheckBox->setChecked(presetBuffer->psi0CurrentChecked);
+        presetForm->psi0SocCurrentSpinBox->setValue(presetBuffer->psi0SocCurrent);
+        presetForm->psi0SocCurrentCheckBox->setChecked(presetBuffer->psi0SocCurrentChecked);
+
+        presetForm->maxLclkSpinBox->setValue(presetBuffer->maxLclk);
+        presetForm->maxLclkCheckBox->setChecked(presetBuffer->maxLclkChecked);
+        presetForm->minLclkSpinBox->setValue(presetBuffer->minLclk);
+        presetForm->minLclkCheckBox->setChecked(presetBuffer->minLclkChecked);
+
+        presetForm->prochotDeassertionRampSpinBox->setValue(presetBuffer->prochotDeassertionRamp);
+        presetForm->prochotDeassertionRampCheckBox->setChecked(presetBuffer->prochotDeassertionRampChecked);
+
+        presetForm->dgpuSkinTempLimitSpinBox->setValue(presetBuffer->dgpuSkinTempLimit);
+        presetForm->dgpuSkinTempLimitCheckBox->setChecked(presetBuffer->dgpuSkinTempLimitChecked);
+        presetForm->apuSlowLimitSpinBox->setValue(presetBuffer->apuSlowLimit);
+        presetForm->apuSlowLimitCheckBox->setChecked(presetBuffer->apuSlowLimitChecked);
+        presetForm->skinTempPowerLimitSpinBox->setValue(presetBuffer->skinTempPowerLimit);
+        presetForm->skinTempPowerLimitCheckBox->setChecked(presetBuffer->skinTempPowerLimitChecked);
+
+        //Add idxes to settings
         ui_settings->dcStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
         ui_settings->acStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
         ui_settings->epmBatterySaverComboBox->insertItem(idx, presetBuffer->presetName, idx);
@@ -264,14 +294,17 @@ void CtrlGui::loadStyleSheet(){
 
         if (configReader.name() == QString("TopWidget"))
             foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
-                if (attr.name().toString() == "value")
+                if (attr.name().toString() == "value"){
                     ui->topwidget->setStyleSheet(attr.value().toString());
+                }
             }else{}
 
         if (configReader.name() == QString("TabWidget"))
             foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
-                if (attr.name().toString() == "value")
+                if (attr.name().toString() == "value"){
+                    ui->scrollAreaWidgetContents->setStyleSheet(attr.value().toString());
                     ui->scrollArea->setStyleSheet(attr.value().toString());
+                }
             }else{}
         //
         configReader.readNext();
@@ -345,6 +378,130 @@ void CtrlGui::savePreset(){
 
     presetBuffer->smuMaxPerfomance = presetForm->smuMaxPerformanceCheckBox->isChecked();
     presetBuffer->smuPowerSaving = presetForm->smuPowerSavingCheckBox->isChecked();
+
+    //NEW VARS
+    presetBuffer->vrmSocCurrent = presetForm->vrmSocCurrentSpinBox->value();
+    presetBuffer->vrmSocCurrentChecked = presetForm->vrmSocCurrentCheckBox->isChecked();
+    presetBuffer->vrmSocMax = presetForm->vrmSocMaxSpinBox->value();
+    presetBuffer->vrmSocMaxChecked = presetForm->vrmSocMaxCheckBox->isChecked();
+
+    presetBuffer->psi0Current = presetForm->psi0CurrentSpinBox->value();
+    presetBuffer->psi0CurrentChecked = presetForm->psi0CurrentCheckBox->isChecked();
+    presetBuffer->psi0SocCurrent = presetForm->psi0SocCurrentSpinBox->value();
+    presetBuffer->psi0SocCurrentChecked = presetForm->psi0SocCurrentCheckBox->isChecked();
+
+    presetBuffer->maxLclk = presetForm->maxLclkSpinBox->value();
+    presetBuffer->maxLclkChecked = presetForm->maxLclkCheckBox->isChecked();
+    presetBuffer->minLclk = presetForm->minLclkSpinBox->value();
+    presetBuffer->minLclkChecked = presetForm->minLclkCheckBox->isChecked();
+
+    presetBuffer->prochotDeassertionRamp = presetForm->prochotDeassertionRampSpinBox->value();
+    presetBuffer->prochotDeassertionRampChecked = presetForm->prochotDeassertionRampCheckBox->isChecked();
+
+    presetBuffer->dgpuSkinTempLimit = presetForm->dgpuSkinTempLimitSpinBox->value();
+    presetBuffer->dgpuSkinTempLimitChecked = presetForm->dgpuSkinTempLimitCheckBox->isChecked();
+    presetBuffer->apuSlowLimit = presetForm->apuSlowLimitSpinBox->value();
+    presetBuffer->apuSlowLimitChecked = presetForm->apuSlowLimitCheckBox->isChecked();
+    presetBuffer->skinTempPowerLimit = presetForm->skinTempPowerLimitSpinBox->value();
+    presetBuffer->skinTempPowerLimitChecked = presetForm->skinTempPowerLimitCheckBox->isChecked();
+
+    conf->savePresets();
+
+    sendPreset(idx, true, false);
+}
+
+void CtrlGui::saveApplyPreset(){
+    ui->label->setText("RyzenAdjCtrl - Applying...");
+    int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+
+    if(!infoMessageShowed){
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setText("For better experience:"
+                       "\nDisable auto switcher in settings.");
+        msgBox.exec();
+        infoMessageShowed = true;
+        conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
+        conf->saveSettings();
+    }
+
+    presetStr *presetBuffer = conf->getPresetBuffer(idx);
+
+    Ui::CtrlGuiAPUForm *presetForm;
+    for(qsizetype i = 0;i < presetFormList->count();i++)
+        if(presetFormList->at(i)->applyPushButton->property("idx").toInt() == idx)
+            presetForm = presetFormList->at(i);
+
+    presetBuffer->fanPresetId = presetForm->fanComboBox->currentIndex();
+
+    presetBuffer->tempLimitValue = presetForm->tempLimitSpinBox->value();
+    presetBuffer->tempLimitChecked = presetForm->tempLimitCheckBox->isChecked();
+    presetBuffer->apuSkinValue = presetForm->apuSkinSpinBox->value();
+    presetBuffer->apuSkinChecked = presetForm->apuSkinCheckBox->isChecked();
+    presetBuffer->stampLimitValue = presetForm->stampLimitSpinBox->value();
+    presetBuffer->stampLimitChecked = presetForm->stampLimitCheckBox->isChecked();
+    presetBuffer->fastLimitValue = presetForm->fastLimitSpinBox->value();
+    presetBuffer->fastLimitChecked = presetForm->fastLimitCheckBox->isChecked();
+    presetBuffer->fastTimeValue = presetForm->fastTimeSpinBox->value();
+    presetBuffer->fastTimeChecked = presetForm->fastTimeCheckBox->isChecked();
+    presetBuffer->slowLimitValue = presetForm->slowLimitSpinBox->value();
+    presetBuffer->slowLimitChecked = presetForm->slowLimitCheckBox->isChecked();
+    presetBuffer->slowTimeValue = presetForm->slowTimeSpinBox->value();
+    presetBuffer->slowTimeChecked = presetForm->slowTimeCheckBox->isChecked();
+
+    presetBuffer->vrmCurrentValue = presetForm->vrmCurrentSpinBox->value();
+    presetBuffer->vrmCurrentChecked = presetForm->vrmCurrentCheckBox->isChecked();
+    presetBuffer->vrmMaxValue = presetForm->vrmMaxSpinBox->value();
+    presetBuffer->vrmMaxChecked = presetForm->vrmMaxCheckBox->isChecked();
+
+    presetBuffer->minFclkValue = presetForm->minFclkSpinBox->value();
+    presetBuffer->minFclkChecked = presetForm->minFclkCheckBox->isChecked();
+    presetBuffer->maxFclkValue = presetForm->maxFclkSpinBox->value();
+    presetBuffer->maxFclkChecked = presetForm->maxFclkCheckBox->isChecked();
+
+    presetBuffer->minGfxclkValue = presetForm->minGfxclkSpinBox->value();
+    presetBuffer->minGfxclkChecked = presetForm->minGfxclkCheckBox->isChecked();
+    presetBuffer->maxGfxclkValue = presetForm->maxGfxclkSpinBox->value();
+    presetBuffer->maxGfxclkChecked = presetForm->maxGfxclkCheckBox->isChecked();
+
+    presetBuffer->minSocclkValue = presetForm->minSocclkSpinBox->value();
+    presetBuffer->minSocclkChecked = presetForm->minSocclkCheckBox->isChecked();
+    presetBuffer->maxSocclkValue = presetForm->maxSocclkSpinBox->value();
+    presetBuffer->maxSocclkChecked = presetForm->maxSocclkCheckBox->isChecked();
+
+    presetBuffer->minVcnValue = presetForm->minVcnSpinBox->value();
+    presetBuffer->minVcnChecked = presetForm->minVcnCheckBox->isChecked();
+    presetBuffer->maxVcnValue = presetForm->maxVcnSpinBox->value();
+    presetBuffer->maxVcnChecked = presetForm->maxVcnCheckBox->isChecked();
+
+    presetBuffer->smuMaxPerfomance = presetForm->smuMaxPerformanceCheckBox->isChecked();
+    presetBuffer->smuPowerSaving = presetForm->smuPowerSavingCheckBox->isChecked();
+
+    //NEW VARS
+    presetBuffer->vrmSocCurrent = presetForm->vrmSocCurrentSpinBox->value();
+    presetBuffer->vrmSocCurrentChecked = presetForm->vrmSocCurrentCheckBox->isChecked();
+    presetBuffer->vrmSocMax = presetForm->vrmSocMaxSpinBox->value();
+    presetBuffer->vrmSocMaxChecked = presetForm->vrmSocMaxCheckBox->isChecked();
+
+    presetBuffer->vrmSocMax = presetForm->psi0CurrentSpinBox->value();
+    presetBuffer->psi0CurrentChecked = presetForm->psi0CurrentCheckBox->isChecked();
+    presetBuffer->psi0SocCurrent = presetForm->psi0SocCurrentSpinBox->value();
+    presetBuffer->psi0SocCurrentChecked = presetForm->psi0SocCurrentCheckBox->isChecked();
+
+    presetBuffer->maxLclk = presetForm->maxLclkSpinBox->value();
+    presetBuffer->maxLclkChecked = presetForm->maxLclkCheckBox->isChecked();
+    presetBuffer->minLclk = presetForm->minLclkSpinBox->value();
+    presetBuffer->minLclkChecked = presetForm->minLclkCheckBox->isChecked();
+
+    presetBuffer->prochotDeassertionRamp = presetForm->prochotDeassertionRampSpinBox->value();
+    presetBuffer->prochotDeassertionRampChecked = presetForm->prochotDeassertionRampCheckBox->isChecked();
+
+    presetBuffer->dgpuSkinTempLimit = presetForm->dgpuSkinTempLimitSpinBox->value();
+    presetBuffer->dgpuSkinTempLimitChecked = presetForm->dgpuSkinTempLimitCheckBox->isChecked();
+    presetBuffer->apuSlowLimit = presetForm->apuSlowLimitSpinBox->value();
+    presetBuffer->apuSlowLimitChecked = presetForm->apuSlowLimitCheckBox->isChecked();
+    presetBuffer->skinTempPowerLimit = presetForm->skinTempPowerLimitSpinBox->value();
+    presetBuffer->skinTempPowerLimitChecked = presetForm->skinTempPowerLimitCheckBox->isChecked();
 
     conf->savePresets();
 
@@ -422,11 +579,36 @@ void CtrlGui::cancelPreset(){
 
     presetForm->smuMaxPerformanceCheckBox->setChecked(presetBuffer->smuMaxPerfomance);
     presetForm->smuPowerSavingCheckBox->setChecked(presetBuffer->smuPowerSaving);
+    //NEW VARS
+    presetForm->vrmSocCurrentSpinBox->setValue(presetBuffer->vrmSocCurrent);
+    presetForm->vrmSocCurrentCheckBox->setChecked(presetBuffer->vrmSocCurrentChecked);
+    presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
+    presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
+
+    presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
+    presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
+    presetForm->psi0SocCurrentSpinBox->setValue(presetBuffer->psi0SocCurrent);
+    presetForm->psi0SocCurrentCheckBox->setChecked(presetBuffer->psi0SocCurrentChecked);
+
+    presetForm->maxLclkSpinBox->setValue(presetBuffer->maxLclk);
+    presetForm->maxLclkCheckBox->setChecked(presetBuffer->maxLclkChecked);
+    presetForm->minLclkSpinBox->setValue(presetBuffer->minLclk);
+    presetForm->minLclkCheckBox->setChecked(presetBuffer->minLclkChecked);
+
+    presetForm->prochotDeassertionRampSpinBox->setValue(presetBuffer->prochotDeassertionRamp);
+    presetForm->prochotDeassertionRampCheckBox->setChecked(presetBuffer->prochotDeassertionRampChecked);
+
+    presetForm->dgpuSkinTempLimitSpinBox->setValue(presetBuffer->dgpuSkinTempLimit);
+    presetForm->dgpuSkinTempLimitCheckBox->setChecked(presetBuffer->dgpuSkinTempLimitChecked);
+    presetForm->apuSlowLimitSpinBox->setValue(presetBuffer->apuSlowLimit);
+    presetForm->apuSlowLimitCheckBox->setChecked(presetBuffer->apuSlowLimitChecked);
+    presetForm->skinTempPowerLimitSpinBox->setValue(presetBuffer->skinTempPowerLimit);
+    presetForm->skinTempPowerLimitCheckBox->setChecked(presetBuffer->skinTempPowerLimitChecked);
 
     sendPreset(idx, false);
 }
 
-void CtrlGui::sendPreset(int idx, bool save){
+void CtrlGui::sendPreset(int idx, bool save, bool apply){
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
     argsWriter.setAutoFormatting(true);
@@ -444,8 +626,10 @@ void CtrlGui::sendPreset(int idx, bool save){
             argsWriter.writeStartElement("save");
             argsWriter.writeEndElement();
         }
-        argsWriter.writeStartElement("apply");
-        argsWriter.writeEndElement();
+        if(apply) {
+            argsWriter.writeStartElement("apply");
+            argsWriter.writeEndElement();
+        }
         argsWriter.writeStartElement("id");
             argsWriter.writeAttribute("value", QString::number(idx));
         argsWriter.writeEndElement();
@@ -548,6 +732,63 @@ void CtrlGui::sendPreset(int idx, bool save){
             argsWriter.writeStartElement("tempLimitValue");
             argsWriter.writeEndElement();
         }
+
+        //NEW VARS
+        if(presetForm->vrmSocCurrentCheckBox->isChecked()) {
+            argsWriter.writeStartElement("vrmSocCurrent");
+                argsWriter.writeAttribute("value", QString::number(presetForm->vrmSocCurrentSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(presetForm->vrmSocMaxCheckBox->isChecked()) {
+            argsWriter.writeStartElement("vrmSocMax");
+                argsWriter.writeAttribute("value", QString::number(presetForm->vrmSocMaxSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(presetForm->psi0CurrentCheckBox->isChecked()) {
+            argsWriter.writeStartElement("psi0Current");
+                argsWriter.writeAttribute("value", QString::number(presetForm->psi0CurrentSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(presetForm->psi0SocCurrentCheckBox->isChecked()) {
+            argsWriter.writeStartElement("psi0SocCurrent");
+                argsWriter.writeAttribute("value", QString::number(presetForm->psi0SocCurrentSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(presetForm->maxLclkCheckBox->isChecked()) {
+            argsWriter.writeStartElement("maxLclk");
+                argsWriter.writeAttribute("value", QString::number(presetForm->maxLclkSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(presetForm->minLclkCheckBox->isChecked()) {
+            argsWriter.writeStartElement("minLclk");
+                argsWriter.writeAttribute("value", QString::number(presetForm->minLclkSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(presetForm->prochotDeassertionRampCheckBox->isChecked()) {
+            argsWriter.writeStartElement("prochotDeassertionRamp");
+                argsWriter.writeAttribute("value", QString::number(presetForm->prochotDeassertionRampSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
+        if(presetForm->dgpuSkinTempLimitCheckBox->isChecked()) {
+            argsWriter.writeStartElement("dgpuSkinTempLimit");
+                argsWriter.writeAttribute("value", QString::number(presetForm->dgpuSkinTempLimitSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(presetForm->apuSlowLimitCheckBox->isChecked()) {
+            argsWriter.writeStartElement("apuSlowLimit");
+                argsWriter.writeAttribute("value", QString::number(presetForm->apuSlowLimitSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+        if(presetForm->skinTempPowerLimitCheckBox->isChecked()) {
+            argsWriter.writeStartElement("skinTempPowerLimit");
+                argsWriter.writeAttribute("value", QString::number(presetForm->skinTempPowerLimitSpinBox->value()));
+            argsWriter.writeEndElement();
+        }
+
 
         argsWriter.writeStartElement("fanPresetId");
             argsWriter.writeAttribute("value", QString::number(presetForm->fanComboBox->currentIndex()));
@@ -690,6 +931,11 @@ void CtrlGui::saveSettings(){
             argsWriter.writeAttribute("value", QString::number(settings->epmMaximumPerfomancePresetId));
         argsWriter.writeEndElement();
     }
+
+    settings->hideNotSupportedVariables = ui_settings->hideVarsGroupBox->isChecked();
+    settings->apuFamilyIdx = ui_settings->apuFamilyComboBox->currentIndex();
+
+    settings->showArmourPlugin = ui_settings->showArmourCheckBox->isChecked();
     //
 
     argsWriter.writeEndElement();
@@ -700,6 +946,56 @@ void CtrlGui::saveSettings(){
     conf->saveSettings();
 
     useAgent(settings->useAgent);
+
+    //Hide not supported variables
+    Ui::CtrlGuiAPUForm *presetForm = nullptr;
+    hideShow *var = conf->hideShowWarnPresetVariable(settings->apuFamilyIdx);
+    for(qsizetype i = 0;i < presetFormList->count();i++){
+        presetForm = presetFormList->at(i);
+
+        presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
+        presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
+        presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
+        presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
+        presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
+        presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
+        presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+
+        presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
+        presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+
+        presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
+        presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+
+        presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
+        presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
+        presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
+        presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
+        presetForm->minVcnWidget->setVisible(var->shwMinVcn);
+        presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+
+        presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
+        presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+
+        //NEW VARS
+        presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
+        presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+
+        presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
+        presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+
+        presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
+        presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+
+        presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+
+        presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
+        presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
+        presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+
+        //Show Armour Plugin
+        presetForm->armourGroupBox->setVisible(settings->showArmourPlugin);
+    }
 }
 
 void CtrlGui::readSettings(){
@@ -747,7 +1043,62 @@ void CtrlGui::readSettings(){
             ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(i);
     }
 
+    ui_settings->hideVarsGroupBox->setChecked(settings->hideNotSupportedVariables);
+    ui_settings->apuFamilyComboBox->setCurrentIndex(settings->apuFamilyIdx);
+
+    ui_settings->showArmourCheckBox->setChecked(settings->showArmourPlugin);
+
     useAgent(settings->useAgent);
+
+    //Hide not supported variables
+    Ui::CtrlGuiAPUForm *presetForm = nullptr;
+    hideShow *var = conf->hideShowWarnPresetVariable(settings->apuFamilyIdx);
+    for(qsizetype i = 0;i < presetFormList->count();i++){
+        presetForm = presetFormList->at(i);
+
+        presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
+        presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
+        presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
+        presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
+        presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
+        presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
+        presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+
+        presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
+        presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+
+        presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
+        presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+
+        presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
+        presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
+        presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
+        presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
+        presetForm->minVcnWidget->setVisible(var->shwMinVcn);
+        presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+
+        presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
+        presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+
+        //NEW VARS
+        presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
+        presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+
+        presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
+        presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+
+        presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
+        presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+
+        presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+
+        presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
+        presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
+        presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+
+        //Show Armour Plugin
+        presetForm->armourGroupBox->setVisible(settings->showArmourPlugin);
+    }
 }
 
 void CtrlGui::cancelSettings(){
@@ -816,8 +1167,9 @@ void CtrlGui::settingsPushButtonClicked() {
     QRect rect = settingFrame->geometry();
     const QRect buttonGeometry = ui->settingsPushButton->geometry();
     const QRect windowGeometry = this->geometry();
-    int height = rect.height();
+    //int height = rect.height();
     int width = rect.width();
+    int height = windowGeometry.height() - 8;
     rect.setX(buttonGeometry.left()+windowGeometry.left()+buttonGeometry.width()-width);
     rect.setY(buttonGeometry.top()+windowGeometry.top());
     rect.setWidth(width);
@@ -868,7 +1220,8 @@ void CtrlGui::presetPlusPushButtonClicked(){
     presetForm->deletePushButton->setProperty("idx",idx);
     presetForm->presetNameEdit->setText(presetBuffer->presetName);
     presetForm->presetNameEdit->setProperty("idx",idx);
-    presetForm->savePushButton->setProperty("idx",idx);
+    presetForm->saveApplyPushButton->setProperty("idx",idx);
+    presetForm->saveOnlyPushButton->setProperty("idx",idx);
     presetForm->applyPushButton->setProperty("idx",idx);
     presetForm->cancelPushButton->setProperty("idx",idx);
     presetForm->fanComboBox->setProperty("idx",idx);
@@ -891,7 +1244,8 @@ void CtrlGui::presetPlusPushButtonClicked(){
     connect(button, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
     connect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
     connect(presetForm->presetNameEdit, &QLineEdit::textChanged, this, &CtrlGui::presetNameEditChanged);
-    connect(presetForm->savePushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
+    connect(presetForm->saveApplyPushButton, &QPushButton::clicked, this, &CtrlGui::saveApplyPreset);
+    connect(presetForm->saveOnlyPushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
     connect(presetForm->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
     connect(presetForm->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
     connect(presetForm->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
@@ -982,7 +1336,8 @@ void CtrlGui::presetDeletePushButtonClicked() {
         disconnect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
         disconnect(presetForm->presetNameEdit, &QLineEdit::textChanged, this, &CtrlGui::presetNameEditChanged);
 
-        disconnect(presetForm->savePushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
+        disconnect(presetForm->saveApplyPushButton, &QPushButton::clicked, this, &CtrlGui::saveApplyPreset);
+        disconnect(presetForm->saveOnlyPushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
         disconnect(presetForm->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
         disconnect(presetForm->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
 
@@ -1118,6 +1473,11 @@ void CtrlGui::settingsAutomaticPresetSwitchClicked(){
     }
 }
 
+void CtrlGui::openAdvancedInfoUrl(){
+    QString link = "https://github.com/FlyGoat/RyzenAdj/wiki/Supported-Models";
+    QDesktopServices::openUrl(QUrl(link));
+}
+
 void CtrlGui::recieveArgs(){
     QByteArray arguments;
     if(bufferToGui->attach(QSharedMemory::ReadWrite)){
@@ -1197,122 +1557,133 @@ void CtrlGui::decodeArgs(QByteArray args){
         if (argsReader.name() == QString("stapm_limit"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->stapm_limit->setText(attr.value().toString());
+                    ui_infoWidget->stapm_limit->setText(attr.value().toString() + " W");
             }else{}
         if (argsReader.name() == QString("stapm_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->stapm_value->setText(attr.value().toString());
+                    ui_infoWidget->stapm_value->setText(attr.value().toString() + " W");
             }else{}
         if (argsReader.name() == QString("fast_limit"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->fast_limit->setText(attr.value().toString());
+                    ui_infoWidget->fast_limit->setText(attr.value().toString() + " W");
             }else{}
         if (argsReader.name() == QString("fast_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->fast_value->setText(attr.value().toString());
+                    ui_infoWidget->fast_value->setText(attr.value().toString() + " W");
             }else{}
         if (argsReader.name() == QString("slow_limit"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->slow_limit->setText(attr.value().toString());
+                    ui_infoWidget->slow_limit->setText(attr.value().toString() + " W");
             }else{}
         if (argsReader.name() == QString("slow_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->slow_value->setText(attr.value().toString());
+                    ui_infoWidget->slow_value->setText(attr.value().toString() + " W");
             }else{}
         if (argsReader.name() == QString("apu_slow_limit"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->apu_slow_limit->setText(attr.value().toString());
+                    ui_infoWidget->apu_slow_limit->setText(attr.value().toString() + " W");
             }else{}
         if (argsReader.name() == QString("apu_slow_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->apu_slow_value->setText(attr.value().toString());
+                    ui_infoWidget->apu_slow_value->setText(attr.value().toString() + " W");
             }else{}
         if (argsReader.name() == QString("vrm_current"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->vrm_current->setText(attr.value().toString());
+                    ui_infoWidget->vrm_current->setText(attr.value().toString() + " A");
             }else{}
         if (argsReader.name() == QString("vrm_current_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->vrm_current_value->setText(attr.value().toString());
+                    ui_infoWidget->vrm_current_value->setText(attr.value().toString() + " A");
             }else{}
         if (argsReader.name() == QString("vrmsoc_current"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->vrmsoc_current->setText(attr.value().toString());
+                    ui_infoWidget->vrmsoc_current->setText(attr.value().toString() + " A");
             }else{}
         if (argsReader.name() == QString("vrmsoc_current_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->vrmsoc_current_value->setText(attr.value().toString());
+                    ui_infoWidget->vrmsoc_current_value->setText(attr.value().toString() + " A");
             }else{}
         if (argsReader.name() == QString("vrmmax_current"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->vrmmax_current->setText(attr.value().toString());
+                    ui_infoWidget->vrmmax_current->setText(attr.value().toString() + " A");
             }else{}
         if (argsReader.name() == QString("vrmmax_current_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->vrmmax_current_value->setText(attr.value().toString());
+                    ui_infoWidget->vrmmax_current_value->setText(attr.value().toString() + " A");
             }else{}
         if (argsReader.name() == QString("vrmsocmax_current"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->vrmsocmax_current->setText(attr.value().toString());
+                    ui_infoWidget->vrmsocmax_current->setText(attr.value().toString() + " A");
             }else{}
         if (argsReader.name() == QString("vrmsocmax_current_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->vrmsocmax_current_value->setText(attr.value().toString());
+                    ui_infoWidget->vrmsocmax_current_value->setText(attr.value().toString() + " A");
             }else{}
         if (argsReader.name() == QString("tctl_temp"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->tctl_temp->setText(attr.value().toString());
+                    ui_infoWidget->tctl_temp->setText(attr.value().toString() + " °C");
             }else{}
         if (argsReader.name() == QString("tctl_temp_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->tctl_temp_value->setText(attr.value().toString());
+                    ui_infoWidget->tctl_temp_value->setText(attr.value().toString() + " °C");
             }else{}
         if (argsReader.name() == QString("apu_skin_temp_limit"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->apu_skin_temp_limit->setText(attr.value().toString());
+                    ui_infoWidget->apu_skin_temp_limit->setText(attr.value().toString() + " °C");
             }else{}
         if (argsReader.name() == QString("apu_skin_temp_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->apu_skin_temp_value->setText(attr.value().toString());
+                    ui_infoWidget->apu_skin_temp_value->setText(attr.value().toString() + " °C");
             }else{}
         if (argsReader.name() == QString("dgpu_skin_temp_limit"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->dgpu_skin_temp_limit->setText(attr.value().toString());
+                    ui_infoWidget->dgpu_skin_temp_limit->setText(attr.value().toString() + " °C");
             }else{}
         if (argsReader.name() == QString("dgpu_skin_temp_value"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->dgpu_skin_temp_value->setText(attr.value().toString());
+                    ui_infoWidget->dgpu_skin_temp_value->setText(attr.value().toString() + " °C");
             }else{}
         if (argsReader.name() == QString("stapm_time"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->stapm_time->setText(attr.value().toString());
+                    ui_infoWidget->stapm_time->setText(attr.value().toString() + " Sec.");
             }else{}
         if (argsReader.name() == QString("slow_time"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value")
-                    ui_infoWidget->slow_time->setText(attr.value().toString());
+                    ui_infoWidget->slow_time->setText(attr.value().toString() + " Sec.");
+            }else{}
+        //NEW VARS
+        if (argsReader.name() == QString("psi0_current"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->psi0_current->setText(attr.value().toString() + " A");
+            }else{}
+        if (argsReader.name() == QString("psi0soc_current"))
+            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                if (attr.name().toString() == "value")
+                    ui_infoWidget->psi0soc_current->setText(attr.value().toString() + " A");
             }else{}
         //
         argsReader.readNext();

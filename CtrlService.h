@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QSharedMemory>
-#include <QProcess>
 #include <QTimer>
 #include "CtrlSettings.h"
 #include "CtrlEPMCallback.h"
@@ -42,6 +41,9 @@ struct PMTable{
     QString dgpu_skin_temp_value;
     QString stapm_time;
     QString slow_time;
+    //NEW VARS
+    QString psi0_current;
+    QString psi0soc_current;
 };
 
 class CtrlService : public QObject {

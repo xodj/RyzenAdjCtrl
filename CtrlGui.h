@@ -1,12 +1,12 @@
 #ifndef CTRLGUI_H
 #define CTRLGUI_H
 
-#include <QMainWindow>
-#include <QTranslator>
-#include <QSharedMemory>
-#include <QFrame>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QFrame>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QPushButton>
+#include <QTranslator>
+#include <QSharedMemory>
 #include "CtrlSettings.h"
 #include "CtrlAgent.h"
 
@@ -34,9 +34,10 @@ private:
     void languageChange(QString langid);
 
     void savePreset();
+    void saveApplyPreset();
     void applyPreset();
     void cancelPreset();
-    void sendPreset(int presetId, bool save);
+    void sendPreset(int presetId, bool save, bool apply = true);
 
     void smuCheckBoxClicked();
     void sendArgsToService(QByteArray arguments);
@@ -57,6 +58,8 @@ private:
     void presetDeletePushButtonClicked();
     void presetNameEditChanged(QString name);
     void settingsAutomaticPresetSwitchClicked();
+
+    void openAdvancedInfoUrl();
 
     void recieveArgs();
     void decodeArgs(QByteArray args);
