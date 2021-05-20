@@ -124,7 +124,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="CtrlComboBox" name="comboBox">
          <property name="minimumSize">
           <size>
            <width>75</width>
@@ -317,6 +317,13 @@
    <widget class="QWidget" name="infoWidget"/>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CtrlComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">CtrlComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

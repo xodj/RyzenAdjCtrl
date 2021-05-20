@@ -117,7 +117,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-60</y>
+        <y>0</y>
         <width>333</width>
         <height>515</height>
        </rect>
@@ -193,7 +193,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="epmBatterySaverComboBox">
+                <widget class="CtrlComboBox" name="epmBatterySaverComboBox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -235,7 +235,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="epmBetterBatteryComboBox">
+                <widget class="CtrlComboBox" name="epmBetterBatteryComboBox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -277,7 +277,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="epmBalancedComboBox">
+                <widget class="CtrlComboBox" name="epmBalancedComboBox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -319,7 +319,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="epmMaximumPerfomanceComboBox">
+                <widget class="CtrlComboBox" name="epmMaximumPerfomanceComboBox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -385,7 +385,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="dcStateComboBox">
+                <widget class="CtrlComboBox" name="dcStateComboBox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -427,7 +427,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="acStateComboBox">
+                <widget class="CtrlComboBox" name="acStateComboBox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -501,7 +501,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="reapplyDurationSpinBox">
+             <widget class="CtrlSpinBox" name="reapplyDurationSpinBox">
               <property name="suffix">
                <string> Sec.</string>
               </property>
@@ -622,7 +622,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="apuFamilyComboBox">
+              <widget class="CtrlComboBox" name="apuFamilyComboBox">
                <item>
                 <property name="text">
                  <string>Raven</string>
@@ -778,6 +778,18 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CtrlSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header location="global">CtrlSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CtrlComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">CtrlComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
