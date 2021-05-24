@@ -2,6 +2,7 @@
 #define CTRLEPMCALLBACK_H
 
 #include <QObject>
+#include <QTimer>
 
 enum epmMode{
     BatterySaver = 0,
