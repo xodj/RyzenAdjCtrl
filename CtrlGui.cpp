@@ -14,19 +14,16 @@
 
 #define bufferToGui_refresh_time 33
 
-CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
+CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
     : ui(new Ui::CtrlGui),
       ui_settings(new Ui::CtrlGuiSettings),
       ui_infoWidget(new Ui::CtrlInfoWidget),
-      bufferToService(bufferToService),
-      bufferToGui(bufferToGui),
+      bus(bus),
       conf(conf)
 {
     qtLanguageTranslator = new QTranslator;
 
-    if(bufferToService->attach(QSharedMemory::ReadWrite))
-        bufferToService->detach();
-    else {
+    if(!bus->isServiseRuning()) {
         qDebug() << "RyzenAdjCtrl Service is not runing!";
         startService();
     }
@@ -41,11 +38,7 @@ CtrlGui::CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, Ctr
 
     if(!conf->getSettingsBuffer()->useAgent)
         this->show();
-
-    QTimer *bufferToService_refresh_timer = new QTimer;
-    connect(bufferToService_refresh_timer, &QTimer::timeout,
-            this, &CtrlGui::recieveArgs);
-    bufferToService_refresh_timer->start(bufferToGui_refresh_time);
+    bus->setGUIRuning();
 }
 
 void CtrlGui::setupUi(){
@@ -146,6 +139,10 @@ void CtrlGui::setupUi(){
     settingFrame->resize(1,1);
     ui_settings->setupUi(settingFrame);
     ui->tabWidget->setHidden(false);
+
+#ifndef WIN32
+    ui_settings->epmAutoPresetSwitchGroupBox->setHidden(true);
+#endif
 }
 
 void CtrlGui::setupConnections(){
@@ -181,6 +178,8 @@ void CtrlGui::setupConnections(){
     connect(ui_settings->installPushButton, &QPushButton::clicked, this, &CtrlGui::installService);
 
     connect(ui_settings->openAdvancedInfoUrlPushButton, &QPushButton::clicked, this, &CtrlGui::openAdvancedInfoUrl);
+
+    connect(bus, &CtrlBus::messageFromServiceRecieved, this, &CtrlGui::decodeArgs);
 }
 
 void CtrlGui::loadPresets(){
@@ -797,7 +796,10 @@ void CtrlGui::sendPreset(int idx, bool save, bool apply){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    sendArgsToService(data);
+    if(!bus->sendMessageToService(data)){
+        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
+        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
+    }
 }
 
 void CtrlGui::smuCheckBoxClicked(){
@@ -941,7 +943,10 @@ void CtrlGui::saveSettings(){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    sendArgsToService(data);
+    if(!bus->sendMessageToService(data)){
+        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
+        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
+    }
 
     conf->saveSettings();
 
@@ -1108,29 +1113,28 @@ void CtrlGui::cancelSettings(){
 
 void CtrlGui::startService(){
     QProcess process;
+#ifdef WIN32
     QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
+#else
+    QString output, error;
+    process.start("pkexec", QStringList({"env", "DISPLAY=$DISPLAY", "XAUTHORITY=$XAUTHORITY", qApp->arguments().value(0), "startup"}));
+    if( !process.waitForStarted() || !process.waitForFinished())
+        return;
+    output = process.readAllStandardOutput();
+    error = process.readAllStandardError();
+    qDebug() << "pkexec output:" << output;
+    qDebug() << "pkexec error:" << error;
+    QString runas = ("pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY " + qApp->arguments().value(0) + " startup");
+    //process.startDetached(runas);
+    //pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY /run/media/xodj/Media/GitHub/build-RyzenAdjCtrl-Desktop-Debug/APPFOLDER/RyzenAdjCtrl startup
+#endif
 }
 
 void CtrlGui::installService(){
     QProcess process;
     QString runas = ("\"" + qApp->arguments().value(0) + "\" check");
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
-}
-
-void CtrlGui::sendArgsToService(QByteArray arguments){
-    if(bufferToService->attach(QSharedMemory::ReadWrite)){
-        char *iodata = (char*)bufferToService->data();
-        if (bufferToService->lock()) {
-            for (int i=0;i<arguments.size();i++)
-                iodata[i] = arguments[i];
-            bufferToService->unlock();
-        }
-        bufferToService->detach();
-    } else {
-        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
-        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
-    }
 }
 
 void CtrlGui::infoPushButtonClicked() {
@@ -1155,7 +1159,10 @@ void CtrlGui::sendRyzenAdjInfo(QString value){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    sendArgsToService(data);
+    if(!bus->sendMessageToService(data)){
+        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
+        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
+    }
 }
 
 void CtrlGui::settingsPushButtonClicked() {
@@ -1429,7 +1436,11 @@ void CtrlGui::presetDeletePushButtonClicked() {
     argsWriter.writeEndElement();
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
-    sendArgsToService(data);
+
+    if(!bus->sendMessageToService(data)){
+        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
+        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
+    }
 }
 
 void CtrlGui::presetNameEditChanged(QString name){
@@ -1476,24 +1487,6 @@ void CtrlGui::settingsAutomaticPresetSwitchClicked(){
 void CtrlGui::openAdvancedInfoUrl(){
     QString link = "https://github.com/FlyGoat/RyzenAdj/wiki/Supported-Models";
     QDesktopServices::openUrl(QUrl(link));
-}
-
-void CtrlGui::recieveArgs(){
-    QByteArray arguments;
-    if(bufferToGui->attach(QSharedMemory::ReadWrite)){
-        if (bufferToGui->lock())
-        {
-            char *iodata = (char*)bufferToGui->data();
-            for (int i=0;iodata[i];i++) {
-                arguments.append(iodata[i]);
-                iodata[i] = '\0';
-            }
-            bufferToGui->unlock();
-        }
-        bufferToGui->detach();
-    }
-    if(arguments.size() > 0)
-        decodeArgs(arguments);
 }
 
 void CtrlGui::decodeArgs(QByteArray args){

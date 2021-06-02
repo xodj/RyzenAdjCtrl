@@ -12,17 +12,11 @@ SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
 DisableWelcomePage=no
 LicenseFile=LICENSE
-//PrivilegesRequired=lowest 
 PrivilegesRequired=admin 
 DisableDirPage=no
 DisableProgramGroupPage=no
 OutputBaseFilename=RyzenAdjCtrl-v.${STR_CTRL_VERSION}-Setup
 VersionInfoVersion=${STR_CTRL_VERSION}
-//CloseApplications=no
-
-//[Languages]
-//Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: "LICENSE";
-//Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"; LicenseFile: "LICENSE"
 
 [Files]
 Source: "Appfolder\Config\StyleSheet.xml"; DestDir: "{app}\Config\"; Flags: ignoreversion
@@ -61,11 +55,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Run] 
 Filename: {app}\RyzenAdjCtrl.exe; Parameters: "install"; StatusMsg: RyzenAdjCtrl Service windows tasks is installing. Please wait... Tasks: addWindowsTask
-//Filename: powershell; Parameters: "start-process {app}\RyzenAdjCtrl.exe install -verb runas"; StatusMsg: RyzenAdjCtrl Service windows tasks is installing. Please wait... Tasks: addWindowsTask
 Filename: "{app}\RyzenAdjCtrl.exe"; Description: "Launch RyzenAdjCtrl"; Flags: postinstall nowait skipifsilent
+
 [UninstallRun]  
 Filename: {app}\RyzenAdjCtrl.exe; Parameters: "uninstall";
-//Filename: powershell; Parameters: "start-process {app}\RyzenAdjCtrl.exe uninstall -verb runas";
 
 [Code]
 { ///////////////////////////////////////////////////////////////////// }

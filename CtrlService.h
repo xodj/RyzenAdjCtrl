@@ -2,12 +2,15 @@
 #define CTRLSERVICE_H
 
 #include <QObject>
-#include <QSharedMemory>
 #include <QTimer>
 #include "CtrlSettings.h"
+#ifdef WIN32
 #include "CtrlEPMCallback.h"
+#endif
+#include "CtrlACCallback.h"
 #include "lib/ryzenadj.h"
 #include "CtrlArmour.h"
+#include "CtrlBus.h"
 
 #include <QDebug>
 
@@ -49,19 +52,17 @@ struct PMTable{
 class CtrlService : public QObject {
     Q_OBJECT
 public:
-    CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf);
+    CtrlService(CtrlBus *bus, CtrlSettings *conf);
     ~CtrlService();
 
 private:
     void initPmTable();
 
-    void recieveArgs();
     void decodeArgs(QByteArray args);
 
     void loadPreset(presetStr *preset);
 
     void sendCurrentPresetIdToGui(int presetId, bool saved);
-    void sendArgsToGui(QByteArray arguments);
 
     void currentInfoTimeoutChanged(int timeout);
     void takeCurrentInfo();
@@ -74,25 +75,28 @@ private:
     QTimer *takeCurrentInfoTimer;
 
     ACState currentACState;
+#ifdef WIN32
     epmMode currentEPMode;
+#endif
 
     presetStr *lastPreset = nullptr;
     bool lastPresetSaved = true;
 
-    QSharedMemory *bufferToService;
-    QSharedMemory *bufferToGui;
+    CtrlBus *bus;
 
+#ifdef WIN32
     CtrlEPMCallback *epmCallback;
+#endif
     CtrlACCallback *acCallback;
-
-    QTimer *bufferToService_refresh_timer;
     QTimer *reapplyPresetTimer;
 
     CtrlSettings *conf;
 
 public slots:
     void currentACStateChanged(ACState state);
+#ifdef WIN32
     void epmIdChanged(epmMode EPMode);
+#endif
     void reapplyPresetTimeout();
 
 };

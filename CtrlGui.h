@@ -6,9 +6,9 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QPushButton>
 #include <QTranslator>
-#include <QSharedMemory>
 #include "CtrlSettings.h"
 #include "CtrlAgent.h"
+#include "CtrlBus.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CtrlGui;
@@ -22,7 +22,7 @@ class CtrlGui : public QMainWindow
     Q_OBJECT
 
 public:
-    CtrlGui(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf);
+    CtrlGui(CtrlBus *bus, CtrlSettings *conf);
     ~CtrlGui();
 
 private:
@@ -40,7 +40,6 @@ private:
     void sendPreset(int presetId, bool save, bool apply = true);
 
     void smuCheckBoxClicked();
-    void sendArgsToService(QByteArray arguments);
 
     void saveSettings();
     void readSettings();
@@ -61,7 +60,6 @@ private:
 
     void openAdvancedInfoUrl();
 
-    void recieveArgs();
     void decodeArgs(QByteArray args);
 
     void useAgent(bool use);
@@ -74,8 +72,7 @@ private:
     Ui::CtrlInfoWidget *ui_infoWidget;
     QFrame *settingFrame;
     QTranslator *qtLanguageTranslator;
-    QSharedMemory *bufferToService;
-    QSharedMemory *bufferToGui;
+    CtrlBus *bus;
     CtrlSettings *conf;
     CtrlAgent *ui_agent = nullptr;
 

@@ -4,22 +4,13 @@
 #define buffer_size 512
 #define bufferToService_refresh_time 33
 
-CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferToGui, CtrlSettings *conf)
+CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
     : QObject(nullptr),
-      bufferToService(bufferToService),
-      bufferToGui(bufferToGui),
-      conf(conf),
-      armour(new CtrlArmour)
+      armour(new CtrlArmour),
+      bus(bus),
+      conf(conf)
 {
     initPmTable();
-
-    bufferToService->create(buffer_size);
-    bufferToGui->create(buffer_size);
-    bufferToService_refresh_timer = new QTimer;
-    bufferToService_refresh_timer->connect(bufferToService_refresh_timer,
-                                           &QTimer::timeout, this,
-                                           &CtrlService::recieveArgs);
-    bufferToService_refresh_timer->start(bufferToService_refresh_time);
 
     reapplyPresetTimer = new QTimer;
     connect(reapplyPresetTimer, &QTimer::timeout,
@@ -34,16 +25,20 @@ CtrlService::CtrlService(QSharedMemory *bufferToService, QSharedMemory *bufferTo
                 this, &CtrlService::currentACStateChanged);
     acCallback->emitCurrentACState();
 
+#ifdef WIN32
     epmCallback = new CtrlEPMCallback;
     if(settingsBuffer->epmAutoPresetSwitch)
         connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                 this, &CtrlService::epmIdChanged);
     epmCallback->emitCurrentEPMState();
+#endif
 
     takeCurrentInfoTimer = new QTimer;
     takeCurrentInfoTimer->connect(takeCurrentInfoTimer, &QTimer::timeout, this, &CtrlService::takeCurrentInfo);
 
     qDebug() << "RyzenAdjCtrl Service started";
+    connect(bus, &CtrlBus::messageFromGUIRecieved, this, &CtrlService::decodeArgs);
+    bus->setServiseRuning();
 }
 
 CtrlService::~CtrlService() {
@@ -80,29 +75,12 @@ void CtrlService::initPmTable(){
         break;
     }
     pmTable.biosVersion = QString::number(get_bios_if_ver(adjEntryPoint));
-    std::stringstream ss;
-    ss<< std::hex << get_table_ver(adjEntryPoint);
-    pmTable.pmTableVersion = QString::fromStdString(ss.str());
+    pmTable.pmTableVersion = QString::number(get_table_ver(adjEntryPoint), 16);
     pmTable.ryzenAdjVersion = QString::number(RYZENADJ_REVISION_VER) + "." + QString::number(RYZENADJ_MAJOR_VER) + "." + QString::number(RYZENADJ_MINIOR_VER);
     qDebug() << "RyzenAdjCtrl Service pmTable.ryzenFamily" << pmTable.ryzenFamily;
     qDebug() << "RyzenAdjCtrl Service pmTable.biosVersion" << pmTable.biosVersion;
     qDebug() << "RyzenAdjCtrl Service pmTable.pmTableVersion" << pmTable.pmTableVersion;
     qDebug() << "RyzenAdjCtrl Service pmTable.ryzenAdjVersion" << pmTable.ryzenAdjVersion;
-}
-
-void CtrlService::recieveArgs(){
-    char *iodata = (char*)bufferToService->data();
-    QByteArray arguments;
-    if (bufferToService->lock())
-    {
-      for (int i=0;iodata[i];i++) {
-        arguments.append(iodata[i]);
-        iodata[i] = '\0';
-      }
-      bufferToService->unlock();
-    }
-    if(arguments.size() > 0)
-        decodeArgs(arguments);
 }
 
 void CtrlService::decodeArgs(QByteArray args){
@@ -439,11 +417,13 @@ void CtrlService::decodeArgs(QByteArray args){
                                     = attr.value().toInt();
                             qDebug() << "RyzenAdjCtrl Service Recieved epmAutoPresetSwitch set to "
                                      << settingsBuffer->epmAutoPresetSwitch;
+#ifdef WIN32
                             disconnect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                                     this, &CtrlService::epmIdChanged);
                             if(settingsBuffer->epmAutoPresetSwitch)
                                 connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                                         this, &CtrlService::epmIdChanged);
+#endif
                             reapplyPresetTimeout();
                         }
                 }else{}
@@ -524,6 +504,7 @@ void CtrlService::currentACStateChanged(ACState state){
     }
 }
 
+#ifdef WIN32
 void CtrlService::epmIdChanged(epmMode EPMode){
     settingsStr *settingsBuffer = conf->getSettingsBuffer();
     currentEPMode = EPMode;
@@ -558,6 +539,7 @@ void CtrlService::epmIdChanged(epmMode EPMode){
         loadPreset(conf->getPresetBuffer(epmPresetId));
     }
 }
+#endif
 
 void CtrlService::reapplyPresetTimeout(){
     qDebug() << "RyzenAdjCtrl Service Reapply Preset Timeout";
@@ -667,7 +649,7 @@ void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
     //
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
-    sendArgsToGui(data);
+    bus->sendMessageToGui(data);
 }
 
 void CtrlService::currentInfoTimeoutChanged(int timeout){
@@ -815,14 +797,5 @@ void CtrlService::sendCurrentInfoToGui(){
     //
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
-    sendArgsToGui(data);
-}
-
-void CtrlService::sendArgsToGui(QByteArray arguments){
-    char *iodata = (char*)bufferToGui->data();
-    if (bufferToGui->lock()) {
-        for (int i=0;i<arguments.size();i++)
-            iodata[i] = arguments[i];
-        bufferToGui->unlock();
-    }
+    bus->sendMessageToGui(data);
 }

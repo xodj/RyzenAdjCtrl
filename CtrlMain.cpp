@@ -5,13 +5,12 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QProcess>
-#include <QSharedMemory>
 #include <QXmlStreamWriter>
 #include <iostream>
-#include "CtrlConfig.h"
 #include "CtrlSettings.h"
 #include "CtrlService.h"
 #include "CtrlGui.h"
+#include "CtrlBus.h"
 
 #define logFileSizeTreshold 10000000
 
@@ -27,7 +26,7 @@ void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
     std::cout << msg.toStdString() << std::endl;
 }
 
-int exitCommand(QSharedMemory *bufferToService) {
+int exitCommand(CtrlBus *bus) {
         qDebug() << "Ctrl Main - Exit Message From CLI";
         QByteArray data;
         QXmlStreamWriter argsWriter(&data);
@@ -41,19 +40,9 @@ int exitCommand(QSharedMemory *bufferToService) {
         argsWriter.writeEndElement();
         argsWriter.writeEndDocument();
 
-        if(bufferToService->attach(QSharedMemory::ReadWrite)) {
-            char *iodata = (char*)bufferToService->data();
-            if (bufferToService->lock()) {
-                for (int i=0;i<data.size();i++)
-                    iodata[i] = data[i];
-                bufferToService->unlock();
-            }
-            bufferToService->detach();
-            return 0;
-        } else {
-            qDebug()<<"Ctrl Main - Service is not started.";
-            return 1;
-        }
+        bus->sendMessageToService(data);
+
+        return 0;
 }
 
 void checkLogsSize() {
@@ -156,51 +145,43 @@ int main(int argc, char *argv[])
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
 
-    QString qSharedMemoryKey = sharedMemoryKey;
-    QSharedMemory *bufferToService = new QSharedMemory("bufferToService:" + qSharedMemoryKey);
+    CtrlBus *bus = new CtrlBus;
 
     if(a.arguments().contains("exit"))
-        return exitCommand(bufferToService);
+        return exitCommand(bus);
     if(a.arguments().contains("check")){
-        exitCommand(bufferToService);
+        exitCommand(bus);
         if(checkService()) installService();
         else uninstallService();
         return 0;
     }
     if(a.arguments().contains("install")){
-        exitCommand(bufferToService);
+        exitCommand(bus);
         installService();
         return 0;
     }
     if(a.arguments().contains("uninstall")){
-        exitCommand(bufferToService);
+        exitCommand(bus);
         uninstallService();
         return 0;
     }
 
-
-    QSharedMemory alreadyRunning("guiAlreadyRunning:" + qSharedMemoryKey);
-    QSharedMemory serviceAlreadyRunning("serviceAlreadyRunning:" + qSharedMemoryKey);
-    QSharedMemory *bufferToGui = new QSharedMemory("bufferToGui:" + qSharedMemoryKey);
-
     if(a.arguments().contains("startup")) {
-        if(serviceAlreadyRunning.attach()){
+        if(bus->isServiseRuning()){
             qDebug() << "Ctrl Main - Service Is Already Running.";
             qDebug() << "Ctrl Main - Exit.";
             return 1;
         } else {
-            serviceAlreadyRunning.create(1);
-            (new CtrlService(bufferToService, bufferToGui, new CtrlSettings));
+            (new CtrlService(bus, new CtrlSettings));
         }
     } else {
         fileName = "Logs/RyzenAdjCtrl - Gui.log";
-        if(alreadyRunning.attach()){
+        if(bus->isGUIRuning()){
             qDebug() << "Ctrl Main - Application Is Already Running.";
             qDebug() << "Ctrl Main - Exit.";
             return 1;
         } else {
-            alreadyRunning.create(1);
-            new CtrlGui(bufferToService, bufferToGui, new CtrlSettings);
+            new CtrlGui(bus, new CtrlSettings);
         }
     }
     return a.exec();

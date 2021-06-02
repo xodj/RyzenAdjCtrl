@@ -59,34 +59,3 @@ void CtrlEPMCallback::emitCurrentEPMState(){
     if(currentEpm != epmNone)
         emit epmIdChanged(currentEpm);
 }
-
-#include <QTimer>
-
-#define currentAc_refresh_time 300
-
-CtrlACCallback::CtrlACCallback(){
-    currentAc_refresh_timer = new QTimer;
-    connect(currentAc_refresh_timer, &QTimer::timeout,
-            this, &CtrlACCallback::checkCurrentACState);
-    currentAc_refresh_timer->start(currentAc_refresh_time);
-}
-
-CtrlACCallback::~CtrlACCallback(){
-    disconnect(currentAc_refresh_timer, &QTimer::timeout,
-               this, &CtrlACCallback::checkCurrentACState);
-    currentAc_refresh_timer->stop();
-}
-
-void CtrlACCallback::checkCurrentACState(){
-    SYSTEM_POWER_STATUS sps;
-    if (GetSystemPowerStatus(&sps))
-        if(currentACState != ACState(sps.ACLineStatus)) {
-            currentACState = ACState(sps.ACLineStatus);
-            emit currentACStateChanged(currentACState);
-        }
-}
-
-void CtrlACCallback::emitCurrentACState(){
-    if(currentACState != ACNone)
-        emit currentACStateChanged(currentACState);
-}
