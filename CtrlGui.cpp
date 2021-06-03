@@ -796,10 +796,7 @@ void CtrlGui::sendPreset(int idx, bool save, bool apply){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    if(!bus->sendMessageToService(data)){
-        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
-        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
-    }
+    bus->sendMessageToService(data);
 }
 
 void CtrlGui::smuCheckBoxClicked(){
@@ -943,10 +940,7 @@ void CtrlGui::saveSettings(){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    if(!bus->sendMessageToService(data)){
-        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
-        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
-    }
+    bus->sendMessageToService(data);
 
     conf->saveSettings();
 
@@ -1159,10 +1153,7 @@ void CtrlGui::sendRyzenAdjInfo(QString value){
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    if(!bus->sendMessageToService(data)){
-        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
-        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
-    }
+    bus->sendMessageToService(data);
 }
 
 void CtrlGui::settingsPushButtonClicked() {
@@ -1437,10 +1428,7 @@ void CtrlGui::presetDeletePushButtonClicked() {
     argsWriter.writeEndElement();
     argsWriter.writeEndDocument();
 
-    if(!bus->sendMessageToService(data)){
-        ui->label->setText("RyzenAdjCtrl - The service is not running. Please run the service or restart RyzenAdjCtrl.");
-        qDebug() << "The service is not running. Please run the service or restart RyzenAdjCtrl.";
-    }
+    bus->sendMessageToService(data);
 }
 
 void CtrlGui::presetNameEditChanged(QString name){

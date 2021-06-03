@@ -2,7 +2,6 @@
 #define CTRLACCALLBACK_H
 
 #include <QObject>
-#include <QTimer>
 
 enum ACState {
     Battery = 0,
@@ -11,6 +10,7 @@ enum ACState {
 };
 
 #ifdef WIN32
+#include <QTimer>
 #include <Windows.h>
 
 #define currentAc_refresh_time 300

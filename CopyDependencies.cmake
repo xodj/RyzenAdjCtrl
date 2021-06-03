@@ -1,8 +1,3 @@
-# Doesn't really make sense anywhere else
-if(NOT MSVC)
-	return()
-endif()
-
 # Internal variable to avoid copying more than once
 if(COPIED_DEPENDENCIES)
 	return()
@@ -16,6 +11,8 @@ endif()
 #COPY DEPS
 message("\nCopy Dependencies...\n")
 
+set(COPIED_DEPENDENCIES TRUE CACHE BOOL "Dependencies have been copied, set to false to copy again" FORCE)
+
 configure_file(Appfolder/Config/StyleSheet.xml ${PROJECT_BINARY_DIR}/Appfolder/Config/StyleSheet.xml COPYONLY)
 configure_file(Appfolder/Theme/checkbox_checked.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_checked.png COPYONLY)
 configure_file(Appfolder/Theme/checkbox_checked_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_checked_disabled.png COPYONLY)
@@ -27,6 +24,12 @@ configure_file(Appfolder/Theme/down_arrow.png ${PROJECT_BINARY_DIR}/Appfolder/Th
 configure_file(Appfolder/Theme/down_arrow_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/down_arrow_disabled.png COPYONLY)
 configure_file(Appfolder/Theme/up_arrow.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/up_arrow.png COPYONLY)
 configure_file(Appfolder/Theme/up_arrow_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/up_arrow_disabled.png COPYONLY)
+
+# Doesn't really make sense anywhere else
+if(NOT MSVC)
+	return()
+endif()
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.dll ${PROJECT_BINARY_DIR}/Appfolder/libryzenadj.dll COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/win32/inpoutx64.dll ${PROJECT_BINARY_DIR}/Appfolder/inpoutx64.dll COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/win32/WinRing0x64.dll ${PROJECT_BINARY_DIR}/Appfolder/WinRing0x64.dll COPYONLY)
@@ -52,5 +55,3 @@ configure_file(${CMAKE_PREFIX_PATH}/plugins/platforms/qwindowsd.dll ${PROJECT_BI
 configure_file(${CMAKE_PREFIX_PATH}/plugins/styles/qwindowsvistastyled.dll ${PROJECT_BINARY_DIR}/Appfolder/Styles/qwindowsvistastyled.dll COPYONLY)
 
 endif(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
-
-set(COPIED_DEPENDENCIES TRUE CACHE BOOL "Dependencies have been copied, set to false to copy again" FORCE)
