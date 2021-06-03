@@ -114,7 +114,5 @@ set_target_properties(RyzenAdjCtrl
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-#COPY DEPS FOR WIN MSVC
-if(WIN32)
+#COPY DEPS
 include(CopyDependencies.cmake)
-endif(WIN32)
