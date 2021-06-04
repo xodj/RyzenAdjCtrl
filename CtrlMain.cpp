@@ -3,9 +3,8 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
-#include <QMessageBox>
 #include <QProcess>
-#include <QXmlStreamWriter>
+#include <QMessageBox>
 #include <iostream>
 #include "CtrlSettings.h"
 #include "CtrlService.h"
@@ -26,6 +25,25 @@ void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
     std::cout << msg.toStdString() << std::endl;
 }
 
+void checkLogsSize() {
+    QDir dir("Config");
+    if (!dir.exists())
+        dir.mkpath(".");
+    dir.setPath("Logs");
+    if (!dir.exists())
+        dir.mkpath(".");
+
+    QFile log("Logs/RyzenAdjCtrl - Gui.log");
+    if(log.size() > logFileSizeTreshold)
+        log.remove("Logs/RyzenAdjCtrl - Gui.log");
+    log.setFileName("Logs/RyzenAdjCtrl - Service.log");
+    if(log.size() > logFileSizeTreshold)
+        log.remove("Logs/RyzenAdjCtrl - Service.log");
+}
+
+#ifdef WIN32
+#include <QXmlStreamWriter>
+
 int exitCommand(CtrlBus *bus) {
         qDebug() << "Ctrl Main - Exit Message From CLI";
         QByteArray data;
@@ -43,22 +61,6 @@ int exitCommand(CtrlBus *bus) {
         bus->sendMessageToService(data);
 
         return 0;
-}
-
-void checkLogsSize() {
-    QDir dir("Config");
-    if (!dir.exists())
-        dir.mkpath(".");
-    dir.setPath("Logs");
-    if (!dir.exists())
-        dir.mkpath(".");
-
-    QFile log("Logs/RyzenAdjCtrl - Gui.log");
-    if(log.size() > logFileSizeTreshold)
-        log.remove("Logs/RyzenAdjCtrl - Gui.log");
-    log.setFileName("Logs/RyzenAdjCtrl - Service.log");
-    if(log.size() > logFileSizeTreshold)
-        log.remove("Logs/RyzenAdjCtrl - Service.log");
 }
 
 bool checkService(){
@@ -186,3 +188,36 @@ int main(int argc, char *argv[])
     }
     return a.exec();
 }
+#else
+#include <unistd.h>
+bool sudoersCheck(){
+    if (int(getuid()) != 0){
+        qDebug() << "CtrlMain: Need sudo priviliges!";
+        QMessageBox msgBox;
+        msgBox.setWindowIcon(QIcon(":/main/amd_icon.ico"));
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setText("Need sudo priviliges!\n");
+        msgBox.exec();
+        return false;
+    } else
+        return true;
+}
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+
+    checkLogsSize();
+    qInstallMessageHandler(messageHandler);
+
+    if(!sudoersCheck())
+        exit(1);
+
+    CtrlBus *bus = new CtrlBus;
+    CtrlSettings *settings = new CtrlSettings;
+    new CtrlService(bus, settings);
+    new CtrlGui(bus, settings);
+
+    return a.exec();
+}
+#endif

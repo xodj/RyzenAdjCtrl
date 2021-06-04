@@ -12,6 +12,10 @@
 #include <QDesktopServices>
 #include <QUrl>
 
+#ifndef WIN32
+#include "CtrlService.h"
+#endif
+
 #define bufferToGui_refresh_time 33
 
 CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
@@ -23,10 +27,12 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
 {
     qtLanguageTranslator = new QTranslator;
 
+#ifdef WIN32
     if(!bus->isServiseRuning()) {
         qDebug() << "RyzenAdjCtrl Service is not runing!";
         startService();
     }
+#endif
 
     setupUi();
     loadPresets();
@@ -38,7 +44,12 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
 
     if(!conf->getSettingsBuffer()->useAgent)
         this->show();
+#ifdef WIN32
     bus->setGUIRuning();
+#endif
+#ifndef WIN32
+    this->setWindowIcon(QIcon(":/main/amd_icon.ico"));
+#endif
 }
 
 void CtrlGui::setupUi(){
@@ -142,6 +153,7 @@ void CtrlGui::setupUi(){
 
 #ifndef WIN32
     ui_settings->epmAutoPresetSwitchGroupBox->setHidden(true);
+    ui_settings->installPushButton->setHidden(true);
 #endif
 }
 
@@ -175,8 +187,9 @@ void CtrlGui::setupConnections(){
     connect(ui_settings->acAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
     connect(ui_infoWidget->spinBox, &QSpinBox::textChanged, this, &CtrlGui::sendRyzenAdjInfo);
 
+#ifdef WIN32
     connect(ui_settings->installPushButton, &QPushButton::clicked, this, &CtrlGui::installService);
-
+#endif
     connect(ui_settings->openAdvancedInfoUrlPushButton, &QPushButton::clicked, this, &CtrlGui::openAdvancedInfoUrl);
 
     connect(bus, &CtrlBus::messageFromServiceRecieved, this, &CtrlGui::decodeArgs);
@@ -1105,24 +1118,11 @@ void CtrlGui::cancelSettings(){
     readSettings();
 }
 
+#ifdef WIN32
 void CtrlGui::startService(){
     QProcess process;
-#ifdef WIN32
     QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
-#else
-    QString output, error;
-    process.start("pkexec", QStringList({"env", "DISPLAY=$DISPLAY", "XAUTHORITY=$XAUTHORITY", qApp->arguments().value(0), "startup"}));
-    if( !process.waitForStarted() || !process.waitForFinished())
-        return;
-    output = process.readAllStandardOutput();
-    error = process.readAllStandardError();
-    qDebug() << "pkexec output:" << output;
-    qDebug() << "pkexec error:" << error;
-    QString runas = ("pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY " + qApp->arguments().value(0) + " startup");
-    //process.startDetached(runas);
-    //pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY /run/media/xodj/Media/GitHub/build-RyzenAdjCtrl-Desktop-Debug/APPFOLDER/RyzenAdjCtrl startup
-#endif
 }
 
 void CtrlGui::installService(){
@@ -1130,6 +1130,7 @@ void CtrlGui::installService(){
     QString runas = ("\"" + qApp->arguments().value(0) + "\" check");
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
 }
+#endif
 
 void CtrlGui::infoPushButtonClicked() {
     ui->infoDockWidget->setHidden(ui->infoDockWidget->isVisible());

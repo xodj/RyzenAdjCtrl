@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenAdjCtrl VERSION 0.4.0.632 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.4.0.644 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
 #Generate and place key for shared memory in CtrlConfig.h
 string(RANDOM LENGTH 512 RANDOM_DATA)
@@ -84,7 +84,7 @@ endif(WIN32)
 if(UNIX)
     message("UNIX OS")
     set(RyzenAdjLib
-        ${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj_debug.so
+        ${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadjd.so
         )
 endif(UNIX)
 #Add project exec

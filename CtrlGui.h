@@ -45,8 +45,10 @@ private:
     void readSettings();
     void cancelSettings();
 
+#ifdef WIN32
     void startService();
     void installService();
+#endif
 
     void infoPushButtonClicked();
     void sendRyzenAdjInfo(QString value = "0");

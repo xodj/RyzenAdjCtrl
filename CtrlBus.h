@@ -2,11 +2,11 @@
 #define CTRLBUS_H
 
 #include <QObject>
-#include "CtrlConfig.h"
 
 #ifdef WIN32
 #include <QSharedMemory>
 #include <QTimer>
+#include "CtrlConfig.h"
 
 #define buffer_size 512
 #define refresh_time 33
@@ -113,73 +113,23 @@ private:
     QTimer *refresh_timer;
 };
 #else //WIN32
-#include <QtDBus/QtDBus>
 class CtrlBus : public QObject
 {
     Q_OBJECT
 public:
-    CtrlBus(QString qSharedMemoryKey = sharedMemoryKey)
-        : QObject(nullptr)
-    {
-        if (!QDBusConnection::sessionBus().isConnected()) {
-            fprintf(stderr, "Cannot connect to the D-Bus session bus.\n"
-                    "To start it, run:\n"
-                    "\teval `dbus-launch --auto-syntax`\n");
-            exit(1);
-        }
-    }
+    CtrlBus() : QObject(nullptr){}
     ~CtrlBus(){}
 
     void sendMessageToService(QByteArray data){
-        busInterface->call(QDBus::NoBlock, "messageFromGui", data.constData());
+        emit messageFromGUIRecieved(data);
     }
     void sendMessageToGui(QByteArray data){
-        busInterface->call(QDBus::NoBlock, "messageFromService", data.constData());
-    }
-    void setServiseRuning(){
-        QDBusConnection::sessionBus().registerService("by.xodj.ryzenadjctrl.service");
-        QDBusConnection::sessionBus().registerObject("/toService", this, QDBusConnection::ExportAllSlots);
-        busInterface = new QDBusInterface("by.xodj.ryzenadjctrl.gui", "/toGui", "", QDBusConnection::sessionBus());
-    }
-    void setGUIRuning(){
-        QDBusConnection::sessionBus().registerService("by.xodj.ryzenadjctrl.gui");
-        QDBusConnection::sessionBus().registerObject("/toGui", this, QDBusConnection::ExportAllSlots);
-        busInterface = new QDBusInterface("by.xodj.ryzenadjctrl.service", "/toService", "", QDBusConnection::sessionBus());
-    }
-
-    bool isServiseRuning(){
-        bool return_ = true;
-        if(QDBusConnection::sessionBus().registerService("by.xodj.ryzenadjctrl.service")){
-            return_ = false;
-            QDBusConnection::sessionBus().unregisterService("by.xodj.ryzenadjctrl.service");
-        }
-        return return_;
-    }
-    bool isGUIRuning(){
-        bool return_ = true;
-        if(QDBusConnection::sessionBus().registerService("by.xodj.ryzenadjctrl.gui")){
-            return_ = false;
-            QDBusConnection::sessionBus().unregisterService("by.xodj.ryzenadjctrl.gui");
-        }
-        return return_;
+        messageFromServiceRecieved(data);
     }
 
 signals:
     void messageFromServiceRecieved(QByteArray data);
     void messageFromGUIRecieved(QByteArray data);
-
-public slots:
-    void messageFromGui(const QString &arg){
-        if(arg.size() > 0)
-            emit messageFromGUIRecieved(arg.toLatin1());
-    }
-    void messageFromService(const QString &arg){
-        if(arg.size() > 0)
-            emit messageFromServiceRecieved(arg.toLatin1());
-    }
-
-private:
-    QDBusInterface *busInterface;
 };
 #endif //WIN32
 #endif // CTRLBUS_H

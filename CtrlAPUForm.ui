@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>678</width>
-    <height>383</height>
+    <width>702</width>
+    <height>389</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -80,7 +80,7 @@
     <widget class="QScrollArea" name="scrollArea">
      <property name="minimumSize">
       <size>
-       <width>660</width>
+       <width>690</width>
        <height>300</height>
       </size>
      </property>
@@ -91,9 +91,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-307</y>
-        <width>641</width>
-        <height>605</height>
+        <y>0</y>
+        <width>665</width>
+        <height>790</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">

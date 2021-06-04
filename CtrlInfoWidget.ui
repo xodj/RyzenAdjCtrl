@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>295</width>
-    <height>295</height>
+    <width>305</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>295</width>
-    <height>295</height>
+    <width>305</width>
+    <height>305</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -92,8 +92,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>258</width>
-        <height>420</height>
+        <width>268</width>
+        <height>600</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -130,12 +130,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>108</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="font">
               <font>
                <weight>75</weight>
@@ -160,13 +154,7 @@
             <widget class="QLabel" name="label_7">
              <property name="minimumSize">
               <size>
-               <width>60</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
+               <width>70</width>
                <height>20</height>
               </size>
              </property>
@@ -194,13 +182,7 @@
             <widget class="QLabel" name="label_8">
              <property name="minimumSize">
               <size>
-               <width>60</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
+               <width>70</width>
                <height>20</height>
               </size>
              </property>
@@ -239,12 +221,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>Sustained Power Limit</string>
              </property>
@@ -257,14 +233,8 @@
             <widget class="QLineEdit" name="stapm_limit">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -276,14 +246,8 @@
             <widget class="QLineEdit" name="stapm_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="text">
@@ -309,12 +273,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>Actual Power Limit</string>
              </property>
@@ -327,14 +285,8 @@
             <widget class="QLineEdit" name="fast_limit">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -346,14 +298,8 @@
             <widget class="QLineEdit" name="fast_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -376,12 +322,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>Average Power Limit</string>
              </property>
@@ -394,14 +334,8 @@
             <widget class="QLineEdit" name="slow_limit">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -413,14 +347,8 @@
             <widget class="QLineEdit" name="slow_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -443,12 +371,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>Slow PPT Time</string>
              </property>
@@ -461,14 +383,8 @@
             <widget class="QLineEdit" name="slow_time">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -478,15 +394,15 @@
            </item>
            <item>
             <widget class="QLabel" name="label_9">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
-               <width>60</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
+               <width>70</width>
                <height>20</height>
               </size>
              </property>
@@ -525,12 +441,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>Sustained Time</string>
              </property>
@@ -543,14 +453,8 @@
             <widget class="QLineEdit" name="stapm_time">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -560,15 +464,15 @@
            </item>
            <item>
             <widget class="QLabel" name="label_17">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
-               <width>60</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
+               <width>70</width>
                <height>20</height>
               </size>
              </property>
@@ -607,12 +511,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>Tctl Temp Limit</string>
              </property>
@@ -625,14 +523,8 @@
             <widget class="QLineEdit" name="tctl_temp">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -644,14 +536,8 @@
             <widget class="QLineEdit" name="tctl_temp_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -674,12 +560,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>VRM Limit</string>
              </property>
@@ -692,14 +572,8 @@
             <widget class="QLineEdit" name="vrm_current">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -711,14 +585,8 @@
             <widget class="QLineEdit" name="vrm_current_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -741,12 +609,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>VRM SoC Limit</string>
              </property>
@@ -759,14 +621,8 @@
             <widget class="QLineEdit" name="vrmsoc_current">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -778,14 +634,8 @@
             <widget class="QLineEdit" name="vrmsoc_current_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -808,12 +658,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>VRM Max Limit</string>
              </property>
@@ -826,14 +670,8 @@
             <widget class="QLineEdit" name="vrmmax_current">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -845,14 +683,8 @@
             <widget class="QLineEdit" name="vrmmax_current_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -875,12 +707,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>VRM SoC Max Limit</string>
              </property>
@@ -893,14 +719,8 @@
             <widget class="QLineEdit" name="vrmsocmax_current">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -912,14 +732,8 @@
             <widget class="QLineEdit" name="vrmsocmax_current_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -942,12 +756,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>PSI0 VDD Limit</string>
              </property>
@@ -960,14 +768,8 @@
             <widget class="QLineEdit" name="psi0_current">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -977,15 +779,15 @@
            </item>
            <item>
             <widget class="QLabel" name="label_18">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
-               <width>60</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
+               <width>70</width>
                <height>20</height>
               </size>
              </property>
@@ -1024,12 +826,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>PSI0 SoC Limit</string>
              </property>
@@ -1042,14 +838,8 @@
             <widget class="QLineEdit" name="psi0soc_current">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -1059,15 +849,15 @@
            </item>
            <item>
             <widget class="QLabel" name="label_19">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
-               <width>60</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
+               <width>70</width>
                <height>20</height>
               </size>
              </property>
@@ -1106,12 +896,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>APU Skin Temp Limit</string>
              </property>
@@ -1124,14 +908,8 @@
             <widget class="QLineEdit" name="apu_skin_temp_limit">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -1143,14 +921,8 @@
             <widget class="QLineEdit" name="apu_skin_temp_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -1173,12 +945,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>dGPU Skin Temp Limit</string>
              </property>
@@ -1191,14 +957,8 @@
             <widget class="QLineEdit" name="dgpu_skin_temp_limit">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -1210,14 +970,8 @@
             <widget class="QLineEdit" name="dgpu_skin_temp_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -1240,12 +994,6 @@
                <height>20</height>
               </size>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>116</width>
-               <height>20</height>
-              </size>
-             </property>
              <property name="text">
               <string>APU Slow Limit</string>
              </property>
@@ -1258,14 +1006,8 @@
             <widget class="QLineEdit" name="apu_slow_limit">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">
@@ -1277,14 +1019,8 @@
             <widget class="QLineEdit" name="apu_slow_value">
              <property name="minimumSize">
               <size>
-               <width>60</width>
+               <width>70</width>
                <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>60</width>
-               <height>16777215</height>
               </size>
              </property>
              <property name="readOnly">

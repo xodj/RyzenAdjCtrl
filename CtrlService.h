@@ -77,16 +77,13 @@ private:
     ACState currentACState;
 #ifdef WIN32
     epmMode currentEPMode;
+    CtrlEPMCallback *epmCallback;
 #endif
 
     presetStr *lastPreset = nullptr;
     bool lastPresetSaved = true;
 
     CtrlBus *bus;
-
-#ifdef WIN32
-    CtrlEPMCallback *epmCallback;
-#endif
     CtrlACCallback *acCallback;
     QTimer *reapplyPresetTimer;
 
