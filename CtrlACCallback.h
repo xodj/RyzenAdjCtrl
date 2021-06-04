@@ -55,6 +55,7 @@ public slots:
 #else
 class CtrlACCallback : public QObject
 {
+    //Add ac callback for unix
     Q_OBJECT
 public:
     CtrlACCallback() {}

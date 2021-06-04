@@ -91,6 +91,7 @@ private:
 #else
 class CtrlArmour : public QObject
 {
+    //Add armory preset switch for unix
     Q_OBJECT
 public:
     CtrlArmour(){}

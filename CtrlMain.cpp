@@ -189,8 +189,13 @@ int main(int argc, char *argv[])
     }
     return a.exec();
 }
-#else
-#ifndef WIN32
+#else //BUILD_SERVICE
+#ifdef WIN32
+bool sudoersCheck(){
+    //add admin rights check
+    return true;
+}
+#else //WIN32
 #include <unistd.h>
 bool sudoersCheck(){
     if (int(getuid()) != 0){
@@ -204,7 +209,7 @@ bool sudoersCheck(){
     } else
         return true;
 }
-#endif
+#endif //WIN32
 
 int main(int argc, char *argv[])
 {
@@ -213,16 +218,13 @@ int main(int argc, char *argv[])
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
 
-#ifndef WIN32
     if(!sudoersCheck())
         exit(1);
-#endif
 
     CtrlBus *bus = new CtrlBus;
-    CtrlSettings *settings = new CtrlSettings;
-    new CtrlService(bus, settings);
-    new CtrlGui(bus, settings);
+    new CtrlService(bus, new CtrlSettings);
+    new CtrlGui(bus, new CtrlSettings);
 
     return a.exec();
 }
-#endif
+#endif //BUILD_SERVICE
