@@ -92,8 +92,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>268</width>
-        <height>600</height>
+        <width>274</width>
+        <height>450</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -115,6 +115,12 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <property name="spacing">
+          <number>4</number>
+         </property>
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
           <number>4</number>
          </property>
          <item>

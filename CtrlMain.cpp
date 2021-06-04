@@ -10,6 +10,7 @@
 #include "CtrlService.h"
 #include "CtrlGui.h"
 #include "CtrlBus.h"
+#include "CtrlConfig.h"
 
 #define logFileSizeTreshold 10000000
 
@@ -41,7 +42,7 @@ void checkLogsSize() {
         log.remove("Logs/RyzenAdjCtrl - Service.log");
 }
 
-#ifdef WIN32
+#ifdef BUILD_SERVICE
 #include <QXmlStreamWriter>
 
 int exitCommand(CtrlBus *bus) {
@@ -189,6 +190,7 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 #else
+#ifndef WIN32
 #include <unistd.h>
 bool sudoersCheck(){
     if (int(getuid()) != 0){
@@ -202,6 +204,7 @@ bool sudoersCheck(){
     } else
         return true;
 }
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -210,8 +213,10 @@ int main(int argc, char *argv[])
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
 
+#ifndef WIN32
     if(!sudoersCheck())
         exit(1);
+#endif
 
     CtrlBus *bus = new CtrlBus;
     CtrlSettings *settings = new CtrlSettings;

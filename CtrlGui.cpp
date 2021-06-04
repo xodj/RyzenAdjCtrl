@@ -11,10 +11,7 @@
 #include <QtWidgets/QScroller>
 #include <QDesktopServices>
 #include <QUrl>
-
-#ifndef WIN32
-#include "CtrlService.h"
-#endif
+#include "CtrlConfig.h"
 
 #define bufferToGui_refresh_time 33
 
@@ -27,7 +24,7 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
 {
     qtLanguageTranslator = new QTranslator;
 
-#ifdef WIN32
+#ifdef BUILD_SERVICE
     if(!bus->isServiseRuning()) {
         qDebug() << "RyzenAdjCtrl Service is not runing!";
         startService();
@@ -44,7 +41,7 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
 
     if(!conf->getSettingsBuffer()->useAgent)
         this->show();
-#ifdef WIN32
+#ifdef BUILD_SERVICE
     bus->setGUIRuning();
 #endif
 #ifndef WIN32
@@ -153,6 +150,8 @@ void CtrlGui::setupUi(){
 
 #ifndef WIN32
     ui_settings->epmAutoPresetSwitchGroupBox->setHidden(true);
+#endif
+#ifndef BUILD_SERVICE
     ui_settings->installPushButton->setHidden(true);
 #endif
 }
@@ -187,7 +186,7 @@ void CtrlGui::setupConnections(){
     connect(ui_settings->acAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
     connect(ui_infoWidget->spinBox, &QSpinBox::textChanged, this, &CtrlGui::sendRyzenAdjInfo);
 
-#ifdef WIN32
+#ifdef BUILD_SERVICE
     connect(ui_settings->installPushButton, &QPushButton::clicked, this, &CtrlGui::installService);
 #endif
     connect(ui_settings->openAdvancedInfoUrlPushButton, &QPushButton::clicked, this, &CtrlGui::openAdvancedInfoUrl);
@@ -1118,7 +1117,7 @@ void CtrlGui::cancelSettings(){
     readSettings();
 }
 
-#ifdef WIN32
+#ifdef BUILD_SERVICE
 void CtrlGui::startService(){
     QProcess process;
     QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");

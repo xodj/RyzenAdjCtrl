@@ -2,11 +2,11 @@
 #define CTRLBUS_H
 
 #include <QObject>
+#include "CtrlConfig.h"
 
-#ifdef WIN32
+#ifdef BUILD_SERVICE
 #include <QSharedMemory>
 #include <QTimer>
-#include "CtrlConfig.h"
 
 #define buffer_size 512
 #define refresh_time 33

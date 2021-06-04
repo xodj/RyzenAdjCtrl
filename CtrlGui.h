@@ -45,7 +45,7 @@ private:
     void readSettings();
     void cancelSettings();
 
-#ifdef WIN32
+#ifdef BUILD_SERVICE
     void startService();
     void installService();
 #endif

@@ -38,7 +38,7 @@ CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
 
     qDebug() << "RyzenAdjCtrl Service started";
     connect(bus, &CtrlBus::messageFromGUIRecieved, this, &CtrlService::decodeArgs);
-#ifdef WIN32
+#ifdef BUILD_SERVICE
     bus->setServiseRuning();
 #endif
 }

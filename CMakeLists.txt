@@ -1,7 +1,18 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenAdjCtrl VERSION 0.4.0.644 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.4.0.657 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
+#BUILD_STANDALONE on UNIX or choose on Windows
+if(WIN32)
+    set(BUILD_STANDALONE FALSE CACHE BOOL "Build without service")
+    if(BUILD_STANDALONE)
+        set(DEF_UNDEF_BUILD_SERVICE "#undef BUILD_SERVICE")
+    else(BUILD_STANDALONE)
+        set(DEF_UNDEF_BUILD_SERVICE "#define BUILD_SERVICE")
+    endif(BUILD_STANDALONE)
+else(WIN32)
+    set(DEF_UNDEF_BUILD_SERVICE "#undef BUILD_SERVICE")
+endif(WIN32)
 #Generate and place key for shared memory in CtrlConfig.h
 string(RANDOM LENGTH 512 RANDOM_DATA)
 configure_file(CtrlConfig.h.in ${PROJECT_BINARY_DIR}/CtrlConfig.h)
@@ -14,7 +25,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #Check Qt PATH
 if(NOT CMAKE_PREFIX_PATH)
-    message(Please add QTDIR to CMAKE_PREFIX_PATH)
+    message("Please add QTDIR to CMAKE_PREFIX_PATH")
     set(CMAKE_PREFIX_PATH "D:/Qt/6.0.4/msvc2019_64")
 endif()
 #Find Qt Libraries

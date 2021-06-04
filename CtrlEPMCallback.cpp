@@ -1,6 +1,7 @@
 #include "CtrlEPMCallback.h"
 
-#define _WIN32_WINNT 0x1809
+#define NTDDI_VERSION NTDDI_WIN10_RS5   //0x0A000006 1809
+#define _WIN32_WINNT _WIN32_WINNT_WIN10 //Windows 10 (0x0A00)
 
 #include <Windows.h>
 #include <PowrProf.h>
@@ -9,7 +10,7 @@
 
 CtrlEPMCallback *epmCallbackMainClass;
 
-void epmCallback(EFFECTIVE_POWER_MODE EPM, void*) {
+void epmCallback(EFFECTIVE_POWER_MODE EPM, void *Context) {
     epmMode epm;
     switch(int(EPM)){
     case 0:

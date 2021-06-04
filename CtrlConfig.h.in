@@ -4,4 +4,8 @@
 #define sharedMemoryKey \
 "${RANDOM_DATA}"
 
+#ifdef WIN32
+${DEF_UNDEF_BUILD_SERVICE}
+#endif
+
 #endif // CTRLCONFIG_H
