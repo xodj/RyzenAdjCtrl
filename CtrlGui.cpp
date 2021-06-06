@@ -41,9 +41,7 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
 
     if(!conf->getSettingsBuffer()->useAgent)
         this->show();
-#ifdef BUILD_SERVICE
     bus->setGUIRuning();
-#endif
 #ifndef WIN32
     this->setWindowIcon(QIcon(":/main/amd_icon.ico"));
 #endif

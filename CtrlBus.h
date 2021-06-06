@@ -112,6 +112,39 @@ private:
 
     QTimer *refresh_timer;
 };
+#else //BUILD_SERVICE
+#ifdef WIN32
+#include <QSharedMemory>
+class CtrlBus : public QObject
+{
+    Q_OBJECT
+public:
+    CtrlBus(QString qSharedMemoryKey = sharedMemoryKey)
+        : QObject(nullptr),
+          guiAlreadyRunning(new QSharedMemory("guiAlreadyRunning:" + qSharedMemoryKey))
+    {}
+    ~CtrlBus(){}
+
+    void sendMessageToService(QByteArray data){
+        emit messageFromGUIRecieved(data);
+    }
+    void sendMessageToGui(QByteArray data){
+        messageFromServiceRecieved(data);
+    }
+    bool isGUIRuning(){
+        return guiAlreadyRunning->attach();
+    }
+    void setGUIRuning(){
+        guiAlreadyRunning->create(1);
+    }
+
+signals:
+    void messageFromServiceRecieved(QByteArray data);
+    void messageFromGUIRecieved(QByteArray data);
+
+private:
+    QSharedMemory *guiAlreadyRunning;
+};
 #else //WIN32
 class CtrlBus : public QObject
 {
@@ -126,10 +159,15 @@ public:
     void sendMessageToGui(QByteArray data){
         messageFromServiceRecieved(data);
     }
+    bool isGUIRuning(){
+        return true;
+    }
+    void setGUIRuning(){}
 
 signals:
     void messageFromServiceRecieved(QByteArray data);
     void messageFromGUIRecieved(QByteArray data);
 };
 #endif //WIN32
+#endif //BUILD_SERVICE
 #endif // CTRLBUS_H

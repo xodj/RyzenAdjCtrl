@@ -192,8 +192,24 @@ int main(int argc, char *argv[])
 #else //BUILD_SERVICE
 #ifdef WIN32
 bool sudoersCheck(){
-    //add admin rights check
-    return true;
+    BOOL fRet = FALSE;
+    HANDLE hToken = NULL;
+    if( OpenProcessToken( GetCurrentProcess( ),TOKEN_QUERY,&hToken ) ) {
+        TOKEN_ELEVATION Elevation;
+        DWORD cbSize = sizeof( TOKEN_ELEVATION );
+        if( GetTokenInformation( hToken, TokenElevation, &Elevation, sizeof( Elevation ), &cbSize ) ) {
+            fRet = Elevation.TokenIsElevated;
+        }
+    }
+    if(hToken) {
+        CloseHandle( hToken );
+    }
+    if(!fRet) {
+        QProcess process;
+        QString runas = ("\"" + qApp->arguments().value(0) + "\"");
+        process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
+    }
+    return fRet;
 }
 #else //WIN32
 #include <unistd.h>
@@ -217,13 +233,19 @@ int main(int argc, char *argv[])
 
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
-
-    if(!sudoersCheck())
-        exit(1);
+    fileName = "Logs/RyzenAdjCtrl.log";
 
     CtrlBus *bus = new CtrlBus;
-    new CtrlService(bus, new CtrlSettings);
-    new CtrlGui(bus, new CtrlSettings);
+    if(bus->isGUIRuning()){
+        qDebug() << "Ctrl Main - Application Is Already Running.";
+        qDebug() << "Ctrl Main - Exit.";
+        return 1;
+    } else {
+        if(!sudoersCheck())
+            return 1;
+        new CtrlService(bus, new CtrlSettings);
+        new CtrlGui(bus, new CtrlSettings);
+    }
 
     return a.exec();
 }
