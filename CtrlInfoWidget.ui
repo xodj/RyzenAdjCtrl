@@ -91,7 +91,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-21</y>
         <width>274</width>
         <height>450</height>
        </rect>
@@ -387,6 +387,12 @@
            </item>
            <item>
             <widget class="QLineEdit" name="slow_time">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>70</width>
@@ -399,36 +405,19 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_9">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QLineEdit" name="val0_3">
              <property name="minimumSize">
               <size>
                <width>70</width>
-               <height>20</height>
+               <height>0</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(0, 0, 0, 0);
+border-color: rgba(0, 0, 0, 0);</string>
              </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="textFormat">
-              <enum>Qt::AutoText</enum>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+             <property name="readOnly">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -469,36 +458,19 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_17">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QLineEdit" name="val0_2">
              <property name="minimumSize">
               <size>
                <width>70</width>
-               <height>20</height>
+               <height>0</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(0, 0, 0, 0);
+border-color: rgba(0, 0, 0, 0);</string>
              </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="textFormat">
-              <enum>Qt::AutoText</enum>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+             <property name="readOnly">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -784,36 +756,19 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_18">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QLineEdit" name="val0_4">
              <property name="minimumSize">
               <size>
                <width>70</width>
-               <height>20</height>
+               <height>0</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(0, 0, 0, 0);
+border-color: rgba(0, 0, 0, 0);</string>
              </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="textFormat">
-              <enum>Qt::AutoText</enum>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+             <property name="readOnly">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -854,36 +809,19 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_19">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QLineEdit" name="val0">
              <property name="minimumSize">
               <size>
                <width>70</width>
-               <height>20</height>
+               <height>0</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(0, 0, 0, 0);
+border-color: rgba(0, 0, 0, 0);</string>
              </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="textFormat">
-              <enum>Qt::AutoText</enum>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+             <property name="readOnly">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
