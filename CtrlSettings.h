@@ -111,6 +111,7 @@ struct settingsStr {
     int epmBetterBatteryPresetId = 1;
     int epmBalancedPresetId = 2;
     int epmMaximumPerfomancePresetId = 3;
+    int epmGamingPresetId = 3;
 
     bool hideNotSupportedVariables = false;
     int apuFamilyIdx = 0;

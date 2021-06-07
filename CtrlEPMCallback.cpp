@@ -11,7 +11,7 @@
 CtrlEPMCallback *epmCallbackMainClass;
 
 void epmCallback(EFFECTIVE_POWER_MODE EPM, void *Context) {
-    epmMode epm;
+    epmMode epm = epmNone;
     switch(int(EPM)){
     case 0:
         epm = BatterySaver;
@@ -41,7 +41,7 @@ void epmCallback(EFFECTIVE_POWER_MODE EPM, void *Context) {
 
 CtrlEPMCallback::CtrlEPMCallback() {
     epmHandle = new void*;
-    PowerRegisterForEffectivePowerModeNotifications(EFFECTIVE_POWER_MODE_V1, epmCallback,
+    PowerRegisterForEffectivePowerModeNotifications(EFFECTIVE_POWER_MODE_V2, epmCallback,
                                                     nullptr, epmHandle);
     // USE EFFECTIVE_POWER_MODE_V2 For Game and AR Modes
     epmCallbackMainClass = this;

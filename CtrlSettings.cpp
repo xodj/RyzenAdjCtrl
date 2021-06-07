@@ -90,6 +90,9 @@ bool CtrlSettings::saveSettings() {
         xmlWriter.writeStartElement("epmMaximumPerfomancePresetId");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.epmMaximumPerfomancePresetId));
         xmlWriter.writeEndElement();
+        xmlWriter.writeStartElement("epmGamingPresetId");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.epmGamingPresetId));
+        xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("hideNotSupportedVariables");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.hideNotSupportedVariables));
@@ -207,6 +210,13 @@ bool CtrlSettings::openSettings(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     settingsBuffer.epmMaximumPerfomancePresetId =
+                            attr.value().toString().toInt();
+            }else{}
+
+        if (xmlReader.name() == QString("epmGamingPresetId"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    settingsBuffer.epmGamingPresetId =
                             attr.value().toString().toInt();
             }else{}
 

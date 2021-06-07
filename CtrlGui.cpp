@@ -280,6 +280,7 @@ void CtrlGui::loadPresets(){
         ui_settings->epmBetterBatteryComboBox->insertItem(idx, presetBuffer->presetName, idx);
         ui_settings->epmBalancedComboBox->insertItem(idx, presetBuffer->presetName, idx);
         ui_settings->epmMaximumPerfomanceComboBox->insertItem(idx, presetBuffer->presetName, idx);
+        ui_settings->epmGamingComboBox->insertItem(idx, presetBuffer->presetName, idx);
     }
 }
 
@@ -940,6 +941,12 @@ void CtrlGui::saveSettings(){
             argsWriter.writeAttribute("value", QString::number(settings->epmMaximumPerfomancePresetId));
         argsWriter.writeEndElement();
     }
+    if(settings->epmGamingPresetId != ui_settings->epmGamingComboBox->currentData().toInt()){
+        settings->epmGamingPresetId = ui_settings->epmGamingComboBox->currentData().toInt();
+        argsWriter.writeStartElement("epmGamingPresetId");
+            argsWriter.writeAttribute("value", QString::number(settings->epmGamingPresetId));
+        argsWriter.writeEndElement();
+    }
 
     settings->hideNotSupportedVariables = ui_settings->hideVarsGroupBox->isChecked();
     settings->apuFamilyIdx = ui_settings->apuFamilyComboBox->currentIndex();
@@ -1027,6 +1034,7 @@ void CtrlGui::readSettings(){
     ui_settings->epmBetterBatteryComboBox->setCurrentIndex(settings->epmBetterBatteryPresetId);
     ui_settings->epmBalancedComboBox->setCurrentIndex(settings->epmBalancedPresetId);
     ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(settings->epmMaximumPerfomancePresetId);
+    ui_settings->epmGamingComboBox->setCurrentIndex(settings->epmGamingPresetId);
 
     for(qsizetype i = 0;i < conf->getPresetsCount();i++){
         if(ui_settings->dcStateComboBox->itemData(i) == settings->dcStatePresetId)
@@ -1050,6 +1058,10 @@ void CtrlGui::readSettings(){
         if(ui_settings->epmMaximumPerfomanceComboBox->itemData(i)
                 == settings->epmMaximumPerfomancePresetId)
             ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(i);
+
+        if(ui_settings->epmGamingComboBox->itemData(i)
+                == settings->epmGamingPresetId)
+            ui_settings->epmGamingComboBox->setCurrentIndex(i);
     }
 
     ui_settings->hideVarsGroupBox->setChecked(settings->hideNotSupportedVariables);
@@ -1303,6 +1315,7 @@ void CtrlGui::presetPlusPushButtonClicked(){
     ui_settings->epmBetterBatteryComboBox->insertItem(idx, presetBuffer->presetName, idx);
     ui_settings->epmBalancedComboBox->insertItem(idx, presetBuffer->presetName, idx);
     ui_settings->epmMaximumPerfomanceComboBox->insertItem(idx, presetBuffer->presetName, idx);
+    ui_settings->epmGamingComboBox->insertItem(idx, presetBuffer->presetName, idx);
 }
 
 void CtrlGui::presetDeletePushButtonClicked() {
@@ -1411,6 +1424,14 @@ void CtrlGui::presetDeletePushButtonClicked() {
                 }
                 ui_settings->epmMaximumPerfomanceComboBox->removeItem(i);
             }
+        for(qsizetype i = 0;i < ui_settings->epmGamingComboBox->count();i++)
+            if(ui_settings->epmGamingComboBox->itemData(i) == idx) {
+                if(ui_settings->epmGamingComboBox->currentIndex() == idx) {
+                    ui_settings->epmGamingComboBox->setCurrentIndex(0);
+                    ui_settings->savePushButton->click();
+                }
+                ui_settings->epmGamingComboBox->removeItem(i);
+            }
     }
     //send del command
     QByteArray data;
@@ -1456,6 +1477,9 @@ void CtrlGui::presetNameEditChanged(QString name){
 
         if(ui_settings->epmMaximumPerfomanceComboBox->itemData(i) == idx)
             ui_settings->epmMaximumPerfomanceComboBox->setItemText(i, name);
+
+        if(ui_settings->epmGamingComboBox->itemData(i) == idx)
+            ui_settings->epmGamingComboBox->setItemText(i, name);
     }
 }
 

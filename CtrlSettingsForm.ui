@@ -125,7 +125,7 @@
         <x>0</x>
         <y>0</y>
         <width>386</width>
-        <height>581</height>
+        <height>609</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -326,6 +326,48 @@
                </item>
                <item>
                 <widget class="CtrlComboBox" name="epmMaximumPerfomanceComboBox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>110</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="currentIndex">
+                  <number>-1</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="QLabel" name="label_11">
+                 <property name="font">
+                  <font>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Gaming (Mixed Reality)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="CtrlComboBox" name="epmGamingComboBox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>

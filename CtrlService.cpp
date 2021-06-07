@@ -465,6 +465,15 @@ void CtrlService::decodeArgs(QByteArray args){
                             reapplyPresetTimeout();
                         }
                 }else{}
+            if (argsReader.name() == QString("epmGamingPresetId"))
+                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
+                    if (attr.name().toString() == "value"){
+                            settingsBuffer->epmGamingPresetId = attr.value().toInt();
+                            qDebug() << "RyzenAdjCtrl Service Recieved epmGamingPresetId set to "
+                                     << settingsBuffer->epmGamingPresetId;
+                            reapplyPresetTimeout();
+                        }
+                }else{}
         //
 
         argsReader.readNext();
@@ -528,6 +537,14 @@ void CtrlService::epmIdChanged(epmMode EPMode){
     case MaxPerformance:
         strEPMode = "Maximum Performance Effective Power Mode";
         epmPresetId = settingsBuffer->epmMaximumPerfomancePresetId;
+        break;
+    case GameMode:
+        strEPMode = "Gaming Effective Power Mode";
+        epmPresetId = settingsBuffer->epmGamingPresetId;
+        break;
+    case MixedReality:
+        strEPMode = "Gaming (MixedReality) Effective Power Mode";
+        epmPresetId = settingsBuffer->epmGamingPresetId;
         break;
     default:
         strEPMode = "ERROR!";
