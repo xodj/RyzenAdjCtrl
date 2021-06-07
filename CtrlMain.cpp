@@ -148,7 +148,14 @@ int main(int argc, char *argv[])
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
 
-    CtrlBus *bus = new CtrlBus;
+    QString qSharedMemoryKey = sharedMemoryKey;
+    QSharedMemory *bufferToService = new QSharedMemory("bufferToService:" + qSharedMemoryKey);
+    QSharedMemory *bufferToGui = new QSharedMemory("bufferToGui:" + qSharedMemoryKey);
+    QSharedMemory *guiAlreadyRunning = new QSharedMemory("guiAlreadyRunning:" + qSharedMemoryKey);
+
+    CtrlBus *bus = new CtrlBus(bufferToService,
+                               bufferToGui,
+                               guiAlreadyRunning);
 
     if(a.arguments().contains("exit"))
         return exitCommand(bus);
@@ -211,6 +218,32 @@ bool sudoersCheck(){
     }
     return fRet;
 }
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+
+    checkLogsSize();
+    qInstallMessageHandler(messageHandler);
+    fileName = "Logs/RyzenAdjCtrl.log";
+
+    QString qSharedMemoryKey = sharedMemoryKey;
+    QSharedMemory *guiAlreadyRunning = new QSharedMemory("guiAlreadyRunning:" + qSharedMemoryKey);
+
+    CtrlBus *bus = new CtrlBus(guiAlreadyRunning);
+    if(bus->isGUIRuning()){
+        qDebug() << "Ctrl Main - Application Is Already Running.";
+        qDebug() << "Ctrl Main - Exit.";
+        return 1;
+    } else {
+        if(!sudoersCheck())
+            return 1;
+        new CtrlService(bus, new CtrlSettings);
+        new CtrlGui(bus, new CtrlSettings);
+    }
+
+    return a.exec();
+}
 #else //WIN32
 #include <unistd.h>
 bool sudoersCheck(){
@@ -225,7 +258,6 @@ bool sudoersCheck(){
     } else
         return true;
 }
-#endif //WIN32
 
 int main(int argc, char *argv[])
 {
@@ -249,4 +281,5 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+#endif //WIN32
 #endif //BUILD_SERVICE

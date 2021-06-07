@@ -2,6 +2,7 @@
 #define CTRLBUS_H
 
 #include <QObject>
+#include <QDebug>
 #include "CtrlConfig.h"
 
 #ifdef BUILD_SERVICE
@@ -15,11 +16,13 @@ class CtrlBus : public QObject
 {
     Q_OBJECT
 public:
-    CtrlBus(QString qSharedMemoryKey = sharedMemoryKey)
+    CtrlBus(QSharedMemory *bufferToService,
+            QSharedMemory *bufferToGui,
+            QSharedMemory *guiAlreadyRunning)
         : QObject(nullptr),
-          bufferToService(new QSharedMemory("bufferToService:" + qSharedMemoryKey)),
-          bufferToGui(new QSharedMemory("bufferToGui:" + qSharedMemoryKey)),
-          guiAlreadyRunning(new QSharedMemory("guiAlreadyRunning:" + qSharedMemoryKey))
+          bufferToService(bufferToService),
+          bufferToGui(bufferToGui),
+          guiAlreadyRunning(guiAlreadyRunning)
     {}
     ~CtrlBus(){
         refresh_timer->stop();
@@ -32,16 +35,26 @@ public:
                 for (int i=0;i<data.size();i++)
                     iodata[i] = data[i];
                 bufferToService->unlock();
-            }
+            } else
+                qDebug()<<"CtrlBus::sendMessageToService: Can't lock bufferToService!";
             bufferToService->detach();
-        }
+        } else
+            qDebug()<<"CtrlBus::sendMessageToService: Can't attach bufferToService!";
+        bufferToService->detach();
     }
     bool isServiseRuning(){
-        return bufferToService->attach();
+        bool bReturn = false;
+        if(bufferToService->attach()){
+            bufferToService->detach();
+            bReturn = true;
+        }
+        return bReturn;
     }
     void setServiseRuning(){
-        bufferToService->create(buffer_size);
-        bufferToGui->create(buffer_size);
+        if(!bufferToService->create(buffer_size))
+            qDebug()<<"CtrlBus::setServiseRuning: Can't create bufferToService!";
+        if(!bufferToGui->create(buffer_size))
+            qDebug()<<"CtrlBus::setServiseRuning: Can't create bufferToGui!";
 
         refresh_timer = new QTimer;
         connect(refresh_timer, &QTimer::timeout,
@@ -55,13 +68,20 @@ public:
             for (int i=0;i<data.size();i++)
                 iodata[i] = data[i];
             bufferToGui->unlock();
-        }
+        } else
+            qDebug()<<"CtrlBus::sendMessageToGui: Can't lock bufferToGui!";
     }
     bool isGUIRuning(){
-        return guiAlreadyRunning->attach();
+        bool bReturn = false;
+        if(guiAlreadyRunning->attach()){
+            guiAlreadyRunning->detach();
+            bReturn = true;
+        }
+        return bReturn;
     }
     void setGUIRuning(){
-        guiAlreadyRunning->create(1);
+        if(!guiAlreadyRunning->create(1))
+            qDebug()<<"CtrlBus::setGUIRuning: Can't create guiAlreadyRunning!";
 
         refresh_timer = new QTimer;
         connect(refresh_timer, &QTimer::timeout,
@@ -84,7 +104,8 @@ private:
             iodata[i] = '\0';
           }
           bufferToService->unlock();
-        }
+        } else
+            qDebug()<<"CtrlBus::getMessageFromGui: Can't lock bufferToService!";
         if(data.size() > 0)
             emit messageFromGUIRecieved(data);
     }
@@ -99,9 +120,11 @@ private:
                     iodata[i] = '\0';
                 }
                 bufferToGui->unlock();
-            }
+            } else
+                qDebug()<<"CtrlBus::getMessageFromService: Can't lock bufferToGui!";
             bufferToGui->detach();
-        }
+        } else
+            qDebug()<<"CtrlBus::getMessageFromService: Can't attach bufferToGui!";
         if(data.size() > 0)
             emit messageFromServiceRecieved(data);
     }
@@ -119,9 +142,9 @@ class CtrlBus : public QObject
 {
     Q_OBJECT
 public:
-    CtrlBus(QString qSharedMemoryKey = sharedMemoryKey)
+    CtrlBus(QSharedMemory *guiAlreadyRunning)
         : QObject(nullptr),
-          guiAlreadyRunning(new QSharedMemory("guiAlreadyRunning:" + qSharedMemoryKey))
+          guiAlreadyRunning(guiAlreadyRunning)
     {}
     ~CtrlBus(){}
 
