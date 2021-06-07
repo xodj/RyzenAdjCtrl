@@ -16,10 +16,15 @@ CtrlSettings::CtrlSettings()
 
     if (!presetsQFile->exists()) {
         qDebug()<<"RyzenAdjCtrl Settings Create New Presets File.";
-        QString presetNames[4] = {"Battery Saver","Better Battery",
-                                  "Balanced","Perfomance"};
+        QString presetNames[5] = {
+            "Battery Saver",
+            "Better Battery",
+            "Balanced",
+            "Perfomance",
+            "Gaming"
+        };
         presetStr *preset;
-        for(int i = 0;i < 4; i++){
+        for(int i = 0;i < 5; i++){
             preset = new presetStr;
             preset->presetId = i;
             preset->presetName = presetNames[i];
