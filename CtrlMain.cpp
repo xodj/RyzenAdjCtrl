@@ -40,6 +40,9 @@ void checkLogsSize() {
     log.setFileName("Logs/RyzenAdjCtrl - Service.log");
     if(log.size() > logFileSizeTreshold)
         log.remove("Logs/RyzenAdjCtrl - Service.log");
+    log.setFileName("Logs/RyzenAdjCtrl.log");
+    if(log.size() > logFileSizeTreshold)
+        log.remove("Logs/RyzenAdjCtrl.log");
 }
 
 #ifdef BUILD_SERVICE
@@ -199,6 +202,7 @@ int main(int argc, char *argv[])
 #else //BUILD_SERVICE
 #ifdef WIN32
 bool sudoersCheck(){
+    qDebug() << "Ctrl Main - Check for Administator priviliges...";
     BOOL fRet = FALSE;
     HANDLE hToken = NULL;
     if( OpenProcessToken( GetCurrentProcess( ),TOKEN_QUERY,&hToken ) ) {
@@ -211,44 +215,21 @@ bool sudoersCheck(){
     if(hToken) {
         CloseHandle( hToken );
     }
+    qDebug() << "Ctrl Main - Administator priviliges:" << (fRet ? "True" : "False");
     if(!fRet) {
+        qDebug() << "Ctrl Main - Try run with Administator priviliges...";
         QProcess process;
         QString runas = ("\"" + qApp->arguments().value(0) + "\"");
         process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
+        qDebug() << "Ctrl Main - Exit.";
     }
     return fRet;
-}
-
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-
-    checkLogsSize();
-    qInstallMessageHandler(messageHandler);
-    fileName = "Logs/RyzenAdjCtrl.log";
-
-    QString qSharedMemoryKey = sharedMemoryKey;
-    QSharedMemory *guiAlreadyRunning = new QSharedMemory("guiAlreadyRunning:" + qSharedMemoryKey);
-
-    CtrlBus *bus = new CtrlBus(guiAlreadyRunning);
-    if(bus->isGUIRuning()){
-        qDebug() << "Ctrl Main - Application Is Already Running.";
-        qDebug() << "Ctrl Main - Exit.";
-        return 1;
-    } else {
-        if(!sudoersCheck())
-            return 1;
-        new CtrlService(bus, new CtrlSettings);
-        new CtrlGui(bus, new CtrlSettings);
-    }
-
-    return a.exec();
 }
 #else //WIN32
 #include <unistd.h>
 bool sudoersCheck(){
     if (int(getuid()) != 0){
-        qDebug() << "CtrlMain: Need sudo priviliges!";
+        qDebug() << "Ctrl Main - Need sudo priviliges!";
         QMessageBox msgBox;
         msgBox.setWindowIcon(QIcon(":/main/amd_icon.ico"));
         msgBox.setIcon(QMessageBox::Critical);
@@ -258,7 +239,7 @@ bool sudoersCheck(){
     } else
         return true;
 }
-
+#endif //WIN32
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -267,19 +248,19 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(messageHandler);
     fileName = "Logs/RyzenAdjCtrl.log";
 
-    CtrlBus *bus = new CtrlBus;
+    if(!sudoersCheck())
+        return 1;
+
+    CtrlBus *bus = new CtrlBus(new QSharedMemory("guiAlreadyRunning:" + QString(sharedMemoryKey)));
     if(bus->isGUIRuning()){
         qDebug() << "Ctrl Main - Application Is Already Running.";
         qDebug() << "Ctrl Main - Exit.";
         return 1;
     } else {
-        if(!sudoersCheck())
-            return 1;
         new CtrlService(bus, new CtrlSettings);
         new CtrlGui(bus, new CtrlSettings);
     }
 
     return a.exec();
 }
-#endif //WIN32
 #endif //BUILD_SERVICE

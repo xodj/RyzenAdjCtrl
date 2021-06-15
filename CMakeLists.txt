@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenAdjCtrl VERSION 0.4.1.677 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.4.1.685 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
 #BUILD_STANDALONE on UNIX or choose on Windows
 if(WIN32)

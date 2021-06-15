@@ -73,6 +73,7 @@ private:
     Ui::CtrlGuiSettings *ui_settings;
     Ui::CtrlInfoWidget *ui_infoWidget;
     QFrame *settingFrame;
+    QFrame *infoFrame;
     QTranslator *qtLanguageTranslator;
     CtrlBus *bus;
     CtrlSettings *conf;
@@ -92,5 +93,6 @@ private:
 
 protected:
     virtual void closeEvent(QCloseEvent *event);
+
 };
 #endif // CTRLGUI_H

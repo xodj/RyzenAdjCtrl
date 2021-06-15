@@ -37,14 +37,10 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
     setupConnections();
     loadStyleSheet();
 
-    this->resize(600, 450);
-
     if(!conf->getSettingsBuffer()->useAgent)
         this->show();
+
     bus->setGUIRuning();
-#ifndef WIN32
-    this->setWindowIcon(QIcon(":/main/amd_icon.ico"));
-#endif
 }
 
 void CtrlGui::setupUi(){
@@ -58,7 +54,7 @@ void CtrlGui::setupUi(){
     ui->tabWidget->setLayout(verticalLayout);
 
     QFont font;
-    font.setPointSize(9);
+    font.setPointSize(8);
     font.setBold(true);
     QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 
@@ -136,15 +132,30 @@ void CtrlGui::setupUi(){
     QScroller::grabGesture(ui->scrollArea, QScroller::LeftMouseButtonGesture);
 
     ui_infoWidget = new Ui::CtrlInfoWidget;
-    ui_infoWidget->setupUi(ui->infoWidget);
-    ui->infoDockWidget->setHidden(true);
+    infoFrame = new QFrame(this, Qt::Window);
+    ui_infoWidget->setupUi(infoFrame);
+    infoFrame->setWindowFlag(Qt::WindowMinMaxButtonsHint, false);
+    //Need to add feature disable updates while hidden
+    infoFrame->setWindowFlag(Qt::WindowCloseButtonHint, false);
+    infoFrame->setWindowTitle("RyzenAdj - Info");
+    infoFrame->setAccessibleName("CtrlInfo");
+    infoFrame->resize(1,1);
+    infoFrame->setWindowIcon(QIcon(":/main/amd_icon.ico"));
+    if (infoFrame->geometry().width()<10) {
+        infoFrame->show();
+        infoFrame->hide();
+    }
 
-    settingFrame = new QFrame(nullptr, Qt::WindowType::Popup);
+    settingFrame = new QFrame(this, Qt::WindowType::Popup);
     settingFrame->setFrameStyle(QFrame::Panel);
-    settingFrame->setAccessibleName("Settings");
+    settingFrame->setAccessibleName("CtrlSettings");
     settingFrame->resize(1,1);
     ui_settings->setupUi(settingFrame);
     ui->tabWidget->setHidden(false);
+    if (settingFrame->geometry().width()<10) {
+        settingFrame->show();
+        settingFrame->hide();
+    }
 
 #ifndef WIN32
     ui_settings->epmAutoPresetSwitchGroupBox->setHidden(true);
@@ -152,6 +163,9 @@ void CtrlGui::setupUi(){
 #ifndef BUILD_SERVICE
     ui_settings->installPushButton->setHidden(true);
 #endif
+
+    this->resize(600, 450);
+    this->setWindowIcon(QIcon(":/main/amd_icon.ico"));
 }
 
 void CtrlGui::setupConnections(){
@@ -1142,12 +1156,24 @@ void CtrlGui::installService(){
 #endif
 
 void CtrlGui::infoPushButtonClicked() {
-    ui->infoDockWidget->setHidden(ui->infoDockWidget->isVisible());
+    if(!infoFrame->isVisible()){
+        QRect rect = infoFrame->geometry();
+        const QRect windowGeometry = this->geometry();
+        int width = rect.width();
+        rect.setX(windowGeometry.right() + 4);
+        rect.setY(windowGeometry.top());
+        rect.setWidth(width);
+        rect.setHeight(windowGeometry.height());
+        infoFrame->setGeometry(rect);
+    }
+
+    infoFrame->setHidden(infoFrame->isVisible());
+    ui->infoPushButton->setChecked(infoFrame->isVisible());
     sendRyzenAdjInfo();
 }
 
 void CtrlGui::sendRyzenAdjInfo(QString value){
-    if(ui->infoDockWidget->isVisible())
+    if(infoFrame->isVisible())
         value = QString::number(ui_infoWidget->spinBox->value());
 
     QByteArray data;
@@ -1167,15 +1193,9 @@ void CtrlGui::sendRyzenAdjInfo(QString value){
 }
 
 void CtrlGui::settingsPushButtonClicked() {
-    if (settingFrame->geometry().width()<10) {
-        settingFrame->show();
-        settingFrame->hide();
-    }
-
     QRect rect = settingFrame->geometry();
     const QRect buttonGeometry = ui->settingsPushButton->geometry();
     const QRect windowGeometry = this->geometry();
-    //int height = rect.height();
     int width = rect.width();
     int height = windowGeometry.height() - 8;
     rect.setX(buttonGeometry.left()+windowGeometry.left()+buttonGeometry.width()-width);
