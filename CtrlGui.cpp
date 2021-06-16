@@ -979,7 +979,9 @@ void CtrlGui::saveSettings(){
 
     //Hide not supported variables
     Ui::CtrlGuiAPUForm *presetForm = nullptr;
-    hideShow *var = conf->hideShowWarnPresetVariable(settings->apuFamilyIdx);
+    hideShow *var = conf->hideShowWarnPresetVariable(
+                settings->hideNotSupportedVariables
+                ? settings->apuFamilyIdx : -1);
     for(qsizetype i = 0;i < presetFormList->count();i++){
         presetForm = presetFormList->at(i);
 
@@ -1087,7 +1089,9 @@ void CtrlGui::readSettings(){
 
     //Hide not supported variables
     Ui::CtrlGuiAPUForm *presetForm = nullptr;
-    hideShow *var = conf->hideShowWarnPresetVariable(settings->apuFamilyIdx);
+    hideShow *var = conf->hideShowWarnPresetVariable(
+                settings->hideNotSupportedVariables
+                ? settings->apuFamilyIdx : -1);
     for(qsizetype i = 0;i < presetFormList->count();i++){
         presetForm = presetFormList->at(i);
 

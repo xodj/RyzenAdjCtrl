@@ -5,20 +5,11 @@
 #include <QFile>
 #include "CtrlConfig.h"
 
-enum enumFanPresetId {
-    None = 0,
-    Windows,
-    Silent,
-    Perfomance,
-    Turbo,
-    Manual
-};
-
 struct presetStr {
     int presetId = 0;
     QString presetName = "Preset Name";
 
-    int fanPresetId = None;
+    int fanPresetId = 0;
 
     int tempLimitValue = 85;
     bool tempLimitChecked = false;
@@ -120,35 +111,35 @@ struct settingsStr {
 };
 
 struct hideShow {
-    int shwStapmLimit;
-    int shwFastLimit;
-    int shwSlowLimit;
-    int shwSlowTime;
-    int shwStapmTime;
-    int shwTctlTemp;
-    int shwVrmCurrent;
-    int shwVrmSocCurrent;
-    int shwVrmMaxCurrent;
-    int shwVrmSocMaxCurrent;
-    int shwPsi0Current;
-    int shwPsi0SocCurrent;
-    int shwMaxSocclkFrequency;
-    int shwMinSocclkFrequency;
-    int shwMaxFclkFrequency;
-    int shwMinFclkFrequency;
-    int shwMaxVcn;
-    int shwMinVcn;
-    int shwMaxLclk;
-    int shwMinLclk;
-    int shwMaxGfxclk;
-    int shwMinGfxclk;
-    int shwProchotDeassertionRamp;
-    int shwApuSkinTemp;
-    int shwDgpuSkinTemp;
-    int shwApuSlowLimit;
-    int shwSkinTempLimit;
-    int shwPowerSaving;
-    int shwMaxPerformance;
+    bool shwStapmLimit = true;
+    bool shwFastLimit = true;
+    bool shwSlowLimit = true;
+    bool shwSlowTime = true;
+    bool shwStapmTime = true;
+    bool shwTctlTemp = true;
+    bool shwVrmCurrent = true;
+    bool shwVrmSocCurrent = true;
+    bool shwVrmMaxCurrent = true;
+    bool shwVrmSocMaxCurrent = true;
+    bool shwPsi0Current = true;
+    bool shwPsi0SocCurrent = true;
+    bool shwMaxSocclkFrequency = true;
+    bool shwMinSocclkFrequency = true;
+    bool shwMaxFclkFrequency = true;
+    bool shwMinFclkFrequency = true;
+    bool shwMaxVcn = true;
+    bool shwMinVcn = true;
+    bool shwMaxLclk = true;
+    bool shwMinLclk = true;
+    bool shwMaxGfxclk = true;
+    bool shwMinGfxclk = true;
+    bool shwProchotDeassertionRamp = true;
+    bool shwApuSkinTemp = true;
+    bool shwDgpuSkinTemp = true;
+    bool shwApuSlowLimit = true;
+    bool shwSkinTempLimit = true;
+    bool shwPowerSaving = true;
+    bool shwMaxPerformance = true;
 };
 
 class CtrlSettings : public QObject
@@ -187,9 +178,8 @@ public:
         case 5:
             return &shwpvLucienne;
         default:
-            return &shwpvShowAll;
+            return new hideShow;
         }
-        return &shwpvShowAll;
     }
 
 private:
@@ -200,228 +190,192 @@ private:
     QFile *presetsQFile;
 
     hideShow shwpvRaven = {
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        2,
-        2,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
     };
-
     hideShow shwpvPicasso = {
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
     };
-
     hideShow shwpvRenoir = {
-        2,
-        1,
-        1,
-        1,
-        2,
-        1,
-        1,
-        1,
-        1,
-        1,
-        2,
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        2,
-        2,
-        2,
-        2,
-        1,
-        1
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
     };
-
     hideShow shwpvCezanne = {
-        2,
-        1,
-        1,
-        1,
-        2,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        2,
-        2,
-        2,
-        2,
-        1,
-        1
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
     };
-
     hideShow shwpvDali = {
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
     };
-
     hideShow shwpvLucienne = {
-        2,
-        1,
-        1,
-        1,
-        2,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
     };
 
-    hideShow shwpvShowAll = {
-        2,
-        1,
-        1,
-        1,
-        2,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-    };
 };
 
 #endif // CTRLSETTINGS_H
