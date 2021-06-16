@@ -120,7 +120,7 @@ set_target_properties(RyzenAdjCtrl
 endif(WIN32)
 #Set output file path
 set_target_properties(RyzenAdjCtrl
-    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/APPFOLDER")
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
 #Add include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj)

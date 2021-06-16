@@ -36,9 +36,9 @@ Source: "Appfolder\Theme\up_arrow.png"; DestDir: "{app}\Theme\"; Flags: ignoreve
 Source: "Appfolder\Theme\up_arrow_disabled.png"; DestDir: "{app}\Theme\"; Flags: ignoreversion
 Source: "Appfolder\inpoutx64.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\libryzenadj.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Qt6Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Qt6Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\Qt6Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Qt${QT_VERSION_MAJOR}Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Qt${QT_VERSION_MAJOR}Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\Qt${QT_VERSION_MAJOR}Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\RyzenAdjCtrl.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\WinRing0x64.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\WinRing0x64.sys"; DestDir: "{app}"; Flags: ignoreversion
