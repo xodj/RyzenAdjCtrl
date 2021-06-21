@@ -27,6 +27,7 @@ void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
 }
 
 void checkLogsSize() {
+#ifdef WIN32
     QDir dir("Config");
     if (!dir.exists())
         dir.mkpath(".");
@@ -43,6 +44,15 @@ void checkLogsSize() {
     log.setFileName("Logs/RyzenAdjCtrl.log");
     if(log.size() > logFileSizeTreshold)
         log.remove("Logs/RyzenAdjCtrl.log");
+#else //WIN32
+    QDir dir("/etc/RyzenAdjCtrl/");
+    if (!dir.exists())
+        dir.mkpath(".");
+
+    QFile log("/etc/RyzenAdjCtrl/RyzenAdjCtrl.log");
+    if(log.size() > logFileSizeTreshold)
+        log.remove("/etc/RyzenAdjCtrl/RyzenAdjCtrl.log");
+#endif //WIN32
 }
 
 #ifdef BUILD_SERVICE
@@ -235,6 +245,15 @@ bool sudoersCheck(){
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.setText("Need sudo priviliges!\n");
         msgBox.exec();
+        /*QProcess process;
+        process.start("pkexec", QStringList({"env", "DISPLAY=$DISPLAY", "XAUTHORITY=$XAUTHORITY", qApp->arguments().value(0)}));
+        for(;!process.waitForStarted();){}
+        for(;!process.waitForFinished();){}
+        QString error = process.readAllStandardError();
+        QString output = process.readAllStandardOutput();
+        qDebug() << "error:" << error;
+        qDebug() << "output:" << output;
+        for(;true;){}*/
         return false;
     } else
         return true;
@@ -246,12 +265,17 @@ int main(int argc, char *argv[])
 
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
+#ifdef WIN32
     fileName = "Logs/RyzenAdjCtrl.log";
+#else //WIN32
+    fileName = "/etc/RyzenAdjCtrl/RyzenAdjCtrl.log";
+#endif //WIN32
 
     if(!sudoersCheck())
         return 1;
 
-    CtrlBus *bus = new CtrlBus(new QSharedMemory("guiAlreadyRunning:" + QString(sharedMemoryKey)));
+    QSharedMemory *guiAlreadyRunning = new QSharedMemory("guiAlreadyRunning:" + QString(sharedMemoryKey));
+    CtrlBus *bus = new CtrlBus(guiAlreadyRunning);
     if(bus->isGUIRuning()){
         qDebug() << "Ctrl Main - Application Is Already Running.";
         qDebug() << "Ctrl Main - Exit.";

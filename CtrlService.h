@@ -6,10 +6,10 @@
 #include "CtrlSettings.h"
 #ifdef WIN32
 #include "CtrlEPMCallback.h"
+#include "CtrlArmour.h"
 #endif
 #include "CtrlACCallback.h"
 #include "lib/ryzenadj.h"
-#include "CtrlArmour.h"
 #include "CtrlBus.h"
 
 #include <QDebug>
@@ -70,7 +70,6 @@ private:
 
     ryzen_access adjEntryPoint;
     PMTable pmTable;
-    CtrlArmour *armour;
 
     QTimer *takeCurrentInfoTimer;
 
@@ -78,6 +77,7 @@ private:
 #ifdef WIN32
     epmMode currentEPMode;
     CtrlEPMCallback *epmCallback;
+    CtrlArmour *armour;
 #endif
 
     presetStr *lastPreset = nullptr;

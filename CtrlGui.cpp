@@ -159,6 +159,7 @@ void CtrlGui::setupUi(){
 
 #ifndef WIN32
     ui_settings->epmAutoPresetSwitchGroupBox->setHidden(true);
+    ui_settings->showArmourCheckBox->setHidden(true);
 #endif
 #ifndef BUILD_SERVICE
     ui_settings->installPushButton->setHidden(true);
@@ -172,7 +173,6 @@ void CtrlGui::setupConnections(){
     connect(ui->comboBox, &QComboBox::currentTextChanged, this, &CtrlGui::languageChange);
     connect(ui->infoPushButton, &QPushButton::clicked, this, &CtrlGui::infoPushButtonClicked);
     connect(ui->settingsPushButton, &QPushButton::clicked, this, &CtrlGui::settingsPushButtonClicked);
-    connect(ui->rssPushButton, &QPushButton::clicked, this, &CtrlGui::loadStyleSheet);
 
     connect(tabPlusButton, &QPushButton::clicked, this, &CtrlGui::presetPlusPushButtonClicked);
 
@@ -299,40 +299,25 @@ void CtrlGui::loadPresets(){
 }
 
 void CtrlGui::loadStyleSheet(){
-    QFile configQFile("Config/StyleSheet.xml");
-    configQFile.open(QIODevice::ReadOnly | QIODevice::Text);
-    QXmlStreamReader configReader;
-    configReader.setDevice(&configQFile);
-    configReader.readNext();
-    while(!configReader.atEnd())
-    {
-        //
-        if (configReader.name() == QString("MainWindow"))
-            foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
-                if (attr.name().toString() == "value") {
-                    QString strStyleSheet = attr.value().toString();
-                    this->setStyleSheet(strStyleSheet);
-                    settingFrame->setStyleSheet(strStyleSheet);
-                }
-            }else{}
+    QFile configQFile;
+    configQFile.setFileName(":/theme/mainwindow.qss");
+    configQFile.open(QIODevice::ReadOnly);
+    QString strStyleSheet = configQFile.readAll();
+    this->setStyleSheet(strStyleSheet);
+    settingFrame->setStyleSheet(strStyleSheet);
+    configQFile.close();
 
-        if (configReader.name() == QString("TopWidget"))
-            foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    ui->topwidget->setStyleSheet(attr.value().toString());
-                }
-            }else{}
+    configQFile.setFileName(":/theme/topwidget.qss");
+    configQFile.open(QIODevice::ReadOnly);
+    strStyleSheet = configQFile.readAll();
+    ui->topwidget->setStyleSheet(strStyleSheet);
+    configQFile.close();
 
-        if (configReader.name() == QString("TabWidget"))
-            foreach(const QXmlStreamAttribute &attr, configReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    ui->scrollAreaWidgetContents->setStyleSheet(attr.value().toString());
-                    ui->scrollArea->setStyleSheet(attr.value().toString());
-                }
-            }else{}
-        //
-        configReader.readNext();
-    }
+    configQFile.setFileName(":/theme/tabwidget.qss");
+    configQFile.open(QIODevice::ReadOnly);
+    strStyleSheet = configQFile.readAll();
+    ui->scrollAreaWidgetContents->setStyleSheet(strStyleSheet);
+    ui->scrollArea->setStyleSheet(strStyleSheet);
     configQFile.close();
 }
 
@@ -1038,8 +1023,6 @@ void CtrlGui::readSettings(){
 
     infoMessageShowed = settings->showNotificationToDisableAutoSwitcher;
 
-    ui->rssPushButton->setVisible(settings->showReloadStyleSheetButton);
-
     ui_settings->reapplyDurationGroupBox->setChecked(settings->autoPresetApplyDurationChecked);
     ui_settings->reapplyDurationSpinBox->setValue(settings->autoPresetApplyDuration);
 
@@ -1173,6 +1156,9 @@ void CtrlGui::infoPushButtonClicked() {
 
     infoFrame->setHidden(infoFrame->isVisible());
     ui->infoPushButton->setChecked(infoFrame->isVisible());
+    if(ui_agent != nullptr){
+        ui_agent->showInfoWidgetAction->setChecked(infoFrame->isVisible());
+    }
     sendRyzenAdjInfo();
 }
 
@@ -1745,12 +1731,14 @@ void CtrlGui::useAgent(bool use){
             qDebug()<<"Create CtrlAgent";
             ui_agent = new CtrlAgent(conf);
             connect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
+            connect(ui_agent, &CtrlAgent::showCtrlInfoWidget, ui->infoPushButton, &QPushButton::clicked);
             connect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
         }
     } else {
         if(ui_agent != nullptr) {
             qDebug()<<"Delete CtrlAgent";
             disconnect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
+            disconnect(ui_agent, &CtrlAgent::showCtrlInfoWidget, ui->infoPushButton, &QPushButton::clicked);
             disconnect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
             delete ui_agent;
             ui_agent = nullptr;

@@ -2,6 +2,8 @@
 #define CTRLACCALLBACK_H
 
 #include <QObject>
+#include <QTimer>
+#include <QDebug>
 
 enum ACState {
     Battery = 0,
@@ -10,10 +12,12 @@ enum ACState {
 };
 
 #ifdef WIN32
-#include <QTimer>
 #include <Windows.h>
-
-#define currentAc_refresh_time 300
+#define currentAc_refresh_time 333
+#else // WIN32
+#include <QFile>
+#define currentAc_refresh_time 1332
+#endif // WIN32
 
 class CtrlACCallback : public QObject
 {
@@ -37,12 +41,23 @@ signals:
 private:
     ACState currentACState = ACNone;
     void checkCurrentACState() {
+#ifdef WIN32
         SYSTEM_POWER_STATUS sps;
         if (GetSystemPowerStatus(&sps))
             if(currentACState != ACState(sps.ACLineStatus)) {
                 currentACState = ACState(sps.ACLineStatus);
                 emit currentACStateChanged(currentACState);
             }
+#else // WIN32
+        QFile acOnline("/sys/class/power_supply/AC0/online");
+        if(acOnline.open(QIODevice::ReadOnly) && acOnline.size() > 0) {
+            int state = acOnline.readAll().toInt();
+            if(currentACState != ACState(state)) {
+                currentACState = ACState(state);
+                emit currentACStateChanged(currentACState);
+            }
+        }
+#endif // WIN32
     }
     QTimer *currentAc_refresh_timer;
 
@@ -52,20 +67,4 @@ public slots:
             emit currentACStateChanged(currentACState);
     }
 };
-#else
-class CtrlACCallback : public QObject
-{
-    //Add ac callback for unix
-    Q_OBJECT
-public:
-    CtrlACCallback() {}
-    ~CtrlACCallback() {}
-
-signals:
-    void currentACStateChanged(ACState state);
-
-public slots:
-    void emitCurrentACState(){}
-};
-#endif
 #endif // CTRLACCALLBACK_H

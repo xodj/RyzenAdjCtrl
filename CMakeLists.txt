@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenAdjCtrl VERSION 0.4.1.687 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.4.1.699 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
 #BUILD_STANDALONE on UNIX or choose on Windows
 if(WIN32)
@@ -39,7 +39,6 @@ set(RyzenAdjCtrl_HEADERS
     CtrlGui.h
     CtrlService.h
     CtrlSettings.h
-    CtrlArmour.h
     CtrlSpinBox.h
     CtrlComboBox.h
     CtrlBus.h
@@ -52,7 +51,7 @@ set(RyzenAdjCtrl_SOURCES
     CtrlSettings.cpp
     )
 set(RyzenAdjCtrl_QRC
-    RyzenAdjRes.qrc
+    RyzenAdjCtrl.qrc
     )
 set(RyzenAdjCtrl_UI
     CtrlAPUForm.ui
@@ -61,7 +60,7 @@ set(RyzenAdjCtrl_UI
     CtrlSettingsForm.ui
     )
 set(RyzenAdjCtrl_TS_FILES
-    Appfolder/Language/RyzenAdjCtrl_ru_RU.ts
+    translate/RyzenAdjCtrl_ru_RU.ts
     )
 #Only Windows Sources
 if(WIN32)
@@ -82,10 +81,11 @@ if(WIN32)
         ${RyzenAdjCtrl_SOURCES}
         CtrlEPMCallback.cpp
         CtrlEPMCallback.h
-        ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc
+        CtrlArmour.h
         RyzenAdjCtrl.rc.in
-        ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss
         RyzenAdjCtrl.iss.in
+        ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc
+        ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss
         )
     set(RyzenAdjLib
         ${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.lib
@@ -112,11 +112,13 @@ target_link_libraries(RyzenAdjCtrl PUBLIC
     Qt${QT_VERSION_MAJOR}::DBus
     ${RyzenAdjLib}
     )
-#Set show or not CLI
 if(WIN32)
+#Set show or not CLI
 set_target_properties(RyzenAdjCtrl
     PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
     LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+#COPY DEPS
+include(CopyDependencies.cmake)
 endif(WIN32)
 #Set output file path
 set_target_properties(RyzenAdjCtrl
@@ -125,5 +127,3 @@ set_target_properties(RyzenAdjCtrl
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-#COPY DEPS
-include(CopyDependencies.cmake)

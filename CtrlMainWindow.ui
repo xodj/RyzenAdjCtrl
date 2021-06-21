@@ -87,25 +87,6 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="rssPushButton">
-         <property name="minimumSize">
-          <size>
-           <width>75</width>
-           <height>23</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <italic>true</italic>
-           <underline>true</underline>
-          </font>
-         </property>
-         <property name="text">
-          <string>Reload StyleSheet</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="CtrlComboBox" name="comboBox">
          <property name="minimumSize">
           <size>

@@ -1,0 +1,238 @@
+QWidget {
+background-color: rgb(96, 96, 96);
+color: rgb(255, 255, 255);
+gridline-color: rgb(255, 255, 255);
+border-color: rgb(192, 192, 192);
+selection-color: rgb(255, 0, 0);
+selection-background-color: rgb(0, 0, 0);
+}
+QWidget:disabled {
+background-color: rgb(96, 96, 96);
+color: rgb(192, 192, 192);
+gridline-color: rgb(255, 0, 0);
+border-color: rgb(192, 192, 192);
+selection-color: rgb(255, 0, 0);
+selection-background-color: rgb(0, 0, 0);
+}
+
+QLineEdit {
+background-color: rgb(64, 64, 64);
+color: rgb(255, 255, 255);
+border: 1px solid rgb(122,121,122);
+selection-color: rgb(255, 0, 0);
+selection-background-color: rgb(0, 0, 0);
+}
+
+QScrollBar:vertical {
+background-color: rgb(76,76,76);
+width: 14px;
+margin: 0px;
+}
+QScrollBar::handle:vertical {
+background-color: rgb(122,121,122);
+min-height: 20px;
+margin: 2px;
+border-radius: 5px;
+border-width: 1px;
+border: 1px solid rgb(192, 192, 192);
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+border: none;
+background: none;
+height: 0px;
+}
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical,
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+border: none;
+background: none;
+color: none;
+}
+
+QGroupBox:hover {
+color: rgb(255, 64, 64);
+}
+QGroupBox::indicator {
+width: 16px;
+height: 16px;
+}
+QGroupBox::indicator:unchecked {
+image: url(:/theme/checkbox_unchecked.png);
+}
+QGroupBox::indicator:unchecked:hover {
+border: none;
+image: url(:/theme/checkbox_unchecked_focus.png);
+}
+QGroupBox::indicator:unchecked:disabled {
+border: none;
+image: url(:/theme/checkbox_unchecked_disabled.png);
+}
+QGroupBox::indicator:checked {
+image: url(:/theme/checkbox_checked.png);
+}
+QGroupBox::indicator:checked:hover {
+border: none;
+image: url(:/theme/checkbox_checked_focus.png);
+}
+QGroupBox::indicator:checked:disabled {
+border: none;
+image: url(:/theme/checkbox_checked_disabled.png);
+}
+
+QSpinBox, QDoubleSpinBox {
+background-color: rgb(58,57,58);
+border: 1px solid gray;
+}
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+subcontrol-origin: margin;
+subcontrol-position: top right;
+background-color: rgb(76,76,76);
+border: 1px solid gray;
+}
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+subcontrol-origin: margin;
+subcontrol-position: bottom right;
+background-color: rgb(76,76,76);
+border: 1px solid gray;
+}
+QSpinBox::up-button:hover,
+QSpinBox::down-button:hover,
+QDoubleSpinBox::up-button:hover,
+QDoubleSpinBox::down-button:hover {
+background-color: rgb(122,121,122);
+}
+QSpinBox::up-button:pressed,
+QSpinBox::down-button:pressed,
+QDoubleSpinBox::up-button:pressed,
+QDoubleSpinBox::down-button:pressed {
+background-color: rgb(58,57,58);
+}
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+image: url(:/theme/up_arrow.png);
+width: 100%;
+}
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+image: url(:/theme/down_arrow.png);
+width: 100%;
+}
+
+QSpinBox:disabled, QDoubleSpinBox:disabled {
+background-color: rgb(96, 96, 96);
+border: 1px solid white;
+}
+QSpinBox::down-button:disabled,
+QDoubleSpinBox::down-button:disabled,
+QSpinBox::down-button:off,
+QDoubleSpinBox::down-button:off {
+subcontrol-origin: margin;
+subcontrol-position: bottom right;
+background-color: rgb(96, 96, 96);
+border: 1px solid white;
+}
+QSpinBox::up-button:disabled,
+QDoubleSpinBox::up-button:disabled 
+QSpinBox::up-button:off,
+QDoubleSpinBox::up-button:off {
+subcontrol-origin: margin;
+subcontrol-position: top right;
+background-color: rgb(96, 96, 96);
+border: 1px solid white;
+}
+QSpinBox::up-arrow:disabled, QDoubleSpinBox::up-arrow:disabled {
+image: url(:/theme/up_arrow_disabled.png);
+width: 100%;
+}
+QSpinBox::down-arrow:disabled, QDoubleSpinBox::down-arrow:disabled {
+image: url(:/theme/down_arrow_disabled.png);
+width: 100%;
+}
+
+QCheckBox {
+spacing: 5px;
+outline: none;
+color: rgb(255, 255, 255);
+margin-bottom: 2px;
+}
+QCheckBox:hover {
+color: rgb(255, 64, 64);
+}
+QCheckBox:disabled {
+color: rgb(96, 32, 32);
+}
+QCheckBox::indicator {
+width: 16px;
+height: 16px;
+}
+QCheckBox::indicator:unchecked {
+image: url(:/theme/checkbox_unchecked.png);
+}
+QCheckBox::indicator:unchecked:hover {
+border: none;
+image: url(:/theme/checkbox_unchecked_focus.png);
+}
+QCheckBox::indicator:unchecked:disabled {
+border: none;
+image: url(:/theme/checkbox_unchecked_disabled.png);
+}
+QCheckBox::indicator:checked {
+image: url(:/theme/checkbox_checked.png);
+}
+QCheckBox::indicator:checked:hover {
+border: none;
+image: url(:/theme/checkbox_checked_focus.png);
+}
+QCheckBox::indicator:checked:disabled {
+border: none;
+image: url(:/theme/checkbox_checked_disabled.png);
+}
+QComboBox {
+border: 1px solid gray;
+background-color: rgb(58,57,58);
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+    border-left-width: 1px;
+    border-left-color: darkgray;
+    border-left-style: solid;
+}
+QComboBox::down-arrow,
+QComboBox::down-arrow:pressed,
+QComboBox::down-arrow:focus {
+image: url(:/theme/down_arrow_disabled.png);
+}
+QComboBox::down-arrow:on,
+QComboBox::down-arrow:hover {
+image: url(:/theme/down_arrow.png);
+}
+QPushButton {
+color: rgb(255,255,255);
+border: 1px solid gray;
+background-color: rgb(58,57,58);
+border-radius: 0px;
+}
+QPushButton:hover {
+background-color: rgb(96, 96, 96);
+}
+QPushButton:pressed {
+background-color: rgb(128, 128, 128);
+}
+QPushButton:checked {
+background-color: rgb(192, 192, 192);
+}
+
+QPushButton::flat {
+color: rgb(255,255,255);
+border: none;
+background-color: none;
+}
+QPushButton::flat:hover {
+color: rgb(255,64,64);
+border: none;
+background-color: none;
+}
+QPushButton::flat:pressed {
+color: rgb(128,0,0);
+border: none;
+background-color: none;
+}

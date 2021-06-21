@@ -80,14 +80,9 @@ struct presetStr {
 };
 
 struct settingsStr {
-#ifdef WIN32
     bool useAgent = true;
-#else
-    bool useAgent = false;
-#endif
     bool showNotifications = true;
 
-    bool showReloadStyleSheetButton = false;
     bool showNotificationToDisableAutoSwitcher = false;
 
     bool autoPresetApplyDurationChecked = false;
