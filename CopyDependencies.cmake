@@ -1,3 +1,8 @@
+# Doesn't really make sense anywhere else
+if(NOT MSVC)
+        return()
+endif()
+
 # Internal variable to avoid copying more than once
 if(COPIED_DEPENDENCIES)
 	return()
@@ -12,23 +17,6 @@ endif()
 message("\nCopy Dependencies...\n")
 
 set(COPIED_DEPENDENCIES TRUE CACHE BOOL "Dependencies have been copied, set to false to copy again" FORCE)
-
-configure_file(Appfolder/Config/StyleSheet.xml ${PROJECT_BINARY_DIR}/Appfolder/Config/StyleSheet.xml COPYONLY)
-configure_file(Appfolder/Theme/checkbox_checked.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_checked.png COPYONLY)
-configure_file(Appfolder/Theme/checkbox_checked_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_checked_disabled.png COPYONLY)
-configure_file(Appfolder/Theme/checkbox_checked_focus.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_checked_focus.png COPYONLY)
-configure_file(Appfolder/Theme/checkbox_unchecked.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_unchecked.png COPYONLY)
-configure_file(Appfolder/Theme/checkbox_unchecked_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_unchecked_disabled.png COPYONLY)
-configure_file(Appfolder/Theme/checkbox_unchecked_focus.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/checkbox_unchecked_focus.png COPYONLY)
-configure_file(Appfolder/Theme/down_arrow.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/down_arrow.png COPYONLY)
-configure_file(Appfolder/Theme/down_arrow_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/down_arrow_disabled.png COPYONLY)
-configure_file(Appfolder/Theme/up_arrow.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/up_arrow.png COPYONLY)
-configure_file(Appfolder/Theme/up_arrow_disabled.png ${PROJECT_BINARY_DIR}/Appfolder/Theme/up_arrow_disabled.png COPYONLY)
-
-# Doesn't really make sense anywhere else
-if(NOT MSVC)
-	return()
-endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.dll ${PROJECT_BINARY_DIR}/Appfolder/libryzenadj.dll COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/win32/inpoutx64.dll ${PROJECT_BINARY_DIR}/Appfolder/inpoutx64.dll COPYONLY)

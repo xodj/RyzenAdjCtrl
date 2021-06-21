@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/main">
+        <file alias="amd_icon.ico">media/main/amd_icon.ico</file>
+        <file alias="application-exit.png">media/main/application-exit.png</file>
+        <file alias="application-exit.png">media/main/checked.png</file>
+        <file alias="unchecked.png">media/main/unchecked.png</file>
+    </qresource>
+    <qresource prefix="/theme">
+        <file alias="stylesheet.xml">media/theme/stylesheet.xml</file>
+        <file alias="checkbox_checked.png">media/theme/checkbox_checked.png</file>
+        <file alias="checkbox_checked_disabled.png">media/theme/checkbox_checked_disabled.png</file>
+        <file alias="checkbox_checked_focus.png">media/theme/checkbox_checked_focus.png</file>
+        <file alias="checkbox_unchecked.png">media/theme/checkbox_unchecked.png</file>
+        <file alias="checkbox_unchecked_disabled.png">media/theme/checkbox_unchecked_disabled.png</file>
+        <file alias="checkbox_unchecked_focus.png">media/theme/checkbox_unchecked_focus.png</file>
+        <file alias="down_arrow.png">media/theme/down_arrow.png</file>
+        <file alias="down_arrow_disabled.png">media/theme/down_arrow_disabled.png</file>
+        <file alias="up_arrow.png">media/theme/up_arrow.png</file>
+        <file alias="up_arrow_disabled.png">media/theme/up_arrow_disabled.png</file>
+        <file alias="mainwindow.qss">media/theme/mainwindow.qss</file>
+        <file alias="tabwidget.qss">media/theme/tabwidget.qss</file>
+        <file alias="topwidget.qss">media/theme/topwidget.qss</file>
+    </qresource>
+</RCC>

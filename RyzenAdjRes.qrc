@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/main">
-        <file>amd_icon.ico</file>
-        <file>application-exit.png</file>
-    </qresource>
-</RCC>

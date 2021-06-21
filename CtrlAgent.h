@@ -21,14 +21,20 @@ public:
 
         QMenu *trayMenu = new QMenu;
 
-        QAction *action = new QAction("Open RyzenAdjCtrl", this);
-        action->setIcon(icon);
+        QAction *action = new QAction(icon, "Open RyzenAdjCtrl", this);
         connect(action, SIGNAL(triggered()), this, SIGNAL(showCtrlGui()));
         trayMenu->addAction(action);
 
-        action = new QAction("Close", this);
-        QIcon exitIcon(":/main/application-exit.png");
-        action->setIcon(exitIcon);
+        showInfoWidgetAction = new QAction("Show Info Widget", this);
+        showInfoWidgetAction->setCheckable(true);
+        QIcon checkIcon;
+        checkIcon.addFile(QString::fromUtf8(":/main/unchecked.png"), QSize(), QIcon::Selected, QIcon::Off);
+        checkIcon.addFile(QString::fromUtf8(":/main/checked.png"), QSize(), QIcon::Selected, QIcon::On);
+        showInfoWidgetAction->setIcon(checkIcon);
+        connect(showInfoWidgetAction, &QAction::triggered, this, &CtrlAgent::showCtrlInfoWidget);
+        trayMenu->addAction(showInfoWidgetAction);
+
+        action = new QAction(QIcon(":/main/application-exit.png"), "Close", this);
         connect(action, SIGNAL(triggered()), this, SIGNAL(closeCtrlGui()));
         trayMenu->addAction(action);
 
@@ -41,6 +47,8 @@ public:
     ~CtrlAgent() {
         disconnect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                 this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+
+        disconnect(showInfoWidgetAction, &QAction::triggered, this, &CtrlAgent::showCtrlInfoWidget);
     }
 
     void notificationToTray(QString message) {
@@ -51,10 +59,13 @@ public:
         }
     }
 
+    QAction *showInfoWidgetAction;
+
 signals:
     void showCtrlGui();
     void closeCtrlGui();
     void showCtrlMiniGui();
+    void showCtrlInfoWidget(bool checked);
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason) {

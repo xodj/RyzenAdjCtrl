@@ -6,7 +6,6 @@
 
 CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
     : QObject(nullptr),
-      armour(new CtrlArmour),
       bus(bus),
       conf(conf)
 {
@@ -26,6 +25,7 @@ CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
     acCallback->emitCurrentACState();
 
 #ifdef WIN32
+    armour = new CtrlArmour;
     epmCallback = new CtrlEPMCallback;
     if(settingsBuffer->epmAutoPresetSwitch)
         connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
@@ -387,9 +387,11 @@ void CtrlService::decodeArgs(QByteArray args){
                                      << settingsBuffer->autoPresetSwitchAC;
                             disconnect(acCallback,&CtrlACCallback::currentACStateChanged,
                                        this, &CtrlService::currentACStateChanged);
-                            if(settingsBuffer->autoPresetSwitchAC)
+                            if(settingsBuffer->autoPresetSwitchAC) {
                                 connect(acCallback, &CtrlACCallback::currentACStateChanged,
                                         this, &CtrlService::currentACStateChanged);
+                                acCallback->emitCurrentACState();
+                            }
                             reapplyPresetTimeout();
                         }
                 }else{}
@@ -422,9 +424,11 @@ void CtrlService::decodeArgs(QByteArray args){
 #ifdef WIN32
                             disconnect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                                     this, &CtrlService::epmIdChanged);
-                            if(settingsBuffer->epmAutoPresetSwitch)
+                            if(settingsBuffer->epmAutoPresetSwitch) {
                                 connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                                         this, &CtrlService::epmIdChanged);
+                                epmCallback->emitCurrentEPMState();
+                            }
 #endif
                             reapplyPresetTimeout();
                         }
@@ -573,9 +577,11 @@ void CtrlService::loadPreset(presetStr *preset){
         qDebug() << "RyzenAdjCtrl Service Load Preset"<<preset->presetId;
         lastPreset = preset;
 
+#ifdef WIN32
         if(preset->fanPresetId > 0) {
             armour->sendArmourThrottlePlan((preset->fanPresetId) - 1);
         }
+#endif
 
 
         if(preset->tempLimitChecked)

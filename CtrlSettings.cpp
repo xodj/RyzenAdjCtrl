@@ -5,8 +5,13 @@
 
 CtrlSettings::CtrlSettings()
     : presets(new QList<presetStr*>),
+#ifdef WIN32
       configQFile(new QFile("Config/Config.xml")),
       presetsQFile(new QFile("Config/Presets.xml"))
+#else //WIN32
+      configQFile(new QFile("/etc/RyzenAdjCtrl/Config.xml")),
+      presetsQFile(new QFile("/etc/RyzenAdjCtrl/Presets.xml"))
+#endif //WIN32
 {
     if (!configQFile->exists()){
         qDebug()<<"RyzenAdjCtrl Settings Create New Settings File.";
@@ -56,9 +61,6 @@ bool CtrlSettings::saveSettings() {
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showNotifications));
         xmlWriter.writeEndElement();
 
-        xmlWriter.writeStartElement("showReloadStyleSheetButton");
-            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showReloadStyleSheetButton));
-        xmlWriter.writeEndElement();
         xmlWriter.writeStartElement("showNotificationToDisableAutoSwitcher");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showNotificationToDisableAutoSwitcher));
         xmlWriter.writeEndElement();
@@ -142,12 +144,6 @@ bool CtrlSettings::openSettings(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     settingsBuffer.showNotificationToDisableAutoSwitcher =
-                            attr.value().toString().toInt();
-            }else{}
-        if (xmlReader.name() == QString("showReloadStyleSheetButton"))
-            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
-                if (attr.name().toString() == "value")
-                    settingsBuffer.showReloadStyleSheetButton =
                             attr.value().toString().toInt();
             }else{}
 
