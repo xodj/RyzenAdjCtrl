@@ -1,8 +1,8 @@
 # RyzenAdjCtrl
 GUI for RyzenAdj.
 
-- Runing as separeted service from gui.
-- RyzenAdj as library (faster then cli) (Windows only)
+- Runing as separeted service from gui (Windows only)
+- RyzenAdj as library (faster then cli)
 - Info widget (you can realtime control your states)
 - Avaliable swithing presets by Effective Power Mode (Windows only)
 - Avaliable swithing presets by AC Power Mode

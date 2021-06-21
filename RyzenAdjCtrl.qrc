@@ -2,11 +2,10 @@
     <qresource prefix="/main">
         <file alias="amd_icon.ico">media/main/amd_icon.ico</file>
         <file alias="application-exit.png">media/main/application-exit.png</file>
-        <file alias="application-exit.png">media/main/checked.png</file>
+        <file alias="checked.png">media/main/checked.png</file>
         <file alias="unchecked.png">media/main/unchecked.png</file>
     </qresource>
     <qresource prefix="/theme">
-        <file alias="stylesheet.xml">media/theme/stylesheet.xml</file>
         <file alias="checkbox_checked.png">media/theme/checkbox_checked.png</file>
         <file alias="checkbox_checked_disabled.png">media/theme/checkbox_checked_disabled.png</file>
         <file alias="checkbox_checked_focus.png">media/theme/checkbox_checked_focus.png</file>
