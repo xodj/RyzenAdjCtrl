@@ -36,10 +36,10 @@ public:
                     iodata[i] = data[i];
                 bufferToService->unlock();
             } else
-                qDebug()<<"CtrlBus::sendMessageToService: Can't lock bufferToService!";
+                qDebug()<<"Ctrl Bus - Can't lock bufferToService!";
             bufferToService->detach();
         } else
-            qDebug()<<"CtrlBus::sendMessageToService: Can't attach bufferToService!";
+            qDebug()<<"Ctrl Bus - Can't attach bufferToService!";
         bufferToService->detach();
     }
     bool isServiseRuning(){
@@ -52,9 +52,9 @@ public:
     }
     void setServiseRuning(){
         if(!bufferToService->create(buffer_size))
-            qDebug()<<"CtrlBus::setServiseRuning: Can't create bufferToService!";
+            qDebug()<<"Ctrl Bus - Can't create bufferToService!";
         if(!bufferToGui->create(buffer_size))
-            qDebug()<<"CtrlBus::setServiseRuning: Can't create bufferToGui!";
+            qDebug()<<"Ctrl Bus - Can't create bufferToGui!";
 
         refresh_timer = new QTimer;
         connect(refresh_timer, &QTimer::timeout,
@@ -69,7 +69,7 @@ public:
                 iodata[i] = data[i];
             bufferToGui->unlock();
         } else
-            qDebug()<<"CtrlBus::sendMessageToGui: Can't lock bufferToGui!";
+            qDebug()<<"Ctrl Bus - Can't lock bufferToGui!";
     }
     bool isGUIRuning(){
         bool bReturn = false;
@@ -81,7 +81,7 @@ public:
     }
     void setGUIRuning(){
         if(!guiAlreadyRunning->create(1))
-            qDebug()<<"CtrlBus::setGUIRuning: Can't create guiAlreadyRunning!";
+            qDebug()<<"Ctrl Bus - Can't create guiAlreadyRunning!";
 
         refresh_timer = new QTimer;
         connect(refresh_timer, &QTimer::timeout,
@@ -105,7 +105,7 @@ private:
           }
           bufferToService->unlock();
         } else
-            qDebug()<<"CtrlBus::getMessageFromGui: Can't lock bufferToService!";
+            qDebug()<<"Ctrl Bus - Can't lock bufferToService!";
         if(data.size() > 0)
             emit messageFromGUIRecieved(data);
     }
@@ -121,10 +121,10 @@ private:
                 }
                 bufferToGui->unlock();
             } else
-                qDebug()<<"CtrlBus::getMessageFromService: Can't lock bufferToGui!";
+                qDebug()<<"Ctrl Bus - Can't lock bufferToGui!";
             bufferToGui->detach();
         } else
-            qDebug()<<"CtrlBus::getMessageFromService: Can't attach bufferToGui!";
+            qDebug()<<"Ctrl Bus - Can't attach bufferToGui!";
         if(data.size() > 0)
             emit messageFromServiceRecieved(data);
     }

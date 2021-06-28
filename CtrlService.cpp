@@ -36,7 +36,7 @@ CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
     takeCurrentInfoTimer = new QTimer;
     takeCurrentInfoTimer->connect(takeCurrentInfoTimer, &QTimer::timeout, this, &CtrlService::takeCurrentInfo);
 
-    qDebug() << "RyzenAdjCtrl Service started";
+    qDebug() << "Ctrl Service - started";
     connect(bus, &CtrlBus::messageFromGUIRecieved, this, &CtrlService::decodeArgs);
 #ifdef BUILD_SERVICE
     bus->setServiseRuning();
@@ -48,7 +48,7 @@ CtrlService::~CtrlService() {
 }
 
 void CtrlService::initPmTable(){
-    qDebug() << "RyzenAdjCtrl Service initPmTable";
+    qDebug() << "Ctrl Service - initPmTable";
     adjEntryPoint = init_ryzenadj();
     init_table(adjEntryPoint);
     refresh_table(adjEntryPoint);
@@ -79,14 +79,14 @@ void CtrlService::initPmTable(){
     pmTable.biosVersion = QString::number(get_bios_if_ver(adjEntryPoint));
     pmTable.pmTableVersion = QString::number(get_table_ver(adjEntryPoint), 16);
     pmTable.ryzenAdjVersion = QString::number(RYZENADJ_REVISION_VER) + "." + QString::number(RYZENADJ_MAJOR_VER) + "." + QString::number(RYZENADJ_MINIOR_VER);
-    qDebug() << "RyzenAdjCtrl Service pmTable.ryzenFamily" << pmTable.ryzenFamily;
-    qDebug() << "RyzenAdjCtrl Service pmTable.biosVersion" << pmTable.biosVersion;
-    qDebug() << "RyzenAdjCtrl Service pmTable.pmTableVersion" << pmTable.pmTableVersion;
-    qDebug() << "RyzenAdjCtrl Service pmTable.ryzenAdjVersion" << pmTable.ryzenAdjVersion;
+    qDebug() << "Ctrl Service - pmTable.ryzenFamily" << pmTable.ryzenFamily;
+    qDebug() << "Ctrl Service - pmTable.biosVersion" << pmTable.biosVersion;
+    qDebug() << "Ctrl Service - pmTable.pmTableVersion" << pmTable.pmTableVersion;
+    qDebug() << "Ctrl Service - pmTable.ryzenAdjVersion" << pmTable.ryzenAdjVersion;
 }
 
 void CtrlService::decodeArgs(QByteArray args){
-    qDebug()<<"RyzenAdjCtrl Service Recieved args from GUI";
+    qDebug()<<"Ctrl Service - Recieved args from GUI";
     bool save = false, apply = false, deletePreset = false;
     int presetId = -1;
     presetStr *recievedPreset = new presetStr;
@@ -101,7 +101,7 @@ void CtrlService::decodeArgs(QByteArray args){
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value") {
                     currentInfoTimeoutChanged(attr.value().toInt());
-                    qDebug() << "RyzenAdjCtrl Service Recieved ryzenAdjInfoTimeout" << attr.value().toInt();
+                    qDebug() << "Ctrl Service - Recieved ryzenAdjInfoTimeout" << attr.value().toInt();
                 }
             }else{}
 
@@ -343,8 +343,8 @@ void CtrlService::decodeArgs(QByteArray args){
 
 
         if (argsReader.name() == QString("exit")){
-            qDebug() << "RyzenAdjCtrl Service Recieved Exit Command";
-            qDebug() << "RyzenAdjCtrl Service Stoped";
+            qDebug() << "Ctrl Service - Recieved Exit Command";
+            qDebug() << "Ctrl Service - Stoped";
             cleanup_ryzenadj(adjEntryPoint);
             exit(0);
         }
@@ -356,7 +356,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 if (attr.name().toString() == "value"){
                         settingsBuffer->autoPresetApplyDurationChecked
                                 = attr.value().toInt();
-                        qDebug() << "RyzenAdjCtrl Service Recieved autoPresetApplyDurationChecked set to "
+                        qDebug() << "Ctrl Service - Recieved autoPresetApplyDurationChecked set to "
                                  << settingsBuffer->autoPresetApplyDurationChecked;
                         reapplyPresetTimer->stop();
                         if(settingsBuffer->autoPresetApplyDurationChecked)
@@ -369,7 +369,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 if (attr.name().toString() == "value"){
                         settingsBuffer->autoPresetApplyDuration
                                 = attr.value().toInt();
-                        qDebug() << "RyzenAdjCtrl Service Recieved autoPresetApplyDuration set to "
+                        qDebug() << "Ctrl Service - Recieved autoPresetApplyDuration set to "
                                  << settingsBuffer->autoPresetApplyDuration;
                         reapplyPresetTimer->stop();
                         if(settingsBuffer->autoPresetApplyDurationChecked)
@@ -383,7 +383,7 @@ void CtrlService::decodeArgs(QByteArray args){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->autoPresetSwitchAC
                                     = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved autoPresetSwitchAC set to "
+                            qDebug() << "Ctrl Service - Recieved autoPresetSwitchAC set to "
                                      << settingsBuffer->autoPresetSwitchAC;
                             disconnect(acCallback,&CtrlACCallback::currentACStateChanged,
                                        this, &CtrlService::currentACStateChanged);
@@ -399,7 +399,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->dcStatePresetId = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved dcStatePresetId set to "
+                            qDebug() << "Ctrl Service - Recieved dcStatePresetId set to "
                                      << settingsBuffer->dcStatePresetId;
                             reapplyPresetTimeout();
                         }
@@ -408,7 +408,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->acStatePresetId = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved acStatePresetId set to "
+                            qDebug() << "Ctrl Service - Recieved acStatePresetId set to "
                                      << settingsBuffer->acStatePresetId;
                             reapplyPresetTimeout();
                         }
@@ -419,7 +419,7 @@ void CtrlService::decodeArgs(QByteArray args){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmAutoPresetSwitch
                                     = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved epmAutoPresetSwitch set to "
+                            qDebug() << "Ctrl Service - Recieved epmAutoPresetSwitch set to "
                                      << settingsBuffer->epmAutoPresetSwitch;
 #ifdef WIN32
                             disconnect(epmCallback, &CtrlEPMCallback::epmIdChanged,
@@ -437,7 +437,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmBatterySaverPresetId = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved epmBatterySaverPresetId set to "
+                            qDebug() << "Ctrl Service - Recieved epmBatterySaverPresetId set to "
                                      << settingsBuffer->epmBatterySaverPresetId;
                             reapplyPresetTimeout();
                         }
@@ -446,7 +446,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmBetterBatteryPresetId = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved epmBetterBatteryPresetId set to "
+                            qDebug() << "Ctrl Service - Recieved epmBetterBatteryPresetId set to "
                                      << settingsBuffer->epmBetterBatteryPresetId;
                             reapplyPresetTimeout();
                         }
@@ -455,7 +455,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmBalancedPresetId = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved epmBalancedPresetId set to "
+                            qDebug() << "Ctrl Service - Recieved epmBalancedPresetId set to "
                                      << settingsBuffer->epmBalancedPresetId;
                             reapplyPresetTimeout();
                         }
@@ -464,7 +464,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmMaximumPerfomancePresetId = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved epmMaximumPerfomancePresetId set to "
+                            qDebug() << "Ctrl Service - Recieved epmMaximumPerfomancePresetId set to "
                                      << settingsBuffer->epmMaximumPerfomancePresetId;
                             reapplyPresetTimeout();
                         }
@@ -473,7 +473,7 @@ void CtrlService::decodeArgs(QByteArray args){
                 foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                     if (attr.name().toString() == "value"){
                             settingsBuffer->epmGamingPresetId = attr.value().toInt();
-                            qDebug() << "RyzenAdjCtrl Service Recieved epmGamingPresetId set to "
+                            qDebug() << "Ctrl Service - Recieved epmGamingPresetId set to "
                                      << settingsBuffer->epmGamingPresetId;
                             reapplyPresetTimeout();
                         }
@@ -484,20 +484,20 @@ void CtrlService::decodeArgs(QByteArray args){
     }
 
     if(apply) {
-        qDebug() << "RyzenAdjCtrl Service Recieved Apply Preset" << presetId;
+        qDebug() << "Ctrl Service - Recieved Apply Preset" << presetId;
         sendCurrentPresetIdToGui(presetId, save);
         lastPresetSaved = save;
         loadPreset(recievedPreset);
     }
     if (save){
-        qDebug() << "RyzenAdjCtrl Service Recieved Save Preset" << presetId;
+        qDebug() << "Ctrl Service - Recieved Save Preset" << presetId;
         conf->setPresetBuffer(presetId, recievedPreset);
         if(recievedPreset->presetId == lastPreset->presetId)
             lastPresetSaved = save;
         reapplyPresetTimeout();
     }
     if (deletePreset){
-        qDebug() << "RyzenAdjCtrl Service Recieved Delete Preset" << presetId;
+        qDebug() << "Ctrl Service - Recieved Delete Preset" << presetId;
         conf->deletePreset(presetId);
     }
 }
@@ -505,7 +505,7 @@ void CtrlService::decodeArgs(QByteArray args){
 void CtrlService::currentACStateChanged(ACState state){
     settingsStr *settingsBuffer = conf->getSettingsBuffer();
     currentACState = state;
-    qDebug() << "RyzenAdjCtrl Service Current state:"
+    qDebug() << "Ctrl Service - Current state:"
              << ((state == Battery) ? "DC State" : "AC State");
 
     if(settingsBuffer->autoPresetSwitchAC){
@@ -554,7 +554,7 @@ void CtrlService::epmIdChanged(epmMode EPMode){
         strEPMode = "ERROR!";
         break;
     }
-    qDebug() << "RyzenAdjCtrl Service Current EPM" << strEPMode;
+    qDebug() << "Ctrl Service - Current EPM" << strEPMode;
 
     if(settingsBuffer->epmAutoPresetSwitch && epmPresetId != -1){
         lastPresetSaved = true;
@@ -565,7 +565,7 @@ void CtrlService::epmIdChanged(epmMode EPMode){
 #endif
 
 void CtrlService::reapplyPresetTimeout(){
-    qDebug() << "RyzenAdjCtrl Service Reapply Preset Timeout";
+    qDebug() << "Ctrl Service - Reapply Preset Timeout";
     if(lastPreset != nullptr) {
         sendCurrentPresetIdToGui(lastPreset->presetId, lastPresetSaved);
         loadPreset(lastPreset);
@@ -574,7 +574,7 @@ void CtrlService::reapplyPresetTimeout(){
 
 void CtrlService::loadPreset(presetStr *preset){
     if(preset != nullptr){
-        qDebug() << "RyzenAdjCtrl Service Load Preset"<<preset->presetId;
+        qDebug() << "Ctrl Service - Load Preset"<<preset->presetId;
         lastPreset = preset;
 
 #ifdef WIN32
@@ -654,11 +654,11 @@ void CtrlService::loadPreset(presetStr *preset){
         if(preset->skinTempPowerLimitChecked)
             set_skin_temp_power_limit(adjEntryPoint, preset->skinTempPowerLimit);
     } else
-        qDebug()<<"Try to load nullptr (deleted) preset!";
+        qDebug()<<"Ctrl Service - Try to load nullptr (deleted) preset!";
 }
 
 void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
-    qDebug() << "RyzenAdjCtrl Service Send Current Loaded Preset ID to GUI" << presetId << "Saved" << saved;
+    qDebug() << "Ctrl Service - Send Current Loaded Preset ID to GUI" << presetId << "Saved" << saved;
     QByteArray data;
     QXmlStreamWriter argsWriter(&data);
     argsWriter.setAutoFormatting(true);

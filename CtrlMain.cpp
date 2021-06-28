@@ -83,14 +83,14 @@ bool checkService(){
         "Get-ScheduledTask -TaskName \"Startup RyzenAdjCtrl\"\n",
         "exit\n"
                                 };
-    qDebug()<<powerShellCLI;
+    qDebug()<< "Ctrl Main - " << powerShellCLI;
     process.start("powershell", powerShellCLI);
     for(;!process.waitForStarted();){}
     for(;!process.waitForFinished();){}
     QString error = process.readAllStandardError();
     QString output = process.readAllStandardOutput();
-    qDebug() << "\nCtrl Main - RyzenAdjCtrl Check Service error:\n\n" << error;
-    qDebug() << "\nCtrl Main - RyzenAdjCtrl Check Service output:\n\n" << output;
+    qDebug() << "Ctrl Main - RyzenAdjCtrl Check Service error:" << error;
+    qDebug() << "Ctrl Main - RyzenAdjCtrl Check Service output:" << output;
 
     return (error.size() > 1);
 }
@@ -117,14 +117,14 @@ void installService(){
         "Start-ScheduledTask \"Startup RyzenAdjCtrl\"\n",
         "exit\n", "-verb", "runas"
                                 };
-    qDebug()<<powerShellCLI;
+    qDebug()<< "Ctrl Main - " << powerShellCLI;
     process.start("powershell", powerShellCLI);
     for(;!process.waitForStarted();){}
     for(;!process.waitForFinished();){}
     QString error = process.readAllStandardError();
     QString output = process.readAllStandardOutput();
-    qDebug() << "\nCtrl Main - RyzenAdjCtrl Install Service error:\n\n" << error;
-    qDebug() << "\nCtrl Main - RyzenAdjCtrl Install Service output:\n\n" << output;
+    qDebug() << "Ctrl Main - RyzenAdjCtrl Install Service error:" << error;
+    qDebug() << "Ctrl Main - RyzenAdjCtrl Install Service output:" << output;
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Information);
@@ -139,14 +139,14 @@ void uninstallService(){
         "Unregister-ScheduledTask \"Startup RyzenAdjCtrl\" -Confirm:$false\n",
         "exit\n"
                                 };
-    qDebug()<<powerShellCLI;
+    qDebug() << "Ctrl Main - " << powerShellCLI;
     process.start("powershell", powerShellCLI);
     for(;!process.waitForStarted();){}
     for(;!process.waitForFinished();){}
     QString error = process.readAllStandardError();
     QString output = process.readAllStandardOutput();
-    qDebug() << "\nCtrl Main - RyzenAdjCtrl Uninstall Service error:\n\n" << error;
-    qDebug() << "\nCtrl Main - RyzenAdjCtrl Uninstall Service output:\n\n" << output;
+    qDebug() << "Ctrl Main - RyzenAdjCtrl Uninstall Service error:" << error;
+    qDebug() << "Ctrl Main - RyzenAdjCtrl Uninstall Service output:" << output;
 
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Information);
@@ -251,8 +251,8 @@ bool sudoersCheck(){
         for(;!process.waitForFinished();){}
         QString error = process.readAllStandardError();
         QString output = process.readAllStandardOutput();
-        qDebug() << "error:" << error;
-        qDebug() << "output:" << output;
+        qDebug() << "Ctrl Main - error:" << error;
+        qDebug() << "Ctrl Main - output:" << output;
         for(;true;){}*/
         return false;
     } else

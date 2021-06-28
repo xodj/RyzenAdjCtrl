@@ -26,7 +26,7 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
 
 #ifdef BUILD_SERVICE
     if(!bus->isServiseRuning()) {
-        qDebug() << "RyzenAdjCtrl Service is not runing!";
+        qDebug() << "Ctrl Gui - RyzenAdjCtrl Service is not runing!";
         startService();
     }
 #endif
@@ -1523,14 +1523,14 @@ void CtrlGui::decodeArgs(QByteArray args){
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     currentPresetId = attr.value().toString().toInt();
-                    qDebug()<<"currentPresetId:"<<currentPresetId;
+                    qDebug()<<"Ctrl Gui - currentPresetId:"<<currentPresetId;
                 }
             }else{}
         if (argsReader.name() == QString("saved"))
             foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
                 if (attr.name().toString() == "value"){
                     saved = attr.value().toString().toInt();
-                    qDebug()<<"saved:"<<saved;
+                    qDebug()<<"Ctrl Gui - saved:"<<saved;
                 }
             }else{}
 
@@ -1725,10 +1725,10 @@ void CtrlGui::closeEvent(QCloseEvent *event) {
 }
 
 void CtrlGui::useAgent(bool use){
-    qDebug()<<"CtrlAgent"<<use;
+    qDebug()<<"Ctrl Gui - CtrlAgent:"<<use;
     if(use){
         if(ui_agent == nullptr){
-            qDebug()<<"Create CtrlAgent";
+            qDebug()<<"Ctrl Gui - Create CtrlAgent";
             ui_agent = new CtrlAgent(conf);
             connect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
             connect(ui_agent, &CtrlAgent::showCtrlInfoWidget, ui->infoPushButton, &QPushButton::clicked);
@@ -1736,7 +1736,7 @@ void CtrlGui::useAgent(bool use){
         }
     } else {
         if(ui_agent != nullptr) {
-            qDebug()<<"Delete CtrlAgent";
+            qDebug()<<"Ctrl Gui - Delete CtrlAgent";
             disconnect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
             disconnect(ui_agent, &CtrlAgent::showCtrlInfoWidget, ui->infoPushButton, &QPushButton::clicked);
             disconnect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);

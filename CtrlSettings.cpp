@@ -14,13 +14,13 @@ CtrlSettings::CtrlSettings()
 #endif //WIN32
 {
     if (!configQFile->exists()){
-        qDebug()<<"RyzenAdjCtrl Settings Create New Settings File.";
+        qDebug()<<"Ctrl Settings - Create New Settings File.";
         saveSettings();
     } else
         openSettings();
 
     if (!presetsQFile->exists()) {
-        qDebug()<<"RyzenAdjCtrl Settings Create New Presets File.";
+        qDebug()<<"Ctrl Settings - Create New Presets File.";
         QString presetNames[5] = {
             "Battery Saver",
             "Better Battery",
@@ -38,13 +38,13 @@ CtrlSettings::CtrlSettings()
         savePresets();
     }
     else openPresets();
-    qDebug() << "RyzenAdjCtrl Settings started";
+    qDebug() << "Ctrl Settings - Started";
 }
 
 CtrlSettings::~CtrlSettings() {
     saveSettings();
     savePresets();
-    qDebug() << "RyzenAdjCtrl Settings desroyed";
+    qDebug() << "Ctrl Settings - Desroyed";
 }
 
 bool CtrlSettings::saveSettings() {
@@ -115,7 +115,7 @@ bool CtrlSettings::saveSettings() {
     xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
     configQFile->close();
-    qDebug() << "RyzenAdjCtrl Settings Saved";
+    qDebug() << "Ctrl Settings - Saved";
     return true;
 }
 
@@ -244,7 +244,7 @@ bool CtrlSettings::openSettings(){
         xmlReader.readNext();
     }
     configQFile->close();
-    qDebug() << "RyzenAdjCtrl Settings Opened";
+    qDebug() << "Ctrl Settings - Opened";
     return true;
 }
 
@@ -388,7 +388,7 @@ bool CtrlSettings::savePresets() {
     xmlWriter.writeEndElement();
     xmlWriter.writeEndDocument();
     presetsQFile->close();
-    qDebug() << "RyzenAdjCtrl Settings Presets Saved";
+    qDebug() << "Ctrl Settings - Presets Saved";
     return true;
 }
 
@@ -616,27 +616,27 @@ bool CtrlSettings::openPresets(){
     }
     presets->append(presetReadBuffer);
     presetsQFile->close();
-    qDebug() << "RyzenAdjCtrl Settings Presets Opened";
+    qDebug() << "Ctrl Settings - Presets Opened";
     return true;
 }
 
 settingsStr* CtrlSettings::getSettingsBuffer() {
-    qDebug() << "RyzenAdjCtrl Settings Get Settings";
+    qDebug() << "Ctrl Settings - Get Settings";
     return &settingsBuffer;
 }
 
 const QList<presetStr*>* CtrlSettings::getPresetsList() {
-    qDebug() << "RyzenAdjCtrl Settings Get Presets List";
+    qDebug() << "Ctrl Settings - Get Presets List";
     return presets;
 }
 
 qsizetype CtrlSettings::getPresetsCount() {
-    qDebug() << "RyzenAdjCtrl Settings Get Presets Count";
+    qDebug() << "Ctrl Settings - Get Presets Count";
     return presets->count();
 }
 
 bool CtrlSettings::setPresetBuffer(int idx, presetStr* preset) {
-    qDebug() << "RyzenAdjCtrl Settings Set Preset ID" << idx << preset->presetName;
+    qDebug() << "Ctrl Settings - Set Preset ID" << idx << preset->presetName;
     presetStr* presetBuffer = getPresetBuffer(idx);
 
     if (presetBuffer != nullptr)
@@ -647,7 +647,7 @@ bool CtrlSettings::setPresetBuffer(int idx, presetStr* preset) {
 }
 
 presetStr* CtrlSettings::getPresetBuffer(int idx) {
-    qDebug() << "RyzenAdjCtrl Settings Get Preset ID" << idx;
+    qDebug() << "Ctrl Settings - Get Preset ID" << idx;
     presetStr* presetBuffer = nullptr;
     for (qsizetype i = 0; i < presets->count(); i++)
         if (presets->at(i)->presetId == idx)
@@ -656,7 +656,7 @@ presetStr* CtrlSettings::getPresetBuffer(int idx) {
 }
 
 int CtrlSettings::insertNewPreset(int newidx, presetStr* newPreset) {
-    qDebug() << "RyzenAdjCtrl Settings Insert New Preset ID" << newidx;
+    qDebug() << "Ctrl Settings - Insert New Preset ID" << newidx;
     if (newPreset == nullptr) {
         newPreset = new presetStr;
         newPreset->presetName = "New preset";
@@ -675,7 +675,7 @@ int CtrlSettings::insertNewPreset(int newidx, presetStr* newPreset) {
 }
 
 bool CtrlSettings::deletePreset(int idx) {
-    qDebug() << "RyzenAdjCtrl Settings Delete Preset ID" << idx;
+    qDebug() << "Ctrl Settings - Delete Preset ID" << idx;
     presetStr* preset = getPresetBuffer(idx);
     presets->removeOne(preset);
     delete preset;
