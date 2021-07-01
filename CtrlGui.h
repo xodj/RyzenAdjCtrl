@@ -66,6 +66,7 @@ private:
 
     void useAgent(bool use);
     void exitFromAgent();
+    void presetChangeFromAgent(int idx);
 
     bool infoMessageShowed = false;
 

@@ -107,7 +107,7 @@ void CtrlGui::setupUi(){
         button->setFont(font);
         button->setStyleSheet(QString::fromUtf8(""));
         button->setCheckable(true);
-        button->setProperty("idx",idx);
+        button->setProperty("idx", idx);
         button->setSizePolicy(sizePolicy);
         if(i == 0)
             button->setChecked(true);
@@ -1144,20 +1144,32 @@ void CtrlGui::installService(){
 
 void CtrlGui::infoPushButtonClicked() {
     if(!infoFrame->isVisible()){
-        QRect rect = infoFrame->geometry();
-        const QRect windowGeometry = this->geometry();
-        int width = rect.width();
-        rect.setX(windowGeometry.right() + 4);
-        rect.setY(windowGeometry.top());
-        rect.setWidth(width);
-        rect.setHeight(windowGeometry.height());
-        infoFrame->setGeometry(rect);
+        if(this->isVisible()){
+            QRect rect = infoFrame->geometry();
+            const QRect windowGeometry = this->geometry();
+            int width = rect.width();
+            rect.setX(windowGeometry.right() + 4);
+            rect.setY(windowGeometry.top());
+            rect.setWidth(width);
+            rect.setHeight(windowGeometry.height());
+            infoFrame->setGeometry(rect);
+        } else {
+            QRect rect = infoFrame->geometry();
+            const QRect primaryScreenGeometry = qApp->primaryScreen()->geometry();
+            int width = 310;
+            int height = 448;
+            rect.setX((primaryScreenGeometry.right() / 2) - (width / 2));
+            rect.setY((primaryScreenGeometry.bottom() / 2) - (height / 2));
+            rect.setWidth(width);
+            rect.setHeight(height);
+            infoFrame->setGeometry(rect);
+        }
     }
 
     infoFrame->setHidden(infoFrame->isVisible());
     ui->infoPushButton->setChecked(infoFrame->isVisible());
     if(ui_agent != nullptr){
-        ui_agent->showInfoWidgetAction->setChecked(infoFrame->isVisible());
+        ui_agent->infoPushButtonClicked(infoFrame->isVisible());
     }
     sendRyzenAdjInfo();
 }
@@ -1326,6 +1338,9 @@ void CtrlGui::presetPlusPushButtonClicked(){
     ui_settings->epmBalancedComboBox->insertItem(idx, presetBuffer->presetName, idx);
     ui_settings->epmMaximumPerfomanceComboBox->insertItem(idx, presetBuffer->presetName, idx);
     ui_settings->epmGamingComboBox->insertItem(idx, presetBuffer->presetName, idx);
+    //Add items to agent
+    if(ui_agent != nullptr)
+        ui_agent->addPresetButton(idx);
 }
 
 void CtrlGui::presetDeletePushButtonClicked() {
@@ -1458,6 +1473,9 @@ void CtrlGui::presetDeletePushButtonClicked() {
     argsWriter.writeEndDocument();
 
     bus->sendMessageToService(data);
+    //Add items to agent
+    if(ui_agent != nullptr)
+        ui_agent->delPresetButton(idx);
 }
 
 void CtrlGui::presetNameEditChanged(QString name){
@@ -1713,6 +1731,9 @@ void CtrlGui::decodeArgs(QByteArray args){
                 && conf->getSettingsBuffer()->useAgent
                 && conf->getSettingsBuffer()->showNotifications)
             ui_agent->notificationToTray(message);
+        if(ui_agent != nullptr)
+            ui_agent->setCurrentPresetId(currentPresetId);
+
     }
 }
 
@@ -1733,6 +1754,7 @@ void CtrlGui::useAgent(bool use){
             connect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
             connect(ui_agent, &CtrlAgent::showCtrlInfoWidget, ui->infoPushButton, &QPushButton::clicked);
             connect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
+            connect(ui_agent, &CtrlAgent::changePreset, this, &CtrlGui::presetChangeFromAgent);
         }
     } else {
         if(ui_agent != nullptr) {
@@ -1740,6 +1762,7 @@ void CtrlGui::useAgent(bool use){
             disconnect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
             disconnect(ui_agent, &CtrlAgent::showCtrlInfoWidget, ui->infoPushButton, &QPushButton::clicked);
             disconnect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
+            disconnect(ui_agent, &CtrlAgent::changePreset, this, &CtrlGui::presetChangeFromAgent);
             delete ui_agent;
             ui_agent = nullptr;
         }
@@ -1747,3 +1770,11 @@ void CtrlGui::useAgent(bool use){
 }
 
 void CtrlGui::exitFromAgent(){ exit(0); }
+
+void CtrlGui::presetChangeFromAgent(int idx){
+    for(qsizetype x = 0;x < presetFormList->count();x++)
+        if(presetFormList->at(x)->applyPushButton->property("idx") == idx){
+            presetFormList->at(x)->saveApplyPushButton->click();
+            break;
+        }
+}
