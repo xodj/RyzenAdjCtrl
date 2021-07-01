@@ -131,7 +131,6 @@ void CtrlGui::setupUi(){
 
     QScroller::grabGesture(ui->scrollArea, QScroller::LeftMouseButtonGesture);
 
-    ui_infoWidget = new Ui::CtrlInfoWidget;
     infoFrame = new QFrame(this, Qt::Window);
     ui_infoWidget->setupUi(infoFrame);
     infoFrame->setWindowFlag(Qt::WindowMinMaxButtonsHint, false);
@@ -1143,7 +1142,7 @@ void CtrlGui::installService(){
 #endif
 
 void CtrlGui::infoPushButtonClicked() {
-    if(!infoFrame->isVisible()){
+    if(!infoWidgetHasBeenShowed){
         if(this->isVisible()){
             QRect rect = infoFrame->geometry();
             const QRect windowGeometry = this->geometry();
@@ -1153,6 +1152,7 @@ void CtrlGui::infoPushButtonClicked() {
             rect.setWidth(width);
             rect.setHeight(windowGeometry.height());
             infoFrame->setGeometry(rect);
+            infoWidgetHasBeenShowed = true;
         } else {
             QRect rect = infoFrame->geometry();
             const QRect primaryScreenGeometry = qApp->primaryScreen()->geometry();
@@ -1163,6 +1163,7 @@ void CtrlGui::infoPushButtonClicked() {
             rect.setWidth(width);
             rect.setHeight(height);
             infoFrame->setGeometry(rect);
+            infoWidgetHasBeenShowed = true;
         }
     }
 
@@ -1759,6 +1760,7 @@ void CtrlGui::useAgent(bool use){
     } else {
         if(ui_agent != nullptr) {
             qDebug()<<"Ctrl Gui - Delete CtrlAgent";
+            ui_agent->hide();
             disconnect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
             disconnect(ui_agent, &CtrlAgent::showCtrlInfoWidget, ui->infoPushButton, &QPushButton::clicked);
             disconnect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
@@ -1769,7 +1771,15 @@ void CtrlGui::useAgent(bool use){
     }
 }
 
-void CtrlGui::exitFromAgent(){ exit(0); }
+void CtrlGui::exitFromAgent(){
+    ui_agent->hide();
+    disconnect(ui_agent, &CtrlAgent::showCtrlGui, this, &CtrlGui::show);
+    disconnect(ui_agent, &CtrlAgent::showCtrlInfoWidget, ui->infoPushButton, &QPushButton::clicked);
+    disconnect(ui_agent, &CtrlAgent::closeCtrlGui, this, &CtrlGui::exitFromAgent);
+    disconnect(ui_agent, &CtrlAgent::changePreset, this, &CtrlGui::presetChangeFromAgent);
+    delete ui_agent;
+    exit(0);
+}
 
 void CtrlGui::presetChangeFromAgent(int idx){
     for(qsizetype x = 0;x < presetFormList->count();x++)

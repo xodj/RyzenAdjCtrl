@@ -52,6 +52,7 @@ private:
 
     void infoPushButtonClicked();
     void sendRyzenAdjInfo(QString value = "0");
+    bool infoWidgetHasBeenShowed = false;
 
     void settingsPushButtonClicked();
     void presetPushButtonClicked();

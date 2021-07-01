@@ -27,7 +27,7 @@ public:
         this->show();
 
         popupMenu = new QFrame(nullptr, Qt::WindowType::Popup);
-        popupMenu->setFrameStyle(QFrame::Panel);
+        popupMenu->setFrameStyle(QFrame::Shape::NoFrame);
         popupMenu->setAccessibleName("CtrlSettings");
         popupMenu->resize(1,1);
         ui_popupwidget->setupUi(popupMenu);
