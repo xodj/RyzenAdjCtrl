@@ -27,7 +27,7 @@ public:
         this->show();
 
         popupMenu = new QFrame(nullptr, Qt::WindowType::Popup);
-        popupMenu->setFrameStyle(QFrame::Shape::NoFrame);
+        popupMenu->setFrameStyle(QFrame::Shape::StyledPanel);
         popupMenu->setAccessibleName("CtrlSettings");
         popupMenu->resize(1,1);
         ui_popupwidget->setupUi(popupMenu);
@@ -39,7 +39,7 @@ public:
         presetButtonsList = new QList<QPushButton*>;
         QPushButton *button;
         QFont font;
-        font.setPointSize(10);
+        font.setPointSize(8);
         font.setBold(true);
         const QList<presetStr*> *presetsList = conf->getPresetsList();
         for(qsizetype i = 0; i < presetsList->count(); i++){
@@ -146,7 +146,7 @@ public:
         ui_popupwidget->scrollAreaWidgetContents->layout()->removeItem(spacer);
         QPushButton *button;
         QFont font;
-        font.setPointSize(10);
+        font.setPointSize(8);
         font.setBold(true);
         const QList<presetStr*> *presetsList = conf->getPresetsList();
         for(qsizetype i = 0; i < presetsList->count(); i++){
