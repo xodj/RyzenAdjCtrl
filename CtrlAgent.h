@@ -3,10 +3,8 @@
 
 #include <QtWidgets/QSystemTrayIcon>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QFrame>
 #include <QAction>
 #include "CtrlSettings.h"
-#include "ui_CtrlPopupWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CtrlPopupWidget; }
@@ -18,68 +16,69 @@ class CtrlAgent : public QSystemTrayIcon
 public:
     CtrlAgent(CtrlSettings *conf)
         : QSystemTrayIcon(new QSystemTrayIcon),
-          conf(conf),
-          ui_popupwidget(new Ui::CtrlPopupWidget)
+          conf(conf)
     {
         QIcon icon(":/main/amd_icon.ico");
         this->setIcon(icon);
         this->setToolTip("RyzenAdjCtrl");
-        this->show();
 
-        popupMenu = new QFrame(nullptr, Qt::WindowType::Popup);
-        popupMenu->setFrameStyle(QFrame::Shape::StyledPanel);
-        popupMenu->setAccessibleName("CtrlSettings");
-        popupMenu->resize(1,1);
-        ui_popupwidget->setupUi(popupMenu);
-        if (popupMenu->geometry().width()<10) {
-            popupMenu->show();
-            popupMenu->hide();
-        }
+        checkIcon.addFile(QString::fromUtf8(":/main/unchecked.png"),
+                          QSize(), QIcon::Selected, QIcon::Off);
+        checkIcon.addFile(QString::fromUtf8(":/main/checked.png"),
+                          QSize(), QIcon::Selected, QIcon::On);
 
-        presetButtonsList = new QList<QPushButton*>;
-        QPushButton *button;
-        QFont font;
-        font.setPointSize(8);
-        font.setBold(true);
+        openAction = new QAction(icon, "Open RyzenAdjCtrl", this);
+        openAction->setObjectName(QString::fromUtf8("openAction"));
+        showAction = new QAction(checkIcon, "Show Info Widget", this);
+        showAction->setObjectName(QString::fromUtf8("showAction"));
+        showAction->setCheckable(true);
+        quitAction = new QAction(QIcon(":/main/application-exit.png"), "Quit", this);
+        quitAction->setObjectName(QString::fromUtf8("quitAction"));
+        trayMenu = new QMenu;
+        trayMenu->setObjectName(QString::fromUtf8("trayMenu"));
+        presetsMenu = new QMenu("Presets switch", trayMenu);
+        presetsMenu->setObjectName(QString::fromUtf8("presetsMenu"));
+        presetsMenu->setIcon(QIcon(":/main/settings.png"));
+
+        this->setContextMenu(trayMenu);
+
+        trayMenu->addAction(openAction);
+        trayMenu->addAction(presetsMenu->menuAction());
+        trayMenu->addAction(showAction);
+        trayMenu->addAction(quitAction);
+
+        presetActionList = new QList<QAction*>;
+        QAction *presetAction;
         const QList<presetStr*> *presetsList = conf->getPresetsList();
         for(qsizetype i = 0; i < presetsList->count(); i++){
             const presetStr *presetBuffer = presetsList->at(i);
 
-            button = new QPushButton(presetBuffer->presetName);
-            button->setCheckable(true);
-            button->setProperty("idx", presetBuffer->presetId);
-            button->setMinimumSize(QSize(105, 23));
-            button->setFont(font);
+            presetAction = new QAction(checkIcon, presetBuffer->presetName, this);
+            presetAction->setCheckable(true);
+            presetAction->setProperty("idx", presetBuffer->presetId);
 
-            ui_popupwidget->scrollAreaWidgetContents->layout()->addWidget(button);
+            presetsMenu->addAction(presetAction);
 
-            presetButtonsList->append(button);
+            presetActionList->append(presetAction);
         }
 
-        spacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-        ui_popupwidget->scrollAreaWidgetContents->layout()->addItem(spacer);
-
-        QFile configQFile;
-        configQFile.setFileName(":/theme/mainwindow.qss");
-        configQFile.open(QIODevice::ReadOnly);
-        QString strStyleSheet = configQFile.readAll();
-        popupMenu->setStyleSheet(strStyleSheet);
-        configQFile.close();
-
         connection();
+        this->show();
     }
 
     ~CtrlAgent() {
+        this->hide();
+
         disconnect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                 this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-        disconnect(ui_popupwidget->openPushButton, SIGNAL(clicked()),
-                   this, SIGNAL(showCtrlGui()));
-        disconnect(ui_popupwidget->showInfoPushButton, &QPushButton::clicked, this, &CtrlAgent::showCtrlInfoWidget);
-        disconnect(ui_popupwidget->quitPushButton, SIGNAL(clicked()),
-                   this, SIGNAL(closeCtrlGui()));
-        for(qsizetype i = 0; i < presetButtonsList->count(); i++){
-            QPushButton *button = presetButtonsList->at(i);
-            disconnect(button, &QPushButton::clicked,
+        disconnect(openAction, SIGNAL(triggered()),
+                this, SIGNAL(showCtrlGui()));
+        disconnect(showAction, &QAction::triggered,
+                this, &CtrlAgent::showCtrlInfoWidget);
+        disconnect(quitAction, SIGNAL(triggered()), this, SIGNAL(closeCtrlGui()));
+        for(qsizetype i = 0; i < presetActionList->count(); i++){
+            QAction *action = presetActionList->at(i);
+            disconnect(action, &QAction::triggered,
                     this, &CtrlAgent::presetButtonClicked);
         }
     }
@@ -87,15 +86,14 @@ public:
     void connection(){
         connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                 this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-        connect(ui_popupwidget->openPushButton, SIGNAL(clicked()),
+        connect(openAction, SIGNAL(triggered()),
                 this, SIGNAL(showCtrlGui()));
-        connect(ui_popupwidget->showInfoPushButton, &QPushButton::clicked,
+        connect(showAction, &QAction::triggered,
                 this, &CtrlAgent::showCtrlInfoWidget);
-        connect(ui_popupwidget->quitPushButton, SIGNAL(clicked()),
-                this, SIGNAL(closeCtrlGui()));
-        for(qsizetype i = 0; i < presetButtonsList->count(); i++){
-            QPushButton *button = presetButtonsList->at(i);
-            connect(button, &QPushButton::clicked,
+        connect(quitAction, SIGNAL(triggered()), this, SIGNAL(closeCtrlGui()));
+        for(qsizetype i = 0; i < presetActionList->count(); i++){
+            QAction *action = presetActionList->at(i);
+            connect(action, &QAction::triggered,
                     this, &CtrlAgent::presetButtonClicked);
         }
     }
@@ -108,78 +106,52 @@ public:
         }
     }
 
-    void showPopupFrame() {
-        QRect rect = popupMenu->geometry();
-        const QRect iconGeometry = this->geometry();
-        int width = rect.width();
-        int height = rect.height();
-        rect.setX(iconGeometry.left() - (width / 2) + (iconGeometry.width() / 2));
-        rect.setY(iconGeometry.top() - height - 10);
-        rect.setWidth(width);
-        rect.setHeight(height);
-        popupMenu->setGeometry(rect);
-
-        if (popupMenu->isHidden())
-            popupMenu->show();
-    }
-
     void infoPushButtonClicked(bool activate){
-        ui_popupwidget->showInfoPushButton->setChecked(activate);
+        showAction->setChecked(activate);
     }
 
     void setCurrentPresetId(int idx){
-        for(qsizetype i = 0; i < presetButtonsList->count(); i++){
-            QPushButton *button = presetButtonsList->at(i);
-            button->setChecked(false);
-            if(button->property("idx").toInt() == idx)
-                button->setChecked(true);
+        for(qsizetype i = 0; i < presetActionList->count(); i++){
+            QAction *action = presetActionList->at(i);
+            action->setChecked(false);
+            if(action->property("idx").toInt() == idx)
+                action->setChecked(true);
         }
     }
 
     void presetButtonClicked(){
-        int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+        int idx = reinterpret_cast<QAction *>(sender())->property("idx").toInt();
         setCurrentPresetId(idx);
         emit changePreset(idx);
     }
 
     void addPresetButton(int idx){
-        ui_popupwidget->scrollAreaWidgetContents->layout()->removeItem(spacer);
-        QPushButton *button;
-        QFont font;
-        font.setPointSize(8);
-        font.setBold(true);
         const QList<presetStr*> *presetsList = conf->getPresetsList();
         for(qsizetype i = 0; i < presetsList->count(); i++){
             const presetStr *presetBuffer = presetsList->at(i);
             if(presetBuffer->presetId == idx){
-                button = new QPushButton(presetBuffer->presetName);
-                button->setCheckable(true);
-                button->setProperty("idx", presetBuffer->presetId);
-                button->setMinimumSize(QSize(105, 23));
-                button->setFont(font);
-                ui_popupwidget->scrollAreaWidgetContents->layout()->addWidget(button);
-                presetButtonsList->append(button);
-                connect(button, &QPushButton::clicked,
-                        this, &CtrlAgent::presetButtonClicked);
+                QAction *presetAction = new QAction(checkIcon, presetBuffer->presetName, this);
+                presetAction->setCheckable(true);
+                presetAction->setProperty("idx", presetBuffer->presetId);
+
+                presetsMenu->addAction(presetAction);
+
+                presetActionList->append(presetAction);
                 break;
             }
         }
-        ui_popupwidget->scrollAreaWidgetContents->layout()->addItem(spacer);
     }
 
     void delPresetButton(int idx){
-        ui_popupwidget->scrollAreaWidgetContents->layout()->removeItem(spacer);
-        for(qsizetype i = 0; i < presetButtonsList->count(); i++){
-            QPushButton *button = presetButtonsList->at(i);
-            if(button->property("idx").toInt() == idx){
-                disconnect(button, &QPushButton::clicked,
-                        this, &CtrlAgent::presetButtonClicked);
-                ui_popupwidget->scrollAreaWidgetContents->layout()->removeWidget(button);
-                presetButtonsList->removeOne(button);
-                delete button;
+        for(qsizetype i = 0; i < presetActionList->count(); i++){
+            QAction *presetAction = presetActionList->at(i);
+            if(presetAction->property("idx").toInt() == idx){
+                presetsMenu->removeAction(presetAction);
+                presetActionList->removeOne(presetAction);
+                delete presetAction;
+                break;
             }
         }
-        ui_popupwidget->scrollAreaWidgetContents->layout()->addItem(spacer);
     }
 
 signals:
@@ -190,19 +162,20 @@ signals:
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason) {
-        if(reason == ActivationReason::DoubleClick){
+        if(reason == ActivationReason::DoubleClick)
             emit showCtrlGui();
-        } else if(reason == ActivationReason::Context){
-            showPopupFrame();
-        }
     }
 
 private:
     QString lastMessage;
-    QFrame *popupMenu;
-    Ui::CtrlPopupWidget *ui_popupwidget;
-    QList<QPushButton*> *presetButtonsList;
-    QSpacerItem *spacer;
+
+    QIcon checkIcon;
+    QAction *openAction;
+    QAction *showAction;
+    QAction *quitAction;
+    QList<QAction*> *presetActionList;
+    QMenu *trayMenu;
+    QMenu *presetsMenu;
 
     CtrlSettings *conf;
 };

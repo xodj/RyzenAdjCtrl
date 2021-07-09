@@ -4,6 +4,7 @@
         <file alias="application-exit.png">media/main/application-exit.png</file>
         <file alias="checked.png">media/main/checked.png</file>
         <file alias="unchecked.png">media/main/unchecked.png</file>
+        <file alias="settings.png">media/main/settings.png</file>
     </qresource>
     <qresource prefix="/theme">
         <file alias="checkbox_checked.png">media/theme/checkbox_checked.png</file>

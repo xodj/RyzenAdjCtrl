@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenAdjCtrl VERSION 0.4.2.718 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.4.2.723 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
 #BUILD_STANDALONE on UNIX or choose on Windows
 if(WIN32)
@@ -58,7 +58,6 @@ set(RyzenAdjCtrl_UI
     CtrlInfoWidget.ui
     CtrlMainWindow.ui
     CtrlSettingsForm.ui
-    CtrlPopupWidget.ui
     )
 set(RyzenAdjCtrl_TS_FILES
     translate/RyzenAdjCtrl_ru_RU.ts
