@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenAdjCtrl VERSION 0.4.2.723 LANGUAGES CXX)
+PROJECT(RyzenAdjCtrl VERSION 0.4.2.725 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
 #BUILD_STANDALONE on UNIX or choose on Windows
 if(WIN32)
@@ -43,6 +43,7 @@ set(RyzenAdjCtrl_HEADERS
     CtrlComboBox.h
     CtrlBus.h
     CtrlACCallback.h
+    CtrlFrame.h
     )
 set(RyzenAdjCtrl_SOURCES
     CtrlGui.cpp

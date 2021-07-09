@@ -131,11 +131,9 @@ void CtrlGui::setupUi(){
 
     QScroller::grabGesture(ui->scrollArea, QScroller::LeftMouseButtonGesture);
 
-    infoFrame = new QFrame(this, Qt::Window);
+    infoFrame = new CtrlFrame(this, Qt::Window);
     ui_infoWidget->setupUi(infoFrame);
     infoFrame->setWindowFlag(Qt::WindowMinMaxButtonsHint, false);
-    //Need to add feature disable updates while hidden
-    infoFrame->setWindowFlag(Qt::WindowCloseButtonHint, false);
     infoFrame->setWindowTitle("RyzenAdj - Info");
     infoFrame->setAccessibleName("CtrlInfo");
     infoFrame->resize(1,1);
@@ -171,6 +169,7 @@ void CtrlGui::setupUi(){
 void CtrlGui::setupConnections(){
     connect(ui->comboBox, &QComboBox::currentTextChanged, this, &CtrlGui::languageChange);
     connect(ui->infoPushButton, &QPushButton::clicked, this, &CtrlGui::infoPushButtonClicked);
+    connect(infoFrame, &CtrlFrame::closeClicked, this, &CtrlGui::infoPushButtonClicked);
     connect(ui->settingsPushButton, &QPushButton::clicked, this, &CtrlGui::settingsPushButtonClicked);
 
     connect(tabPlusButton, &QPushButton::clicked, this, &CtrlGui::presetPlusPushButtonClicked);

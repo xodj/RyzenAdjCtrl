@@ -9,6 +9,7 @@
 #include "CtrlSettings.h"
 #include "CtrlAgent.h"
 #include "CtrlBus.h"
+#include "CtrlFrame.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CtrlGui;
@@ -75,7 +76,7 @@ private:
     Ui::CtrlGuiSettings *ui_settings;
     Ui::CtrlInfoWidget *ui_infoWidget;
     QFrame *settingFrame;
-    QFrame *infoFrame;
+    CtrlFrame *infoFrame;
     QTranslator *qtLanguageTranslator;
     CtrlBus *bus;
     CtrlSettings *conf;
