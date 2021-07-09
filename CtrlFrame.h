@@ -2,6 +2,7 @@
 #define CTRLFRAME_H
 
 #include <QFrame>
+#include <QEvent>
 
 class CtrlFrame : public QFrame
 {
@@ -16,7 +17,9 @@ signals:
 
 protected:
     virtual void closeEvent(QCloseEvent *event) {
-        emit closeClicked();
+        QEvent *ev = (QEvent*)event;
+        ev->ignore();
+        closeClicked();
     }
 };
 
