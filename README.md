@@ -1,4 +1,4 @@
-# RyzenAdjCtrl
+# RyzenAdjCtrl [(Download)](https://github.com/xodj/RyzenAdjCtrl/releases)
 RyzenAdjCtrl is tool to increase Ryzen's laptops performance.
 
 Support project on [Patreon](https://www.patreon.com/bePatron?u=62001804) or [yoomoney](https://yoomoney.ru/to/410017318965665)
