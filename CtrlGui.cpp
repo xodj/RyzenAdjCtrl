@@ -1345,138 +1345,159 @@ void CtrlGui::presetPlusPushButtonClicked(){
 
 void CtrlGui::presetDeletePushButtonClicked() {
     int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
+    QMessageBox *deleteDialog;
     if(conf->getPresetsCount() != 1) {
+        deleteDialog =
+                new QMessageBox(QMessageBox::Question,
+                                "Delete Preset",
+                                "Do you really want to delete preset?");
+        deleteDialog->addButton(QString::fromUtf8("&Yes"),
+                                QMessageBox::AcceptRole);
+        deleteDialog->addButton(QString::fromUtf8("&No"),
+                                QMessageBox::RejectRole);
+        deleteDialog->setModal(true);
+        if (!(deleteDialog->exec() == QDialog::Accepted)){
+            Ui::CtrlGuiAPUForm *presetForm;
+            for(qsizetype x = 0;x < presetFormList->count();x++)
+                if(presetFormList->at(x)->applyPushButton->property("idx") == idx){
+                    presetForm = presetFormList->at(x);
+                    break;
+                }
+            QPushButton *button;
+            for(qsizetype x = 0;x < tabButtonList->count();x++)
+                if(tabButtonList->at(x)->property("idx") == idx){
+                    button = tabButtonList->at(x);
+                    break;
+                }
+            QWidget *widget = nullptr;
+            for(qsizetype x = 0;x < tabWidgetsList->count();x++)
+                if(tabWidgetsList->at(x)->property("idx") == idx){
+                    widget = tabWidgetsList->at(x);
+                    break;
+                }
 
-        Ui::CtrlGuiAPUForm *presetForm;
-        for(qsizetype x = 0;x < presetFormList->count();x++)
-            if(presetFormList->at(x)->applyPushButton->property("idx") == idx){
-                presetForm = presetFormList->at(x);
-                break;
+            disconnect(button, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
+            disconnect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
+            disconnect(presetForm->presetNameEdit, &QLineEdit::textChanged, this, &CtrlGui::presetNameEditChanged);
+
+            disconnect(presetForm->saveApplyPushButton, &QPushButton::clicked, this, &CtrlGui::saveApplyPreset);
+            disconnect(presetForm->saveOnlyPushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
+            disconnect(presetForm->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
+            disconnect(presetForm->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
+
+            disconnect(presetForm->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
+            disconnect(presetForm->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
+
+            ui->scrollAreaWidgetContents->layout()->removeWidget(button);
+            verticalLayout->removeWidget(widget);
+
+            tabButtonList->removeOne(button);
+            presetFormList->removeOne(presetForm);
+            tabWidgetsList->removeOne(widget);
+            conf->deletePreset(idx);
+
+            delete button;
+            delete presetForm;
+            delete widget;
+
+            conf->savePresets();
+            //Set active
+            if(conf->getPresetsCount()>0){
+                for(int i = 0;i < tabWidgetsList->count();i++)
+                    tabWidgetsList->at(i)->setHidden(true);
+                for(int i = 0;i < tabButtonList->count();i++)
+                    tabButtonList->at(i)->setChecked(false);
+                tabWidgetsList->at(0)->setHidden(false);
+                tabButtonList->at(0)->setChecked(true);
             }
-        QPushButton *button;
-        for(qsizetype x = 0;x < tabButtonList->count();x++)
-            if(tabButtonList->at(x)->property("idx") == idx){
-                button = tabButtonList->at(x);
-                break;
-            }
-        QWidget *widget = nullptr;
-        for(qsizetype x = 0;x < tabWidgetsList->count();x++)
-            if(tabWidgetsList->at(x)->property("idx") == idx){
-                widget = tabWidgetsList->at(x);
-                break;
-            }
+            //delete items from settings
+            for(qsizetype i = 0;i < ui_settings->dcStateComboBox->count();i++)
+                if(ui_settings->dcStateComboBox->itemData(i) == idx) {
+                    if(ui_settings->dcStateComboBox->currentIndex() == idx) {
+                        ui_settings->dcStateComboBox->setCurrentIndex(0);
+                        ui_settings->savePushButton->click();
+                    }
+                    ui_settings->dcStateComboBox->removeItem(i);
+                }
+            for(qsizetype i = 0;i < ui_settings->acStateComboBox->count();i++)
+                if(ui_settings->acStateComboBox->itemData(i) == idx) {
+                    if(ui_settings->acStateComboBox->currentIndex() == idx) {
+                        ui_settings->acStateComboBox->setCurrentIndex(0);
+                        ui_settings->savePushButton->click();
+                    }
+                    ui_settings->acStateComboBox->removeItem(i);
+                }
+            for(qsizetype i = 0;i < ui_settings->epmBatterySaverComboBox->count();i++)
+                if(ui_settings->epmBatterySaverComboBox->itemData(i) == idx) {
+                    if(ui_settings->epmBatterySaverComboBox->currentIndex() == idx) {
+                        ui_settings->epmBatterySaverComboBox->setCurrentIndex(0);
+                        ui_settings->savePushButton->click();
+                    }
+                    ui_settings->epmBatterySaverComboBox->removeItem(i);
+                }
+            for(qsizetype i = 0;i < ui_settings->epmBetterBatteryComboBox->count();i++)
+                if(ui_settings->epmBetterBatteryComboBox->itemData(i) == idx) {
+                    if(ui_settings->epmBetterBatteryComboBox->currentIndex() == idx) {
+                        ui_settings->epmBetterBatteryComboBox->setCurrentIndex(0);
+                        ui_settings->savePushButton->click();
+                    }
+                    ui_settings->epmBetterBatteryComboBox->removeItem(i);
+                }
+            for(qsizetype i = 0;i < ui_settings->epmBalancedComboBox->count();i++)
+                if(ui_settings->epmBalancedComboBox->itemData(i) == idx) {
+                    if(ui_settings->epmBalancedComboBox->currentIndex() == idx) {
+                        ui_settings->epmBalancedComboBox->setCurrentIndex(0);
+                        ui_settings->savePushButton->click();
+                    }
+                    ui_settings->epmBalancedComboBox->removeItem(i);
+                }
+            for(qsizetype i = 0;i < ui_settings->epmMaximumPerfomanceComboBox->count();i++)
+                if(ui_settings->epmMaximumPerfomanceComboBox->itemData(i) == idx) {
+                    if(ui_settings->epmMaximumPerfomanceComboBox->currentIndex() == idx) {
+                        ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(0);
+                        ui_settings->savePushButton->click();
+                    }
+                    ui_settings->epmMaximumPerfomanceComboBox->removeItem(i);
+                }
+            for(qsizetype i = 0;i < ui_settings->epmGamingComboBox->count();i++)
+                if(ui_settings->epmGamingComboBox->itemData(i) == idx) {
+                    if(ui_settings->epmGamingComboBox->currentIndex() == idx) {
+                        ui_settings->epmGamingComboBox->setCurrentIndex(0);
+                        ui_settings->savePushButton->click();
+                    }
+                    ui_settings->epmGamingComboBox->removeItem(i);
+                }
 
-        disconnect(button, &QPushButton::clicked, this, &CtrlGui::presetPushButtonClicked);
-        disconnect(presetForm->deletePushButton, &QPushButton::clicked, this, &CtrlGui::presetDeletePushButtonClicked);
-        disconnect(presetForm->presetNameEdit, &QLineEdit::textChanged, this, &CtrlGui::presetNameEditChanged);
+            //send del command
+            QByteArray data;
+            QXmlStreamWriter argsWriter(&data);
+            argsWriter.setAutoFormatting(true);
+            argsWriter.writeStartDocument();
+            argsWriter.writeStartElement("bufferToService");
+            argsWriter.writeStartElement("delete");
+            argsWriter.writeEndElement();
+            argsWriter.writeStartElement("id");
+            argsWriter.writeAttribute("value", QString::number(idx));
+            argsWriter.writeEndElement();
+            argsWriter.writeEndElement();
+            argsWriter.writeEndDocument();
+            bus->sendMessageToService(data);
 
-        disconnect(presetForm->saveApplyPushButton, &QPushButton::clicked, this, &CtrlGui::saveApplyPreset);
-        disconnect(presetForm->saveOnlyPushButton, &QPushButton::clicked, this, &CtrlGui::savePreset);
-        disconnect(presetForm->applyPushButton, &QPushButton::clicked, this, &CtrlGui::applyPreset);
-        disconnect(presetForm->cancelPushButton, &QPushButton::clicked, this, &CtrlGui::cancelPreset);
-
-        disconnect(presetForm->smuMaxPerformanceCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
-        disconnect(presetForm->smuPowerSavingCheckBox, &QCheckBox::stateChanged, this, &CtrlGui::smuCheckBoxClicked);
-
-        ui->scrollAreaWidgetContents->layout()->removeWidget(button);
-        verticalLayout->removeWidget(widget);
-
-        tabButtonList->removeOne(button);
-        presetFormList->removeOne(presetForm);
-        tabWidgetsList->removeOne(widget);
-        conf->deletePreset(idx);
-
-        delete button;
-        delete presetForm;
-        delete widget;
-
-        conf->savePresets();
-        //Set active
-        if(conf->getPresetsCount()>0){
-            for(int i = 0;i < tabWidgetsList->count();i++)
-                tabWidgetsList->at(i)->setHidden(true);
-            for(int i = 0;i < tabButtonList->count();i++)
-                tabButtonList->at(i)->setChecked(false);
-            tabWidgetsList->at(0)->setHidden(false);
-            tabButtonList->at(0)->setChecked(true);
+            //Add items to agent
+            if(ui_agent != nullptr)
+                ui_agent->delPresetButton(idx);
         }
-        //delete items from settings
-        for(qsizetype i = 0;i < ui_settings->dcStateComboBox->count();i++)
-            if(ui_settings->dcStateComboBox->itemData(i) == idx) {
-                if(ui_settings->dcStateComboBox->currentIndex() == idx) {
-                    ui_settings->dcStateComboBox->setCurrentIndex(0);
-                    ui_settings->savePushButton->click();
-                }
-                ui_settings->dcStateComboBox->removeItem(i);
-            }
-        for(qsizetype i = 0;i < ui_settings->acStateComboBox->count();i++)
-            if(ui_settings->acStateComboBox->itemData(i) == idx) {
-                if(ui_settings->acStateComboBox->currentIndex() == idx) {
-                    ui_settings->acStateComboBox->setCurrentIndex(0);
-                    ui_settings->savePushButton->click();
-                }
-                ui_settings->acStateComboBox->removeItem(i);
-            }
-        for(qsizetype i = 0;i < ui_settings->epmBatterySaverComboBox->count();i++)
-            if(ui_settings->epmBatterySaverComboBox->itemData(i) == idx) {
-                if(ui_settings->epmBatterySaverComboBox->currentIndex() == idx) {
-                    ui_settings->epmBatterySaverComboBox->setCurrentIndex(0);
-                    ui_settings->savePushButton->click();
-                }
-                ui_settings->epmBatterySaverComboBox->removeItem(i);
-            }
-        for(qsizetype i = 0;i < ui_settings->epmBetterBatteryComboBox->count();i++)
-            if(ui_settings->epmBetterBatteryComboBox->itemData(i) == idx) {
-                if(ui_settings->epmBetterBatteryComboBox->currentIndex() == idx) {
-                    ui_settings->epmBetterBatteryComboBox->setCurrentIndex(0);
-                    ui_settings->savePushButton->click();
-                }
-                ui_settings->epmBetterBatteryComboBox->removeItem(i);
-            }
-        for(qsizetype i = 0;i < ui_settings->epmBalancedComboBox->count();i++)
-            if(ui_settings->epmBalancedComboBox->itemData(i) == idx) {
-                if(ui_settings->epmBalancedComboBox->currentIndex() == idx) {
-                    ui_settings->epmBalancedComboBox->setCurrentIndex(0);
-                    ui_settings->savePushButton->click();
-                }
-                ui_settings->epmBalancedComboBox->removeItem(i);
-            }
-        for(qsizetype i = 0;i < ui_settings->epmMaximumPerfomanceComboBox->count();i++)
-            if(ui_settings->epmMaximumPerfomanceComboBox->itemData(i) == idx) {
-                if(ui_settings->epmMaximumPerfomanceComboBox->currentIndex() == idx) {
-                    ui_settings->epmMaximumPerfomanceComboBox->setCurrentIndex(0);
-                    ui_settings->savePushButton->click();
-                }
-                ui_settings->epmMaximumPerfomanceComboBox->removeItem(i);
-            }
-        for(qsizetype i = 0;i < ui_settings->epmGamingComboBox->count();i++)
-            if(ui_settings->epmGamingComboBox->itemData(i) == idx) {
-                if(ui_settings->epmGamingComboBox->currentIndex() == idx) {
-                    ui_settings->epmGamingComboBox->setCurrentIndex(0);
-                    ui_settings->savePushButton->click();
-                }
-                ui_settings->epmGamingComboBox->removeItem(i);
-            }
-
-        //send del command
-        QByteArray data;
-        QXmlStreamWriter argsWriter(&data);
-        argsWriter.setAutoFormatting(true);
-        argsWriter.writeStartDocument();
-        argsWriter.writeStartElement("bufferToService");
-        argsWriter.writeStartElement("delete");
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("id");
-        argsWriter.writeAttribute("value", QString::number(idx));
-        argsWriter.writeEndElement();
-        argsWriter.writeEndElement();
-        argsWriter.writeEndDocument();
-        bus->sendMessageToService(data);
-
-        //Add items to agent
-        if(ui_agent != nullptr)
-            ui_agent->delPresetButton(idx);
+    } else {
+        deleteDialog =
+                new QMessageBox(QMessageBox::Warning,
+                                "Delete Preset",
+                                "Unable to delete the last preset!");
+        deleteDialog->addButton(QString::fromUtf8("&OK"),
+                                QMessageBox::AcceptRole);
+        deleteDialog->setModal(true);
+        deleteDialog->exec();
     }
+    delete deleteDialog;
 }
 
 void CtrlGui::presetNameEditChanged(QString name){
