@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenAdjCtrl VERSION 0.4.3.730 LANGUAGES CXX)
+PROJECT(RyzenCtrl VERSION 0.5.0.791 LANGUAGES CXX)
 #Set version number in this  ^^^^^^^^^
 #BUILD_STANDALONE on UNIX or choose on Windows
 if(WIN32)
@@ -32,7 +32,7 @@ endif()
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets DBus REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets DBus REQUIRED)
 #Source Files:
-set(RyzenAdjCtrl_HEADERS
+set(RyzenCtrl_HEADERS
     CtrlAgent.h
     ${PROJECT_BINARY_DIR}/CtrlConfig.h
     CtrlConfig.h.in
@@ -45,48 +45,48 @@ set(RyzenAdjCtrl_HEADERS
     CtrlACCallback.h
     CtrlFrame.h
     )
-set(RyzenAdjCtrl_SOURCES
+set(RyzenCtrl_SOURCES
     CtrlGui.cpp
     CtrlMain.cpp
     CtrlService.cpp
     CtrlSettings.cpp
     )
-set(RyzenAdjCtrl_QRC
-    RyzenAdjCtrl.qrc
+set(RyzenCtrl_QRC
+    RyzenCtrl.qrc
     )
-set(RyzenAdjCtrl_UI
+set(RyzenCtrl_UI
     CtrlAPUForm.ui
     CtrlInfoWidget.ui
     CtrlMainWindow.ui
     CtrlSettingsForm.ui
     )
-set(RyzenAdjCtrl_TS_FILES
-    translate/RyzenAdjCtrl_ru_RU.ts
+set(RyzenCtrl_TS_FILES
+    translate/RyzenCtrl_ru_RU.ts
     )
 #Only Windows Sources
 if(WIN32)
     message("WINDOWS OS")
     #Place version to .rc
-    set(STR_CTRL_VERSION ${RyzenAdjCtrl_VERSION})
+    set(STR_CTRL_VERSION ${RyzenCtrl_VERSION})
     string(REPLACE "." "." RC_SPLIT ${STR_CTRL_VERSION})
     string(REPLACE "." ";" RC_SPLIT ${RC_SPLIT})
-    message("\nRyzenAdjCtrl is now: ${STR_CTRL_VERSION}\n")
+    message("\nRyzenCtrl is now: ${STR_CTRL_VERSION}\n")
     list(GET RC_SPLIT 0 CTRL_VERSION)
     list(GET RC_SPLIT 1 CTRL_MAJOR_VERSION)
     list(GET RC_SPLIT 2 CTRL_MINOR_VERSION)
     list(GET RC_SPLIT 3 CTRL_PATCH_VERSION)
-    configure_file(RyzenAdjCtrl.rc.in ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc)
+    configure_file(RyzenCtrl.rc.in ${PROJECT_BINARY_DIR}/RyzenCtrl.rc)
     #Place version to Inno Setup Project
-    configure_file(RyzenAdjCtrl.iss.in ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss)
-    set(RyzenAdjCtrl_SOURCES
-        ${RyzenAdjCtrl_SOURCES}
+    configure_file(RyzenCtrl.iss.in ${PROJECT_BINARY_DIR}/RyzenCtrl.iss)
+    set(RyzenCtrl_SOURCES
+        ${RyzenCtrl_SOURCES}
         CtrlEPMCallback.cpp
         CtrlEPMCallback.h
         CtrlArmour.h
-        RyzenAdjCtrl.rc.in
-        RyzenAdjCtrl.iss.in
-        ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.rc
-        ${PROJECT_BINARY_DIR}/RyzenAdjCtrl.iss
+        RyzenCtrl.rc.in
+        RyzenCtrl.iss.in
+        ${PROJECT_BINARY_DIR}/RyzenCtrl.rc
+        ${PROJECT_BINARY_DIR}/RyzenCtrl.iss
         )
     set(RyzenAdjLib
         ${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadj.lib
@@ -100,29 +100,28 @@ if(UNIX)
         )
 endif(UNIX)
 #Add project exec
-add_executable(RyzenAdjCtrl
-        ${RyzenAdjCtrl_SOURCES}
-        ${RyzenAdjCtrl_HEADERS}
-        ${RyzenAdjCtrl_QRC}
-        ${RyzenAdjCtrl_UI}
-        ${RyzenAdjCtrl_TS_FILES}
+add_executable(RyzenCtrl
+        ${RyzenCtrl_SOURCES}
+        ${RyzenCtrl_HEADERS}
+        ${RyzenCtrl_QRC}
+        ${RyzenCtrl_UI}
+        ${RyzenCtrl_TS_FILES}
         )
 #Link libraries
-target_link_libraries(RyzenAdjCtrl PUBLIC
+target_link_libraries(RyzenCtrl PUBLIC
     Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::DBus
     ${RyzenAdjLib}
     )
 if(WIN32)
 #Set show or not CLI
-set_target_properties(RyzenAdjCtrl
+set_target_properties(RyzenCtrl
     PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
     LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 #COPY DEPS
 include(CopyDependencies.cmake)
 endif(WIN32)
 #Set output file path
-set_target_properties(RyzenAdjCtrl
+set_target_properties(RyzenCtrl
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
 #Add include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

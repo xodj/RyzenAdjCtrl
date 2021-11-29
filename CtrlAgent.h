@@ -20,14 +20,14 @@ public:
     {
         QIcon icon(":/main/amd_icon.ico");
         this->setIcon(icon);
-        this->setToolTip("RyzenAdjCtrl");
+        this->setToolTip("RyzenCtrl");
 
         checkIcon.addFile(QString::fromUtf8(":/main/unchecked.png"),
                           QSize(), QIcon::Selected, QIcon::Off);
         checkIcon.addFile(QString::fromUtf8(":/main/checked.png"),
                           QSize(), QIcon::Selected, QIcon::On);
 
-        openAction = new QAction(icon, "Open RyzenAdjCtrl", this);
+        openAction = new QAction(icon, "Open RyzenCtrl", this);
         openAction->setObjectName(QString::fromUtf8("openAction"));
         showAction = new QAction(checkIcon, "Show Info Widget", this);
         showAction->setObjectName(QString::fromUtf8("showAction"));

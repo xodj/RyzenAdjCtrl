@@ -10,12 +10,15 @@
 #include "CtrlAgent.h"
 #include "CtrlBus.h"
 #include "CtrlFrame.h"
+#include <QMouseEvent>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class CtrlGui;
-               class CtrlGuiAPUForm;
-               class CtrlGuiSettings;
-               class CtrlInfoWidget; }
+namespace Ui {
+class CtrlGui;
+class CtrlGuiAPUForm;
+class CtrlGuiSettings;
+class CtrlInfoWidget;
+}
 QT_END_NAMESPACE
 
 class CtrlGui : public QMainWindow
@@ -64,7 +67,7 @@ private:
 
     void openAdvancedInfoUrl();
 
-    void decodeArgs(QByteArray args);
+    void recieveMessageToGui(messageToGuiStr messageToGui);
 
     void useAgent(bool use);
     void exitFromAgent();

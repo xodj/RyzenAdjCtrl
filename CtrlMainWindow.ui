@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>RyzenAdjCtrl</string>
+   <string>RyzenCtrl</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -69,7 +69,7 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>RyzenAdjCtrl</string>
+          <string>RyzenCtrl</string>
          </property>
         </widget>
        </item>

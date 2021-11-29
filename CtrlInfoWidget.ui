@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>RyzenCtrl - States</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -1027,7 +1027,7 @@ border-color: rgba(0, 0, 0, 0);</string>
         <string> msec.</string>
        </property>
        <property name="minimum">
-        <number>100</number>
+        <number>33</number>
        </property>
        <property name="maximum">
         <number>3600</number>

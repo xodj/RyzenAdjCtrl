@@ -1,12 +1,12 @@
 [Setup] 
 AppId={{D1E0507C-61B0-4BC3-9FE4-23088D68151F}
-AppName=RyzenAdjCtrl
+AppName=RyzenCtrl
 AppVersion=${STR_CTRL_VERSION}
 AppPublisher=xo.dj@ya.ru
 WizardStyle=modern
-DefaultDirName={userappdata}\RyzenAdjCtrl
+DefaultDirName={userappdata}\RyzenCtrl
 DefaultGroupName=RyzenAdjCtrl
-UninstallDisplayIcon={app}\RyzenAdjCtrl.exe
+UninstallDisplayIcon={app}\RyzenCtrl.exe
 Compression=lzma2
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
@@ -15,7 +15,7 @@ LicenseFile=LICENSE
 PrivilegesRequired=admin 
 DisableDirPage=no
 DisableProgramGroupPage=no
-OutputBaseFilename=RyzenAdjCtrl-v.${STR_CTRL_VERSION}-Setup
+OutputBaseFilename=RyzenCtrl-v.${STR_CTRL_VERSION}-Setup
 VersionInfoVersion=${STR_CTRL_VERSION}
 CloseApplications=force
 
@@ -28,28 +28,28 @@ Source: "Appfolder\libryzenadj.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\Qt${QT_VERSION_MAJOR}Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\Qt${QT_VERSION_MAJOR}Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\Qt${QT_VERSION_MAJOR}Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Appfolder\RyzenAdjCtrl.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Appfolder\RyzenCtrl.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\WinRing0x64.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Appfolder\WinRing0x64.sys"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\RyzenAdjCtrl"; Filename: "{app}\RyzenAdjCtrl.exe"
+Name: "{group}\RyzenCtrl"; Filename: "{app}\RyzenCtrl.exe"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\RyzenAdjCtrl"; Filename: "{app}\RyzenAdjCtrl.exe"; Tasks: desktopicon 
-Name: "{userstartup}\RyzenAdjCtrl"; Filename: "{app}\RyzenAdjCtrl.exe"; Tasks: addAutoStart
+Name: "{userdesktop}\RyzenCtrl"; Filename: "{app}\RyzenCtrl.exe"; Tasks: desktopicon
+Name: "{userstartup}\RyzenCtrl"; Filename: "{app}\RyzenCtrl.exe"; Tasks: addAutoStart
 
 [Tasks]
-Name: "addWindowsTask"; Description: "Autorun RyzenAdjCtrl Service at start"; GroupDescription: "Autorun:"
-Name: "addAutoStart"; Description: "Autorun RyzenAdjCtrl GUI at start"; GroupDescription: "Autorun:"
+Name: "addWindowsTask"; Description: "Autorun RyzenCtrl Service at start"; GroupDescription: "Autorun:"
+Name: "addAutoStart"; Description: "Autorun RyzenCtrl GUI at start"; GroupDescription: "Autorun:"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Run] 
-Filename: "{app}\RyzenAdjCtrl.exe"; Parameters: "install"; StatusMsg: "RyzenAdjCtrl Service windows tasks is installing. Please wait..."; Tasks: addWindowsTask
-Filename: "{app}\RyzenAdjCtrl.exe"; Description: "Launch RyzenAdjCtrl"; Flags: postinstall nowait skipifsilent
+Filename: "{app}\RyzenCtrl.exe"; Parameters: "install"; StatusMsg: "RyzenCtrl Service windows tasks is installing. Please wait..."; Tasks: addWindowsTask
+Filename: "{app}\RyzenCtrl.exe"; Description: "Launch RyzenCtrl"; Flags: postinstall nowait skipifsilent
 
 [UninstallRun]  
-Filename: "{app}\RyzenAdjCtrl.exe"; Parameters: "uninstall"
-Filename: "{cmd}"; Parameters: "/C ""taskkill /im RyzenAdjCtrl.exe /f /t"
+Filename: "{app}\RyzenCtrl.exe"; Parameters: "uninstall"
+Filename: "{cmd}"; Parameters: "/C ""taskkill /im RyzenCtrl.exe /f /t"
 
 [Code]
 { ///////////////////////////////////////////////////////////////////// }

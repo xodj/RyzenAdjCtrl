@@ -9,8 +9,8 @@ CtrlSettings::CtrlSettings()
       configQFile(new QFile("Config/Config.xml")),
       presetsQFile(new QFile("Config/Presets.xml"))
 #else //WIN32
-      configQFile(new QFile("/etc/RyzenAdjCtrl/Config.xml")),
-      presetsQFile(new QFile("/etc/RyzenAdjCtrl/Presets.xml"))
+      configQFile(new QFile("/etc/RyzenCtrl/Config.xml")),
+      presetsQFile(new QFile("/etc/RyzenCtrl/Presets.xml"))
 #endif //WIN32
 {
     if (!configQFile->exists()){
@@ -21,18 +21,19 @@ CtrlSettings::CtrlSettings()
 
     if (!presetsQFile->exists()) {
         qDebug()<<"Ctrl Settings - Create New Presets File.";
-        QString presetNames[5] = {
-            "Battery Saver",
-            "Better Battery",
-            "Balanced",
-            "Perfomance",
-            "Gaming"
+        char presetNames[5][16] = {
+            {'B', 'a', 't', 't', 'e', 'r', 'y', ' ', 'S', 'a', 'v', 'e', 'r', '\0'},
+            {'B', 'e', 't', 't', 'e', 'r', ' ', 'B', 'a', 't', 't', 'e', 'r', 'y', '\0'},
+            {'B', 'a', 'l', 'a', 'n', 'c', 'e', 'd', '\0'},
+            {'P', 'e', 'r', 'f', 'o', 'm', 'a', 'n', 'c', 'e', '\0'},
+            {'G', 'a', 'm', 'i', 'n', 'g', '\0'}
         };
         presetStr *preset;
         for(int i = 0;i < 5; i++){
             preset = new presetStr;
             preset->presetId = i;
-            preset->presetName = presetNames[i];
+            for(int y = 0;y < sizeof(preset->presetName) + 1; y++)
+                preset->presetName[y] = presetNames[i][y];
             presets->append(preset);
         }
         savePresets();
@@ -415,9 +416,12 @@ bool CtrlSettings::openPresets(){
             }else{}
         if (xmlReader.name() == QString("presetName"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
-                if (attr.name().toString() == "value")
-                    presetReadBuffer->presetName =
-                            attr.value().toString();
+                if (attr.name().toString() == "value"){
+                    QString presetName = attr.value().toString();
+                    for(qsizetype i = 0;i < presetName.size() && i < (sizeof(presetReadBuffer->presetName) - 1); i++)
+                        presetReadBuffer->presetName[i] = presetName.at(i).toLatin1();
+                    presetReadBuffer->presetName[presetName.size()] = '\0';
+                }
             }else{}
 
         if (xmlReader.name() == QString("fanPresetId"))
@@ -636,7 +640,8 @@ qsizetype CtrlSettings::getPresetsCount() {
 }
 
 bool CtrlSettings::setPresetBuffer(int idx, presetStr* preset) {
-    qDebug() << "Ctrl Settings - Set Preset ID" << idx << preset->presetName;
+    QString presetName = QByteArray(preset->presetName);
+    qDebug() << "Ctrl Settings - Set Preset ID" << idx << presetName;
     presetStr* presetBuffer = getPresetBuffer(idx);
 
     if (presetBuffer != nullptr)
@@ -659,7 +664,9 @@ int CtrlSettings::insertNewPreset(int newidx, presetStr* newPreset) {
     qDebug() << "Ctrl Settings - Insert New Preset ID" << newidx;
     if (newPreset == nullptr) {
         newPreset = new presetStr;
-        newPreset->presetName = "New preset";
+        char newPresetName[] = {'N', 'e', 'w', ' ', 'p', 'r', 'e', 's', 'e', 't', '\0'};
+        for(int i = 0;i < sizeof(newPresetName) + 1; i++)
+            newPreset->presetName[i] = newPresetName[i];
     }
     if (newidx == -1) {
         newidx = presets->count();
