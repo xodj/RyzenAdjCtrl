@@ -7,7 +7,7 @@
 
 struct presetStr {
     int presetId = 0;
-    char presetName[17] = {'P', 'r', 'e', 's', 'e', 't', ' ', 'N', 'a', 'm', 'e', '\0', '\0', '\0', '\0', '\0', '\0'};
+    char presetName[17] = {'P', 'r', 'e', 's', 'e', 't', ' ', 'N', 'a', 'm', 'e', '\0'};
 
     int fanPresetId = 0;
 

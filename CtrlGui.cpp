@@ -1030,21 +1030,6 @@ void CtrlGui::sendRyzenAdjInfo(QString value){
     if(infoFrame->isVisible())
         value = QString::number(ui_infoWidget->spinBox->value());
 
-    /*QByteArray data;
-    QXmlStreamWriter argsWriter(&data);
-    argsWriter.setAutoFormatting(true);
-    argsWriter.writeStartDocument();
-    argsWriter.writeStartElement("bufferToService");
-    //
-        argsWriter.writeStartElement("ryzenAdjInfoTimeout");
-            argsWriter.writeAttribute("value", value);
-        argsWriter.writeEndElement();
-    //
-    argsWriter.writeEndElement();
-    argsWriter.writeEndDocument();
-
-    bus->sendMessageToService(data);*/
-
     messageToServiceStr messageToService = {false, true, settingsStr(),
                                             false, false, false, presetStr(),
                                             true, value.toInt()};
@@ -1253,20 +1238,6 @@ void CtrlGui::presetDeletePushButtonClicked() {
             tabWidgetsList->removeOne(widget);
 
             //send del command
-            /*QByteArray data;
-            QXmlStreamWriter argsWriter(&data);
-            argsWriter.setAutoFormatting(true);
-            argsWriter.writeStartDocument();
-            argsWriter.writeStartElement("bufferToService");
-            argsWriter.writeStartElement("delete");
-            argsWriter.writeEndElement();
-            argsWriter.writeStartElement("id");
-            argsWriter.writeAttribute("value", QString::number(idx));
-            argsWriter.writeEndElement();
-            argsWriter.writeEndElement();
-            argsWriter.writeEndDocument();
-            bus->sendMessageToService(data);
-            */
             messageToServiceStr messageToService = {false, false, settingsStr(),
                                                     false, false, true, *conf->getPresetBuffer(idx)};
             bus->sendMessageToService(messageToService);

@@ -113,8 +113,9 @@ void CtrlService::recieveMessageToService(messageToServiceStr messageToService){
     if (messageToService.savePreset){
         qDebug() << "Ctrl Service - Recieved Save Preset" << messageToService.preset.presetId;
         conf->setPresetBuffer(messageToService.preset.presetId, &messageToService.preset);
-        if(messageToService.preset.presetId == lastPreset->presetId)
-            lastPresetSaved = messageToService.savePreset;
+        if(lastPreset != nullptr)
+            if(messageToService.preset.presetId == lastPreset->presetId)
+                lastPresetSaved = messageToService.savePreset;
         reapplyPresetTimeout();
     }
     if (messageToService.deletePreset){

@@ -1027,16 +1027,16 @@ border-color: rgba(0, 0, 0, 0);</string>
         <string> msec.</string>
        </property>
        <property name="minimum">
-        <number>33</number>
+        <number>30</number>
        </property>
        <property name="maximum">
         <number>3600</number>
        </property>
        <property name="singleStep">
-        <number>100</number>
+        <number>10</number>
        </property>
        <property name="value">
-        <number>300</number>
+        <number>100</number>
        </property>
       </widget>
      </item>
