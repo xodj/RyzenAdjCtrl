@@ -520,7 +520,7 @@ void CtrlGui::saveApplyPreset(){
 
     conf->savePresets();
 
-    sendPreset(idx, true);
+    sendPreset(idx, true, true);
 }
 
 void CtrlGui::applyPreset(){
@@ -538,7 +538,7 @@ void CtrlGui::applyPreset(){
         conf->saveSettings();
     }
 
-    sendPreset(i, false);
+    sendPreset(i, false, true);
 }
 
 void CtrlGui::cancelPreset(){
@@ -620,7 +620,7 @@ void CtrlGui::cancelPreset(){
     presetForm->skinTempPowerLimitSpinBox->setValue(presetBuffer->skinTempPowerLimit);
     presetForm->skinTempPowerLimitCheckBox->setChecked(presetBuffer->skinTempPowerLimitChecked);
 
-    sendPreset(idx, false);
+    sendPreset(idx, false, true);
 }
 
 void CtrlGui::sendPreset(int idx, bool save, bool apply){
@@ -1074,6 +1074,10 @@ void CtrlGui::presetPlusPushButtonClicked(){
     //Create preset
     int idx = conf->insertNewPreset();
     presetStr *presetBuffer = conf->getPresetBuffer(idx);
+    //send add command
+    messageToServiceStr messageToService = {false, false, settingsStr(),
+                                            true, false, false, *presetBuffer};
+    bus->sendMessageToService(messageToService);
     //FONT
     QFont font;
     font.setPointSize(9);
@@ -1163,6 +1167,31 @@ void CtrlGui::presetPlusPushButtonClicked(){
     presetForm->maxVcnCheckBox->setChecked(presetBuffer->maxVcnChecked);
     presetForm->smuMaxPerformanceCheckBox->setChecked(presetBuffer->smuMaxPerfomance);
     presetForm->smuPowerSavingCheckBox->setChecked(presetBuffer->smuPowerSaving);
+    //NEW VARS
+    presetForm->vrmSocCurrentSpinBox->setValue(presetBuffer->vrmSocCurrent);
+    presetForm->vrmSocCurrentCheckBox->setChecked(presetBuffer->vrmSocCurrentChecked);
+    presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
+    presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
+
+    presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
+    presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
+    presetForm->psi0SocCurrentSpinBox->setValue(presetBuffer->psi0SocCurrent);
+    presetForm->psi0SocCurrentCheckBox->setChecked(presetBuffer->psi0SocCurrentChecked);
+
+    presetForm->maxLclkSpinBox->setValue(presetBuffer->maxLclk);
+    presetForm->maxLclkCheckBox->setChecked(presetBuffer->maxLclkChecked);
+    presetForm->minLclkSpinBox->setValue(presetBuffer->minLclk);
+    presetForm->minLclkCheckBox->setChecked(presetBuffer->minLclkChecked);
+
+    presetForm->prochotDeassertionRampSpinBox->setValue(presetBuffer->prochotDeassertionRamp);
+    presetForm->prochotDeassertionRampCheckBox->setChecked(presetBuffer->prochotDeassertionRampChecked);
+
+    presetForm->dgpuSkinTempLimitSpinBox->setValue(presetBuffer->dgpuSkinTempLimit);
+    presetForm->dgpuSkinTempLimitCheckBox->setChecked(presetBuffer->dgpuSkinTempLimitChecked);
+    presetForm->apuSlowLimitSpinBox->setValue(presetBuffer->apuSlowLimit);
+    presetForm->apuSlowLimitCheckBox->setChecked(presetBuffer->apuSlowLimitChecked);
+    presetForm->skinTempPowerLimitSpinBox->setValue(presetBuffer->skinTempPowerLimit);
+    presetForm->skinTempPowerLimitCheckBox->setChecked(presetBuffer->skinTempPowerLimitChecked);
     //Set active
     for(int i = 0;i < tabWidgetsList->count();i++)
         tabWidgetsList->at(i)->setHidden(true);

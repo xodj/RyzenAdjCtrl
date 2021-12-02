@@ -41,7 +41,7 @@ private:
     void saveApplyPreset();
     void applyPreset();
     void cancelPreset();
-    void sendPreset(int presetId, bool save, bool apply = true);
+    void sendPreset(int presetId = -1, bool save = false, bool apply = false);
 
     void smuCheckBoxClicked();
 

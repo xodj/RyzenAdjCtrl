@@ -59,6 +59,8 @@ struct messageToGuiStr{
     bool presetSaved = false;
     bool pmUpdated = false;
     PMTable pmTable;
+    settingsStr settings;
+    presetStr preset;
 };
 
 #ifdef BUILD_SERVICE
