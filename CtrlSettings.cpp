@@ -643,11 +643,10 @@ bool CtrlSettings::setPresetBuffer(int idx, presetStr* preset) {
     QString presetName = QByteArray(preset->presetName);
     qDebug() << "Ctrl Settings - Set Preset ID" << idx << presetName;
     presetStr* presetBuffer = getPresetBuffer(idx);
-
     if (presetBuffer != nullptr)
-        presets->removeOne(presetBuffer);
-
-    insertNewPreset(idx, preset);
+        memcpy(presetBuffer, preset, sizeof(presetStr));
+    else
+        insertNewPreset(idx, preset);
     return true;
 }
 
@@ -671,9 +670,9 @@ int CtrlSettings::insertNewPreset(int newidx, presetStr* newPreset) {
     if (newidx == -1) {
         newidx = presets->count();
         for (;;) {
-            newidx++;
             if (getPresetBuffer(newidx) == nullptr)
                 break;
+            newidx++;
         }
     }
     newPreset->presetId = newidx;
