@@ -224,6 +224,7 @@ void CtrlGui::setupConnections(){
     connect(ui_settings->openAdvancedInfoUrlPushButton, &QPushButton::clicked, this, &CtrlGui::openAdvancedInfoUrl);
 
     connect(bus, &CtrlBus::messageFromServiceRecieved, this, &CtrlGui::recieveMessageToGui);
+    connect(bus, &CtrlBus::messageFromAnotherGui, this, &CtrlGui::showWindow);
 }
 
 void CtrlGui::loadPresets(){

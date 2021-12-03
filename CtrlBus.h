@@ -5,6 +5,11 @@
 #include <QDebug>
 #include "CtrlConfig.h"
 #include "CtrlSettings.h"
+#include <QSharedMemory>
+#include <QTimer>
+
+#define buffer_size 512
+#define refresh_time 10
 
 struct messageToServiceStr{
     bool exit = false;
@@ -62,12 +67,6 @@ struct messageToGuiStr{
 };
 
 #ifdef BUILD_SERVICE
-#include <QSharedMemory>
-#include <QTimer>
-
-#define buffer_size 512
-#define refresh_time 10
-
 class CtrlBus : public QObject
 {
     Q_OBJECT
@@ -168,26 +167,32 @@ public:
         bufferToGuiFlag->unlock();
     }
     bool isGUIRuning(){
-        bool bReturn = false;
         if(guiAlreadyRunning->attach()){
+            for(;!guiAlreadyRunning->lock();){}
+            bool signal = true;
+            memcpy(guiAlreadyRunning->data(), &signal, sizeof(bool));
+            guiAlreadyRunning->unlock();
             guiAlreadyRunning->detach();
-            bReturn = true;
-        }
-        return bReturn;
+            return true;
+        } else
+            return false;
     }
     void setGUIRuning(){
-        if(!guiAlreadyRunning->create(1))
+        if(!guiAlreadyRunning->create(sizeof(bool)))
             qDebug()<<"Ctrl Bus - Can't create guiAlreadyRunning!";
 
         refresh_timer = new QTimer;
         connect(refresh_timer, &QTimer::timeout,
                 this, &CtrlBus::getMessageFromService);
+        connect(refresh_timer, &QTimer::timeout,
+                this, &CtrlBus::guiAlreadyRunningCheck);
         refresh_timer->start(refresh_time);
     }
 
 signals:
     void messageFromServiceRecieved(messageToGuiStr messageToGui);
     void messageFromGUIRecieved(messageToServiceStr messageToService);
+    void messageFromAnotherGui();
 
 private:
     void getMessageFromGui(){
@@ -254,6 +259,21 @@ private:
         bufferToGuiFlag->detach();
     }
 
+    void guiAlreadyRunningCheck(){
+        if (guiAlreadyRunning->lock()) {
+            bool signal = false;
+            memcpy(&signal, guiAlreadyRunning->data(), sizeof(bool));
+            if(signal) {
+                qDebug()<<"Ctrl Bus - Recieved message from another unit of GUI";
+                signal = false;
+                memcpy(guiAlreadyRunning->data(), &signal, sizeof(bool));
+                emit messageFromAnotherGui();
+            }
+            guiAlreadyRunning->unlock();
+        } else
+            qDebug()<<"Ctrl Bus - Can't lock guiAlreadyRunning!";
+    }
+
     QSharedMemory *bufferToService;
     QSharedMemory *bufferToServiceFlag;
     QSharedMemory *bufferToGui;
@@ -263,15 +283,13 @@ private:
     QTimer *refresh_timer;
 };
 #else //BUILD_SERVICE
-#include <QSharedMemory>
 class CtrlBus : public QObject
 {
     Q_OBJECT
 public:
     CtrlBus(QSharedMemory *guiAlreadyRunning)
         : QObject(nullptr),
-          guiAlreadyRunning(guiAlreadyRunning)
-    {}
+          guiAlreadyRunning(guiAlreadyRunning){}
     ~CtrlBus(){}
 
     void sendMessageToService(messageToServiceStr data){
@@ -281,18 +299,48 @@ public:
         messageFromServiceRecieved(data);
     }
     bool isGUIRuning(){
-        return guiAlreadyRunning->attach();
+        if(guiAlreadyRunning->attach()){
+            for(;!guiAlreadyRunning->lock();){}
+            bool signal = true;
+            memcpy(guiAlreadyRunning->data(), &signal, sizeof(bool));
+            guiAlreadyRunning->unlock();
+            guiAlreadyRunning->detach();
+            return true;
+        } else
+            return false;
     }
     void setGUIRuning(){
-        guiAlreadyRunning->create(1);
+        guiAlreadyRunning->create(sizeof(bool));
+        refresh_timer = new QTimer;
+        connect(refresh_timer, &QTimer::timeout,
+                this, &CtrlBus::guiAlreadyRunningCheck);
+        refresh_timer->start(refresh_time);
     }
 
 signals:
     void messageFromServiceRecieved(messageToGuiStr messageToGui);
     void messageFromGUIRecieved(messageToServiceStr messageToService);
+    void messageFromAnotherGui();
 
 private:
+    void guiAlreadyRunningCheck(){
+        if (guiAlreadyRunning->lock()) {
+            bool signal = false;
+            memcpy(&signal, guiAlreadyRunning->data(), sizeof(bool));
+            if(signal) {
+                qDebug()<<"Ctrl Bus - Recieved message from another unit of GUI";
+                signal = false;
+                memcpy(guiAlreadyRunning->data(), &signal, sizeof(bool));
+                emit messageFromAnotherGui();
+            }
+            guiAlreadyRunning->unlock();
+        } else
+            qDebug()<<"Ctrl Bus - Can't lock guiAlreadyRunning!";
+    }
+
     QSharedMemory *guiAlreadyRunning;
+
+    QTimer *refresh_timer;
 };
 #endif //BUILD_SERVICE
 #endif // CTRLBUS_H

@@ -73,6 +73,8 @@ private:
     void exitFromAgent();
     void presetChangeFromAgent(int idx);
 
+    void showWindow(){ this->showNormal(); }
+
     bool infoMessageShowed = false;
 
     Ui::CtrlGui *ui;
