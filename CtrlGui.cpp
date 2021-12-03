@@ -24,9 +24,33 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
     qtLanguageTranslator = new QTranslator;
 
 #ifdef BUILD_SERVICE
-    if(!bus->isServiseRuning()) {
+    for(;!bus->isServiseRuning();){
         qDebug() << "Ctrl Gui - RyzenCtrl Service is not runing!";
-        startService();
+        QMessageBox *dialog =
+                new QMessageBox(QMessageBox::Warning,
+                                "RyzenCtrl Service is not runing!",
+                                "RyzenCtrl Service is not runing!"
+                                "\nNeed to start service.");
+        dialog->addButton(QString::fromUtf8("&Start"),
+                                QMessageBox::AcceptRole);
+        dialog->addButton(QString::fromUtf8("&Retry"),
+                                QMessageBox::ActionRole);
+        dialog->addButton(QString::fromUtf8("&Cancel"),
+                                QMessageBox::RejectRole);
+        dialog->setModal(true);
+        int role = dialog->exec();
+        if (role == 0){
+            startService();
+            for(int i = 0;i < 100;i++){
+                if(bus->isServiseRuning()) break;
+                QThread::msleep(100);
+            }
+        }
+        if (role == 1)
+            QThread::msleep(333);
+        if (role == 2)
+            exit(0);
+        delete dialog;
     }
 #endif
 
@@ -980,8 +1004,8 @@ void CtrlGui::cancelSettings(){
 
 #ifdef BUILD_SERVICE
 void CtrlGui::startService(){
-    QProcess process;
     QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");
+    QProcess process;
     process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
 }
 

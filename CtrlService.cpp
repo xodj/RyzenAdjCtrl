@@ -47,9 +47,10 @@ CtrlService::~CtrlService() {
 }
 
 static inline char* charFromString(std::string str, char *cstr = NULL){
+    int charLength = str.length() + 1;
     if(cstr == NULL)
-        cstr = new char[str.length() + 1];
-    std::strcpy(cstr, str.c_str());
+        cstr = new char[charLength];
+    strcpy_s(cstr, charLength, str.c_str());
     cstr[str.length()] = '\0';
     return cstr;
 }
