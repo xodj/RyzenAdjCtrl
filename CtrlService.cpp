@@ -43,6 +43,8 @@ CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
 }
 
 CtrlService::~CtrlService() {
+    conf->saveSettings();
+    conf->savePresets();
     cleanup_ryzenadj(adjEntryPoint);
 }
 
@@ -98,6 +100,8 @@ void CtrlService::recieveMessageToService(messageToServiceStr messageToService){
     qDebug()<<"Ctrl Service - Recieved args from GUI";
     if (messageToService.exit){
         qDebug() << "Ctrl Service - Recieved Exit Command";
+        conf->saveSettings();
+        conf->savePresets();
         qDebug() << "Ctrl Service - Stoped";
         cleanup_ryzenadj(adjEntryPoint);
         exit(0);
@@ -117,11 +121,13 @@ void CtrlService::recieveMessageToService(messageToServiceStr messageToService){
         if(lastPreset != nullptr)
             if(messageToService.preset.presetId == lastPreset->presetId)
                 lastPresetSaved = messageToService.savePreset;
+        conf->savePresets();
     }
     if (messageToService.deletePreset){
         qDebug() << "Ctrl Service - Recieved Delete Preset"
                  << messageToService.preset.presetId;
         conf->deletePreset(messageToService.preset.presetId);
+        conf->savePresets();
     }
     if (messageToService.saveSettings){
         qDebug() << "Ctrl Service - Recieved Save Settings";

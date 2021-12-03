@@ -353,7 +353,8 @@ void CtrlGui::savePreset(){
         msgBox.exec();
         infoMessageShowed = true;
         conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
-        conf->saveSettings();
+        messageToServiceStr messageToService = {false, true, *conf->getSettingsBuffer()};
+        bus->sendMessageToService(messageToService);
     }
 
     presetStr *presetBuffer = conf->getPresetBuffer(idx);
@@ -439,8 +440,6 @@ void CtrlGui::savePreset(){
     presetBuffer->skinTempPowerLimit = presetForm->skinTempPowerLimitSpinBox->value();
     presetBuffer->skinTempPowerLimitChecked = presetForm->skinTempPowerLimitCheckBox->isChecked();
 
-    conf->savePresets();
-
     sendPreset(idx, true, false);
 }
 
@@ -456,7 +455,8 @@ void CtrlGui::saveApplyPreset(){
         msgBox.exec();
         infoMessageShowed = true;
         conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
-        conf->saveSettings();
+        messageToServiceStr messageToService = {false, true, *conf->getSettingsBuffer()};
+        bus->sendMessageToService(messageToService);
     }
 
     presetStr *presetBuffer = conf->getPresetBuffer(idx);
@@ -542,8 +542,6 @@ void CtrlGui::saveApplyPreset(){
     presetBuffer->skinTempPowerLimit = presetForm->skinTempPowerLimitSpinBox->value();
     presetBuffer->skinTempPowerLimitChecked = presetForm->skinTempPowerLimitCheckBox->isChecked();
 
-    conf->savePresets();
-
     sendPreset(idx, true, true);
 }
 
@@ -559,7 +557,8 @@ void CtrlGui::applyPreset(){
         msgBox.exec();
         infoMessageShowed = true;
         conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
-        conf->saveSettings();
+        messageToServiceStr messageToService = {false, true, *conf->getSettingsBuffer()};
+        bus->sendMessageToService(messageToService);
     }
 
     sendPreset(i, false, true);
@@ -624,8 +623,8 @@ void CtrlGui::cancelPreset(){
     presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
     presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
 
-    presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
-    presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
+    presetForm->psi0CurrentSpinBox->setValue(presetBuffer->psi0Current);
+    presetForm->psi0CurrentCheckBox->setChecked(presetBuffer->psi0CurrentChecked);
     presetForm->psi0SocCurrentSpinBox->setValue(presetBuffer->psi0SocCurrent);
     presetForm->psi0SocCurrentCheckBox->setChecked(presetBuffer->psi0SocCurrentChecked);
 
@@ -831,8 +830,6 @@ void CtrlGui::saveSettings(){
 
     messageToServiceStr messageToService = {false, true, *settings};
     bus->sendMessageToService(messageToService);
-
-    conf->saveSettings();
 
     useAgent(settings->useAgent);
 
@@ -1098,7 +1095,7 @@ void CtrlGui::presetPlusPushButtonClicked(){
     //Create preset
     int idx = conf->insertNewPreset();
     presetStr *presetBuffer = conf->getPresetBuffer(idx);
-    //send add command
+    //Send new preset to service
     messageToServiceStr messageToService = {false, false, settingsStr(),
                                             true, false, false, *presetBuffer};
     bus->sendMessageToService(messageToService);
@@ -1197,8 +1194,8 @@ void CtrlGui::presetPlusPushButtonClicked(){
     presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
     presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
 
-    presetForm->vrmSocMaxSpinBox->setValue(presetBuffer->vrmSocMax);
-    presetForm->vrmSocMaxCheckBox->setChecked(presetBuffer->vrmSocMaxChecked);
+    presetForm->psi0CurrentSpinBox->setValue(presetBuffer->psi0Current);
+    presetForm->psi0CurrentCheckBox->setChecked(presetBuffer->psi0CurrentChecked);
     presetForm->psi0SocCurrentSpinBox->setValue(presetBuffer->psi0SocCurrent);
     presetForm->psi0SocCurrentCheckBox->setChecked(presetBuffer->psi0SocCurrentChecked);
 
@@ -1223,8 +1220,6 @@ void CtrlGui::presetPlusPushButtonClicked(){
         tabButtonList->at(i)->setChecked(false);
     widget->setHidden(false);
     button->setChecked(true);
-    //Save presets to file
-    conf->savePresets();
     //Add items to settings
     ui_settings->dcStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
     ui_settings->acStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
@@ -1236,6 +1231,56 @@ void CtrlGui::presetPlusPushButtonClicked(){
     //Add items to agent
     if(ui_agent != nullptr)
         ui_agent->addPresetButton(idx);
+    /*
+    Hide/Show elements by settings
+    */
+    settingsStr *settings = conf->getSettingsBuffer();
+    hideShow *var = conf->hideShowWarnPresetVariable(
+                settings->hideNotSupportedVariables
+                ? settings->apuFamilyIdx : -1);
+
+    presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
+    presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
+    presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
+    presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
+    presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
+    presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
+    presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+
+    presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
+    presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+
+    presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
+    presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+
+    presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
+    presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
+    presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
+    presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
+    presetForm->minVcnWidget->setVisible(var->shwMinVcn);
+    presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+
+    presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
+    presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+
+    presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
+    presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+
+    presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
+    presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+
+    presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
+    presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+
+    presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+
+    presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
+    presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
+    presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+    /*
+    Hide/ShowShow Armour Plugin
+    */
+    presetForm->armourGroupBox->setVisible(settings->showArmourPlugin);
 }
 
 void CtrlGui::presetDeletePushButtonClicked() {
@@ -1300,8 +1345,6 @@ void CtrlGui::presetDeletePushButtonClicked() {
             delete button;
             delete presetForm;
             delete widget;
-
-            conf->savePresets();
             //Set active
             if(conf->getPresetsCount()>0){
                 for(int i = 0;i < tabWidgetsList->count();i++)

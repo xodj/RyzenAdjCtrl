@@ -43,8 +43,6 @@ CtrlSettings::CtrlSettings()
 }
 
 CtrlSettings::~CtrlSettings() {
-    saveSettings();
-    savePresets();
     qDebug() << "Ctrl Settings - Desroyed";
 }
 
