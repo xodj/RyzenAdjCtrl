@@ -191,7 +191,7 @@ background-color: rgb(58,57,58);
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
-    width: 15px;
+    width: 16px;
     border-left-width: 1px;
     border-left-color: darkgray;
     border-left-style: solid;
@@ -200,10 +200,14 @@ QComboBox::down-arrow,
 QComboBox::down-arrow:pressed,
 QComboBox::down-arrow:focus {
 image: url(:/theme/combo_arrow_disabled.svg);
+width: 20px;
+height: 20px;
 }
 QComboBox::down-arrow:on,
 QComboBox::down-arrow:hover {
 image: url(:/theme/combo_arrow.svg);
+width: 20px;
+height: 20px;
 }
 QPushButton {
 color: rgb(255,255,255);
