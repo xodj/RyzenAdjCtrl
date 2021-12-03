@@ -199,11 +199,11 @@ QComboBox::drop-down {
 QComboBox::down-arrow,
 QComboBox::down-arrow:pressed,
 QComboBox::down-arrow:focus {
-image: url(:/theme/down_arrow_disabled.svg);
+image: url(:/theme/combo_arrow_disabled.svg);
 }
 QComboBox::down-arrow:on,
 QComboBox::down-arrow:hover {
-image: url(:/theme/down_arrow.svg);
+image: url(:/theme/combo_arrow.svg);
 }
 QPushButton {
 color: rgb(255,255,255);

@@ -342,7 +342,6 @@ void CtrlGui::loadStyleSheet(){
 }
 
 void CtrlGui::savePreset(){
-    ui->label->setText("RyzenCtrl - Applying...");
     int idx = reinterpret_cast<QPushButton *>(sender())->property("idx").toInt();
 
     if(!infoMessageShowed){
@@ -352,8 +351,11 @@ void CtrlGui::savePreset(){
                        "\nDisable auto switcher in settings.");
         msgBox.exec();
         infoMessageShowed = true;
-        conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
-        messageToServiceStr messageToService = {false, true, *conf->getSettingsBuffer()};
+        settingsStr* settings = conf->getSettingsBuffer();
+        settings->showNotificationToDisableAutoSwitcher = true;
+        messageToServiceStr messageToService;
+        messageToService.saveSettings = true;
+        messageToService.settings = *settings;
         bus->sendMessageToService(messageToService);
     }
 
@@ -454,8 +456,11 @@ void CtrlGui::saveApplyPreset(){
                        "\nDisable auto switcher in settings.");
         msgBox.exec();
         infoMessageShowed = true;
-        conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
-        messageToServiceStr messageToService = {false, true, *conf->getSettingsBuffer()};
+        settingsStr* settings = conf->getSettingsBuffer();
+        settings->showNotificationToDisableAutoSwitcher = true;
+        messageToServiceStr messageToService;
+        messageToService.saveSettings = true;
+        messageToService.settings = *settings;
         bus->sendMessageToService(messageToService);
     }
 
@@ -556,8 +561,11 @@ void CtrlGui::applyPreset(){
                        "\nDisable auto switcher in settings.");
         msgBox.exec();
         infoMessageShowed = true;
-        conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher = true;
-        messageToServiceStr messageToService = {false, true, *conf->getSettingsBuffer()};
+        settingsStr* settings = conf->getSettingsBuffer();
+        settings->showNotificationToDisableAutoSwitcher = true;
+        messageToServiceStr messageToService;
+        messageToService.saveSettings = true;
+        messageToService.settings = *settings;
         bus->sendMessageToService(messageToService);
     }
 
@@ -729,8 +737,10 @@ void CtrlGui::sendPreset(int idx, bool save, bool apply){
     presetBuffer.skinTempPowerLimit = presetForm->skinTempPowerLimitSpinBox->value();
     presetBuffer.skinTempPowerLimitChecked = presetForm->skinTempPowerLimitCheckBox->isChecked();
 
-    messageToServiceStr messageToService = {false, false, settingsStr(),
-                                            save, apply, false, presetBuffer};
+    messageToServiceStr messageToService;
+    messageToService.savePreset = save;
+    messageToService.applyPreset = apply;
+    messageToService.preset = presetBuffer;
     bus->sendMessageToService(messageToService);
 }
 
@@ -828,7 +838,9 @@ void CtrlGui::saveSettings(){
     settings->showArmourPlugin = ui_settings->showArmourCheckBox->isChecked();
     //
 
-    messageToServiceStr messageToService = {false, true, *settings};
+    messageToServiceStr messageToService;
+    messageToService.saveSettings = true;
+    messageToService.settings = *settings;
     bus->sendMessageToService(messageToService);
 
     useAgent(settings->useAgent);
@@ -1051,9 +1063,11 @@ void CtrlGui::sendRyzenAdjInfo(QString value){
     if(infoFrame->isVisible())
         value = QString::number(ui_infoWidget->spinBox->value());
 
-    messageToServiceStr messageToService = {false, true, settingsStr(),
-                                            false, false, false, presetStr(),
-                                            true, value.toInt()};
+    settingsStr* settings = conf->getSettingsBuffer();
+    settings->showNotificationToDisableAutoSwitcher = true;
+    messageToServiceStr messageToService;
+    messageToService.ryzenAdjInfo = true;
+    messageToService.ryzenAdjInfoTimeout = value.toInt();
     bus->sendMessageToService(messageToService);
 }
 
@@ -1096,8 +1110,9 @@ void CtrlGui::presetPlusPushButtonClicked(){
     int idx = conf->insertNewPreset();
     presetStr *presetBuffer = conf->getPresetBuffer(idx);
     //Send new preset to service
-    messageToServiceStr messageToService = {false, false, settingsStr(),
-                                            true, false, false, *presetBuffer};
+    messageToServiceStr messageToService;
+    messageToService.savePreset = true;
+    messageToService.preset = *presetBuffer;
     bus->sendMessageToService(messageToService);
     //FONT
     QFont font;
@@ -1336,8 +1351,9 @@ void CtrlGui::presetDeletePushButtonClicked() {
             tabWidgetsList->removeOne(widget);
 
             //send del command
-            messageToServiceStr messageToService = {false, false, settingsStr(),
-                                                    false, false, true, *conf->getPresetBuffer(idx)};
+            messageToServiceStr messageToService;
+            messageToService.deletePreset = true;
+            messageToService.preset = *conf->getPresetBuffer(idx);
             bus->sendMessageToService(messageToService);
 
             conf->deletePreset(idx);

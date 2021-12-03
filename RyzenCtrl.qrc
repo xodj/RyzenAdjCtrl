@@ -13,6 +13,8 @@
         <file alias="checkbox_unchecked.svg">media/theme/checkbox_unchecked.svg</file>
         <file alias="checkbox_unchecked_disabled.svg">media/theme/checkbox_unchecked_disabled.svg</file>
         <file alias="checkbox_unchecked_focus.svg">media/theme/checkbox_unchecked_focus.svg</file>
+        <file alias="combo_arrow.svg">media/theme/combo_arrow.svg</file>
+        <file alias="combo_arrow_disabled.svg">media/theme/combo_arrow_disabled.svg</file>
         <file alias="down_arrow.svg">media/theme/down_arrow.svg</file>
         <file alias="down_arrow_disabled.svg">media/theme/down_arrow_disabled.svg</file>
         <file alias="up_arrow.svg">media/theme/up_arrow.svg</file>

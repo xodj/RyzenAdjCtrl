@@ -59,7 +59,9 @@ void checkLogsSize() {
 
 int exitCommand(CtrlBus *bus) {
         qDebug() << "Ctrl Main - Exit Message From CLI";
-        bus->sendMessageToService(messageToServiceStr{true});
+        messageToServiceStr messageToService;
+        messageToService.exit = true;
+        bus->sendMessageToService(messageToService);
         return 0;
 }
 

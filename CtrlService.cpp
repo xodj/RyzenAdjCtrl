@@ -117,10 +117,14 @@ void CtrlService::recieveMessageToService(messageToServiceStr messageToService){
     }
     if (messageToService.savePreset){
         qDebug() << "Ctrl Service - Recieved Save Preset" << messageToService.preset.presetId;
-        conf->setPresetBuffer(messageToService.preset.presetId, &messageToService.preset);
+        presetStr* preset = new presetStr;
+        memcpy(preset, &messageToService.preset, sizeof(presetStr));
+        conf->setPresetBuffer(messageToService.preset.presetId, preset);
         if(lastPreset != nullptr)
-            if(messageToService.preset.presetId == lastPreset->presetId)
+            if(messageToService.preset.presetId == lastPreset->presetId) {
                 lastPresetSaved = messageToService.savePreset;
+                sendCurrentPresetIdToGui(messageToService.preset.presetId, messageToService.savePreset);
+            }
         conf->savePresets();
     }
     if (messageToService.deletePreset){
@@ -265,7 +269,9 @@ void CtrlService::reapplyPresetTimeout(){
 void CtrlService::loadPreset(presetStr *preset){
     if(preset != nullptr){
         qDebug() << "Ctrl Service - Load Preset"<<preset->presetId;
-        lastPreset = preset;
+        if(lastPreset == nullptr)
+            lastPreset = new presetStr;
+        memcpy(lastPreset, preset, sizeof(presetStr));
 
 #ifdef WIN32
         if(preset->fanPresetId > 0) {

@@ -274,10 +274,10 @@ public:
     {}
     ~CtrlBus(){}
 
-    void sendMessageToService(QByteArray data){
+    void sendMessageToService(messageToServiceStr data){
         emit messageFromGUIRecieved(data);
     }
-    void sendMessageToGui(QByteArray data){
+    void sendMessageToGui(messageToGuiStr data){
         messageFromServiceRecieved(data);
     }
     bool isGUIRuning(){
@@ -288,8 +288,8 @@ public:
     }
 
 signals:
-    void messageFromServiceRecieved(QByteArray data);
-    void messageFromGUIRecieved(QByteArray data);
+    void messageFromServiceRecieved(messageToGuiStr messageToGui);
+    void messageFromGUIRecieved(messageToServiceStr messageToService);
 
 private:
     QSharedMemory *guiAlreadyRunning;
