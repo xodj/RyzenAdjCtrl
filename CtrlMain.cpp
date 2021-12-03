@@ -264,9 +264,9 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(messageHandler);
 #ifdef WIN32
     fileName = "Logs/RyzenCtrl.log";
-#else //WIN32
+#else //Linux
     fileName = "/etc/RyzenCtrl/RyzenCtrl.log";
-#endif //WIN32
+#endif
 
     if(!sudoersCheck())
         return 1;

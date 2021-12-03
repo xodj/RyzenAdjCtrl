@@ -11,6 +11,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include "CtrlConfig.h"
+#include <QThread>
 
 #define bufferToGui_refresh_time 33
 
