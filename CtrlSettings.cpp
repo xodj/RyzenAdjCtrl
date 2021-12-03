@@ -14,13 +14,13 @@ CtrlSettings::CtrlSettings()
 #endif //WIN32
 {
     if (!configQFile->exists()){
-        qDebug()<<"Ctrl Settings - Create New Settings File.";
+        qDebug() << "Ctrl Settings - Create New Settings File.";
         saveSettings();
     } else
         openSettings();
 
     if (!presetsQFile->exists()) {
-        qDebug()<<"Ctrl Settings - Create New Presets File.";
+        qDebug() << "Ctrl Settings - Create New Presets File.";
         char presetNames[5][16] = {
             {'B', 'a', 't', 't', 'e', 'r', 'y', ' ', 'S', 'a', 'v', 'e', 'r', '\0'},
             {'B', 'e', 't', 't', 'e', 'r', ' ', 'B', 'a', 't', 't', 'e', 'r', 'y', '\0'},
