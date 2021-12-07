@@ -208,6 +208,7 @@ int main(int argc, char *argv[])
 }
 #else //BUILD_SERVICE
 #ifdef WIN32
+#include "lib/ryzenadj.h"
 bool sudoersCheck(){
     qDebug() << "Ctrl Main - Check for Administator priviliges...";
     BOOL fRet = FALSE;
@@ -224,7 +225,16 @@ bool sudoersCheck(){
     }
     qDebug() << "Ctrl Main - Administator priviliges:" << (fRet ? "True" : "False");
     if(!fRet) {
-        qDebug() << "Ctrl Main - Try run with Administator priviliges...";
+        qDebug() << "Ctrl Main - Try to get pm tables without administator priviliges...";
+        ryzen_access ry = init_ryzenadj();
+        if(ry != NULL){
+            qDebug() << "Ctrl Main - Have access without administator priviliges...";
+            cleanup_ryzenadj(ry);
+            fRet = true;
+        }
+    }
+    if(!fRet) {
+        qDebug() << "Ctrl Main - Try to run with Administator priviliges...";
         QProcess process;
         QString runas = ("\"" + qApp->arguments().value(0) + "\"");
         process.startDetached("powershell", QStringList({"start-process", runas, "-verb", "runas"}));
