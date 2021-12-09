@@ -127,11 +127,17 @@ void CtrlService::recieveMessageToService(messageToServiceStr messageToService){
             }
         conf->savePresets();
     }
-    if (messageToService.deletePreset){
+    if (messageToService.deletePreset) {
         qDebug() << "Ctrl Service - Recieved Delete Preset"
-                 << messageToService.preset.presetId;
+            << messageToService.preset.presetId;
         conf->deletePreset(messageToService.preset.presetId);
         conf->savePresets();
+        if(lastPreset != nullptr)
+            if (messageToService.preset.presetId
+                == lastPreset->presetId) {
+                lastPreset = nullptr;
+                lastPresetSaved = false;
+            }
     }
     if (messageToService.saveSettings){
         qDebug() << "Ctrl Service - Recieved Save Settings";
