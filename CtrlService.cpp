@@ -1,8 +1,5 @@
 #include "CtrlService.h"
 
-#define buffer_size 512
-#define bufferToService_refresh_time 33
-
 CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
     : QObject(nullptr),
       bus(bus),

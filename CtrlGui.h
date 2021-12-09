@@ -99,6 +99,8 @@ private:
     QString pmTableVersion;
     QString ryzenAdjVersion;
 
+    int currentPresetId = -1;
+
 protected:
     virtual void closeEvent(QCloseEvent *event);
 

@@ -13,8 +13,6 @@
 #include "CtrlConfig.h"
 #include <QThread>
 
-#define bufferToGui_refresh_time 33
-
 CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
     : ui(new Ui::CtrlGui),
       ui_settings(new Ui::CtrlGuiSettings),
@@ -1433,6 +1431,12 @@ void CtrlGui::presetDeletePushButtonClicked() {
             //Add items to agent
             if(ui_agent != nullptr)
                 ui_agent->delPresetButton(idx);
+
+            //Remove preset namo from label
+            if (currentPresetId == idx) {
+                currentPresetId = -1;
+                ui->label->setText("RyzenCtrl");
+            }
         }
     } else {
         deleteDialog =
@@ -1499,7 +1503,7 @@ void CtrlGui::openAdvancedInfoUrl(){
 }
 
 void CtrlGui::recieveMessageToGui(messageToGuiStr messageToGui){
-    int currentPresetId = messageToGui.currentPresetId;
+    currentPresetId = messageToGui.currentPresetId;
     bool saved = messageToGui.presetSaved;
 
     if(messageToGui.pmUpdated){
