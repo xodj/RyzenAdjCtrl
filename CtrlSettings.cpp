@@ -62,6 +62,10 @@ bool CtrlSettings::saveSettings() {
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showNotifications));
         xmlWriter.writeEndElement();
 
+        xmlWriter.writeStartElement("lastUsedPMTableUpdateInterval");
+            xmlWriter.writeAttribute("value", QString::number(settingsBuffer.lastUsedPMTableUpdateInterval));
+        xmlWriter.writeEndElement();
+
         xmlWriter.writeStartElement("showNotificationToDisableAutoSwitcher");
             xmlWriter.writeAttribute("value", QString::number(settingsBuffer.showNotificationToDisableAutoSwitcher));
         xmlWriter.writeEndElement();
@@ -138,6 +142,14 @@ bool CtrlSettings::openSettings(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     settingsBuffer.showNotifications =
+                            attr.value().toString().toInt();
+            }else{}
+
+
+        if (xmlReader.name() == QString("lastUsedPMTableUpdateInterval"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    settingsBuffer.lastUsedPMTableUpdateInterval =
                             attr.value().toString().toInt();
             }else{}
 
