@@ -29,9 +29,9 @@ CtrlGui::CtrlGui(CtrlBus *bus)
                                 "RyzenCtrl Service is not runing!",
                                 "RyzenCtrl Service is not runing!"
                                 "\nNeed to start service.");
-        dialog->addButton(QString::fromUtf8("&Start"),
-                                QMessageBox::AcceptRole);
         dialog->addButton(QString::fromUtf8("&Install"),
+                                QMessageBox::AcceptRole);
+        dialog->addButton(QString::fromUtf8("&Start"),
                                 QMessageBox::AcceptRole);
         dialog->addButton(QString::fromUtf8("&Retry"),
                                 QMessageBox::AcceptRole);
@@ -40,14 +40,14 @@ CtrlGui::CtrlGui(CtrlBus *bus)
         dialog->setModal(true);
         int actionNumber = dialog->exec();
         if (actionNumber == 0){
-            startService();
+            installService();
             for(int i = 0;i < 100;i++){
                 if(bus->isServiseRuning()) break;
                 QThread::msleep(100);
             }
         }
         if (actionNumber == 1){
-            installService();
+            startService();
             for(int i = 0;i < 100;i++){
                 if(bus->isServiseRuning()) break;
                 QThread::msleep(100);

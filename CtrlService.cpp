@@ -138,40 +138,7 @@ void CtrlService::recieveMessageToService(messageToServiceStr messageToService){
     }
     if (messageToService.saveSettings){
         qDebug() << "Ctrl Service - Recieved Save Settings";
-        conf->getSettingsBuffer()->useAgent =
-                messageToService.settings.useAgent;
-        conf->getSettingsBuffer()->showNotifications =
-                messageToService.settings.showNotifications;
-        conf->getSettingsBuffer()->showNotificationToDisableAutoSwitcher =
-                messageToService.settings.showNotificationToDisableAutoSwitcher;
-        conf->getSettingsBuffer()->autoPresetApplyDurationChecked =
-                messageToService.settings.autoPresetApplyDurationChecked;
-        conf->getSettingsBuffer()->autoPresetApplyDuration =
-                messageToService.settings.autoPresetApplyDuration;
-        conf->getSettingsBuffer()->autoPresetSwitchAC =
-                messageToService.settings.autoPresetSwitchAC;
-        conf->getSettingsBuffer()->dcStatePresetId =
-                messageToService.settings.dcStatePresetId;
-        conf->getSettingsBuffer()->acStatePresetId =
-                messageToService.settings.acStatePresetId;
-        conf->getSettingsBuffer()->epmAutoPresetSwitch =
-                messageToService.settings.epmAutoPresetSwitch;
-        conf->getSettingsBuffer()->epmBatterySaverPresetId =
-                messageToService.settings.epmBatterySaverPresetId;
-        conf->getSettingsBuffer()->epmBetterBatteryPresetId =
-                messageToService.settings.epmBetterBatteryPresetId;
-        conf->getSettingsBuffer()->epmBalancedPresetId =
-                messageToService.settings.epmBalancedPresetId;
-        conf->getSettingsBuffer()->epmMaximumPerfomancePresetId =
-                messageToService.settings.epmMaximumPerfomancePresetId;
-        conf->getSettingsBuffer()->epmGamingPresetId =
-                messageToService.settings.epmGamingPresetId;
-        conf->getSettingsBuffer()->hideNotSupportedVariables =
-                messageToService.settings.hideNotSupportedVariables;
-        conf->getSettingsBuffer()->apuFamilyIdx =
-                messageToService.settings.apuFamilyIdx;
-        conf->getSettingsBuffer()->showArmourPlugin =
-                messageToService.settings.showArmourPlugin;
+        memcpy(conf->getSettingsBuffer(), &messageToService.settings, sizeof(settingsStr));
         conf->saveSettings();
 
         reapplyPresetTimer->stop();
