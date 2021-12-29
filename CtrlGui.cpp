@@ -913,6 +913,8 @@ void CtrlGui::readSettings(){
     ui_settings->useAgentGroupBox->setChecked(settings->useAgent);
     ui_settings->showNotificationsCheckBox->setChecked(settings->showNotifications);
 
+    ui_infoWidget->spinBox->setValue(settings->lastUsedPMTableUpdateInterval);
+
     infoMessageShowed = settings->showNotificationToDisableAutoSwitcher;
 
     ui_settings->reapplyDurationGroupBox->setChecked(settings->autoPresetApplyDurationChecked);
@@ -1071,6 +1073,7 @@ void CtrlGui::infoPushButtonClicked() {
 void CtrlGui::sendRyzenAdjInfo(QString value){
     if(infoFrame->isVisible())
         value = QString::number(ui_infoWidget->spinBox->value());
+    conf->getSettingsBuffer()->lastUsedPMTableUpdateInterval = value.toInt();
 
     settingsStr* settings = conf->getSettingsBuffer();
     settings->showNotificationToDisableAutoSwitcher = true;

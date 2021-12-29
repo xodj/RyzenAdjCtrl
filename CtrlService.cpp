@@ -371,6 +371,8 @@ void CtrlService::currentInfoTimeoutChanged(int timeout){
     else {
         takeCurrentInfoTimer->stop();
         takeCurrentInfoTimer->start(timeout);
+        conf->getSettingsBuffer()->lastUsedPMTableUpdateInterval = timeout;
+        conf->saveSettings();
     }
 }
 

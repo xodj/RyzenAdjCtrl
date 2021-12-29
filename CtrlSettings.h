@@ -83,6 +83,8 @@ struct settingsStr {
     bool useAgent = true;
     bool showNotifications = true;
 
+    int lastUsedPMTableUpdateInterval = 100;
+
     bool showNotificationToDisableAutoSwitcher = false;
 
     bool autoPresetApplyDurationChecked = false;
