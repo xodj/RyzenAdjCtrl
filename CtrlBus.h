@@ -404,7 +404,8 @@ class CtrlBus : public QObject
 public:
     CtrlBus(QSharedMemory *guiAlreadyRunning)
         : QObject(nullptr),
-          guiAlreadyRunning(guiAlreadyRunning)
+          guiAlreadyRunning(guiAlreadyRunning),
+          conf(new CtrlSettings)
     {
         conf->checkSettings();
     }
