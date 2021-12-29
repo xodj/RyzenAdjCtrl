@@ -7,7 +7,7 @@
 
 struct presetStr {
     int presetId = 0;
-    QString presetName = "Preset Name";
+    char presetName[17] = {'P', 'r', 'e', 's', 'e', 't', ' ', 'N', 'a', 'm', 'e', '\0'};
 
     int fanPresetId = 0;
 
@@ -83,6 +83,8 @@ struct settingsStr {
     bool useAgent = true;
     bool showNotifications = true;
 
+    int lastUsedPMTableUpdateInterval = 100;
+
     bool showNotificationToDisableAutoSwitcher = false;
 
     bool autoPresetApplyDurationChecked = false;
@@ -145,6 +147,7 @@ public:
     CtrlSettings();
     ~CtrlSettings();
 
+    void checkSettings();
     bool saveSettings();
     bool openSettings();
     bool savePresets();

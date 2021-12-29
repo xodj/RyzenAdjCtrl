@@ -56,26 +56,26 @@ width: 16px;
 height: 16px;
 }
 QGroupBox::indicator:unchecked {
-image: url(:/theme/checkbox_unchecked.png);
+image: url(:/theme/checkbox_unchecked.svg);
 }
 QGroupBox::indicator:unchecked:hover {
 border: none;
-image: url(:/theme/checkbox_unchecked_focus.png);
+image: url(:/theme/checkbox_unchecked_focus.svg);
 }
 QGroupBox::indicator:unchecked:disabled {
 border: none;
-image: url(:/theme/checkbox_unchecked_disabled.png);
+image: url(:/theme/checkbox_unchecked_disabled.svg);
 }
 QGroupBox::indicator:checked {
-image: url(:/theme/checkbox_checked.png);
+image: url(:/theme/checkbox_checked.svg);
 }
 QGroupBox::indicator:checked:hover {
 border: none;
-image: url(:/theme/checkbox_checked_focus.png);
+image: url(:/theme/checkbox_checked_focus.svg);
 }
 QGroupBox::indicator:checked:disabled {
 border: none;
-image: url(:/theme/checkbox_checked_disabled.png);
+image: url(:/theme/checkbox_checked_disabled.svg);
 }
 
 QSpinBox, QDoubleSpinBox {
@@ -107,11 +107,11 @@ QDoubleSpinBox::down-button:pressed {
 background-color: rgb(58,57,58);
 }
 QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
-image: url(:/theme/up_arrow.png);
+image: url(:/theme/up_arrow.svg);
 width: 100%;
 }
 QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
-image: url(:/theme/down_arrow.png);
+image: url(:/theme/down_arrow.svg);
 width: 100%;
 }
 
@@ -138,11 +138,11 @@ background-color: rgb(96, 96, 96);
 border: 1px solid white;
 }
 QSpinBox::up-arrow:disabled, QDoubleSpinBox::up-arrow:disabled {
-image: url(:/theme/up_arrow_disabled.png);
+image: url(:/theme/up_arrow_disabled.svg);
 width: 100%;
 }
 QSpinBox::down-arrow:disabled, QDoubleSpinBox::down-arrow:disabled {
-image: url(:/theme/down_arrow_disabled.png);
+image: url(:/theme/down_arrow_disabled.svg);
 width: 100%;
 }
 
@@ -163,26 +163,26 @@ width: 16px;
 height: 16px;
 }
 QCheckBox::indicator:unchecked {
-image: url(:/theme/checkbox_unchecked.png);
+image: url(:/theme/checkbox_unchecked.svg);
 }
 QCheckBox::indicator:unchecked:hover {
 border: none;
-image: url(:/theme/checkbox_unchecked_focus.png);
+image: url(:/theme/checkbox_unchecked_focus.svg);
 }
 QCheckBox::indicator:unchecked:disabled {
 border: none;
-image: url(:/theme/checkbox_unchecked_disabled.png);
+image: url(:/theme/checkbox_unchecked_disabled.svg);
 }
 QCheckBox::indicator:checked {
-image: url(:/theme/checkbox_checked.png);
+image: url(:/theme/checkbox_checked.svg);
 }
 QCheckBox::indicator:checked:hover {
 border: none;
-image: url(:/theme/checkbox_checked_focus.png);
+image: url(:/theme/checkbox_checked_focus.svg);
 }
 QCheckBox::indicator:checked:disabled {
 border: none;
-image: url(:/theme/checkbox_checked_disabled.png);
+image: url(:/theme/checkbox_checked_disabled.svg);
 }
 QComboBox {
 border: 1px solid gray;
@@ -191,7 +191,7 @@ background-color: rgb(58,57,58);
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
-    width: 15px;
+    width: 16px;
     border-left-width: 1px;
     border-left-color: darkgray;
     border-left-style: solid;
@@ -199,11 +199,15 @@ QComboBox::drop-down {
 QComboBox::down-arrow,
 QComboBox::down-arrow:pressed,
 QComboBox::down-arrow:focus {
-image: url(:/theme/down_arrow_disabled.png);
+image: url(:/theme/combo_arrow_disabled.svg);
+width: 20px;
+height: 20px;
 }
 QComboBox::down-arrow:on,
 QComboBox::down-arrow:hover {
-image: url(:/theme/down_arrow.png);
+image: url(:/theme/combo_arrow.svg);
+width: 20px;
+height: 20px;
 }
 QPushButton {
 color: rgb(255,255,255);

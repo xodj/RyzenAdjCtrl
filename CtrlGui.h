@@ -10,12 +10,15 @@
 #include "CtrlAgent.h"
 #include "CtrlBus.h"
 #include "CtrlFrame.h"
+#include <QMouseEvent>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class CtrlGui;
-               class CtrlGuiAPUForm;
-               class CtrlGuiSettings;
-               class CtrlInfoWidget; }
+namespace Ui {
+class CtrlGui;
+class CtrlGuiAPUForm;
+class CtrlGuiSettings;
+class CtrlInfoWidget;
+}
 QT_END_NAMESPACE
 
 class CtrlGui : public QMainWindow
@@ -23,7 +26,7 @@ class CtrlGui : public QMainWindow
     Q_OBJECT
 
 public:
-    CtrlGui(CtrlBus *bus, CtrlSettings *conf);
+    CtrlGui(CtrlBus *bus);
     ~CtrlGui();
 
 private:
@@ -38,7 +41,7 @@ private:
     void saveApplyPreset();
     void applyPreset();
     void cancelPreset();
-    void sendPreset(int presetId, bool save, bool apply = true);
+    void sendPreset(int presetId = -1, bool save = false, bool apply = false);
 
     void smuCheckBoxClicked();
 
@@ -64,11 +67,13 @@ private:
 
     void openAdvancedInfoUrl();
 
-    void decodeArgs(QByteArray args);
+    void recieveMessageToGui(messageToGuiStr messageToGui);
 
     void useAgent(bool use);
     void exitFromAgent();
     void presetChangeFromAgent(int idx);
+
+    void showWindow(){ this->showNormal(); }
 
     bool infoMessageShowed = false;
 
@@ -93,6 +98,8 @@ private:
     QString biosVersion;
     QString pmTableVersion;
     QString ryzenAdjVersion;
+
+    int currentPresetId = -1;
 
 protected:
     virtual void closeEvent(QCloseEvent *event);

@@ -53,3 +53,8 @@ compile_commands.json
 
 #RyzenAdjModule
 RyzenAdj
+
+#VS
+.vs
+out
+CMakeSettings.json

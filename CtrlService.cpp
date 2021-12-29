@@ -1,13 +1,9 @@
 #include "CtrlService.h"
-#include <QXmlStreamReader>
 
-#define buffer_size 512
-#define bufferToService_refresh_time 33
-
-CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
+CtrlService::CtrlService(CtrlBus *bus)
     : QObject(nullptr),
       bus(bus),
-      conf(conf)
+      conf(bus->getSettingsFromFile())
 {
     initPmTable();
 
@@ -37,14 +33,25 @@ CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
     takeCurrentInfoTimer->connect(takeCurrentInfoTimer, &QTimer::timeout, this, &CtrlService::takeCurrentInfo);
 
     qDebug() << "Ctrl Service - started";
-    connect(bus, &CtrlBus::messageFromGUIRecieved, this, &CtrlService::decodeArgs);
+    connect(bus, &CtrlBus::messageFromGUIRecieved, this, &CtrlService::recieveMessageToService);
 #ifdef BUILD_SERVICE
     bus->setServiseRuning();
 #endif
 }
 
 CtrlService::~CtrlService() {
+    conf->saveSettings();
+    conf->savePresets();
     cleanup_ryzenadj(adjEntryPoint);
+}
+
+static inline char* charFromString(std::string str, char *cstr = NULL){
+    int charLength = str.length() + 1;
+    if(cstr == NULL)
+        cstr = new char[charLength];
+    strcpy_s(cstr, charLength, str.c_str());
+    cstr[str.length()] = '\0';
+    return cstr;
 }
 
 void CtrlService::initPmTable(){
@@ -55,450 +62,107 @@ void CtrlService::initPmTable(){
 
     switch(get_cpu_family(adjEntryPoint)){
     case 0:
-        pmTable.ryzenFamily = "Raven";
+        charFromString("Raven", pmTable.ryzenFamily);
         break;
     case 1:
-        pmTable.ryzenFamily = "Picasso";
+        charFromString("Picasso", pmTable.ryzenFamily);
         break;
     case 2:
-        pmTable.ryzenFamily = "Renoir";
+        charFromString("Renoir", pmTable.ryzenFamily);
         break;
     case 3:
-        pmTable.ryzenFamily = "Cezanne";
+        charFromString("Cezanne", pmTable.ryzenFamily);
         break;
     case 4:
-        pmTable.ryzenFamily = "Dali";
+        charFromString("Dali", pmTable.ryzenFamily);
         break;
     case 5:
-        pmTable.ryzenFamily = "Lucienne";
+        charFromString("Lucienne", pmTable.ryzenFamily);
         break;
     default:
-        pmTable.ryzenFamily = "Unknown";
         break;
     }
-    pmTable.biosVersion = QString::number(get_bios_if_ver(adjEntryPoint));
-    pmTable.pmTableVersion = QString::number(get_table_ver(adjEntryPoint), 16);
-    pmTable.ryzenAdjVersion = QString::number(RYZENADJ_REVISION_VER) + "." + QString::number(RYZENADJ_MAJOR_VER) + "." + QString::number(RYZENADJ_MINIOR_VER);
+    pmTable.biosVersion = get_bios_if_ver(adjEntryPoint);
+    pmTable.pmTableVersion = get_table_ver(adjEntryPoint);
+    pmTable.ryzenAdjVersion = RYZENADJ_REVISION_VER;
+    pmTable.ryzenAdjMajorVersion =  RYZENADJ_MAJOR_VER;
+    pmTable.ryzenAdjMinorVersion = RYZENADJ_MINIOR_VER;
     qDebug() << "Ctrl Service - pmTable.ryzenFamily" << pmTable.ryzenFamily;
     qDebug() << "Ctrl Service - pmTable.biosVersion" << pmTable.biosVersion;
     qDebug() << "Ctrl Service - pmTable.pmTableVersion" << pmTable.pmTableVersion;
     qDebug() << "Ctrl Service - pmTable.ryzenAdjVersion" << pmTable.ryzenAdjVersion;
 }
 
-void CtrlService::decodeArgs(QByteArray args){
+void CtrlService::recieveMessageToService(messageToServiceStr messageToService){
     qDebug()<<"Ctrl Service - Recieved args from GUI";
-    bool save = false, apply = false, deletePreset = false;
-    int presetId = -1;
-    presetStr *recievedPreset = new presetStr;
-    settingsStr *settingsBuffer = conf->getSettingsBuffer();
+    if (messageToService.exit){
+        qDebug() << "Ctrl Service - Recieved Exit Command";
+        conf->saveSettings();
+        conf->savePresets();
+        qDebug() << "Ctrl Service - Stoped";
+        cleanup_ryzenadj(adjEntryPoint);
+        exit(0);
+    }
+    if(messageToService.ryzenAdjInfo)
+        currentInfoTimeoutChanged(messageToService.ryzenAdjInfoTimeout);
+    if(messageToService.applyPreset) {
+        qDebug() << "Ctrl Service - Recieved Apply Preset" <<
+                    messageToService.preset.presetId;
+        sendCurrentPresetIdToGui(messageToService.preset.presetId, messageToService.savePreset);
+        lastPresetSaved = messageToService.savePreset;
+        loadPreset(&messageToService.preset);
+    }
+    if (messageToService.savePreset){
+        qDebug() << "Ctrl Service - Recieved Save Preset" << messageToService.preset.presetId;
+        presetStr* preset = new presetStr;
+        memcpy(preset, &messageToService.preset, sizeof(presetStr));
+        conf->setPresetBuffer(messageToService.preset.presetId, preset);
+        if(lastPreset != nullptr)
+            if(messageToService.preset.presetId == lastPreset->presetId) {
+                lastPresetSaved = messageToService.savePreset;
+                sendCurrentPresetIdToGui(messageToService.preset.presetId, messageToService.savePreset);
+            }
+        conf->savePresets();
+    }
+    if (messageToService.deletePreset) {
+        qDebug() << "Ctrl Service - Recieved Delete Preset"
+            << messageToService.preset.presetId;
+        conf->deletePreset(messageToService.preset.presetId);
+        conf->savePresets();
+        if(lastPreset != nullptr)
+            if (messageToService.preset.presetId
+                == lastPreset->presetId) {
+                lastPreset = nullptr;
+                lastPresetSaved = false;
+            }
+    }
+    if (messageToService.saveSettings){
+        qDebug() << "Ctrl Service - Recieved Save Settings";
+        memcpy(conf->getSettingsBuffer(), &messageToService.settings, sizeof(settingsStr));
+        conf->saveSettings();
 
-    QXmlStreamReader argsReader(args);
-    argsReader.readNext();
-    while(!argsReader.atEnd())
-    {
-        //
-        if (argsReader.name() == QString("ryzenAdjInfoTimeout"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value") {
-                    currentInfoTimeoutChanged(attr.value().toInt());
-                    qDebug() << "Ctrl Service - Recieved ryzenAdjInfoTimeout" << attr.value().toInt();
-                }
-            }else{}
-
-
-        if (argsReader.name() == QString("id"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    presetId = attr.value().toInt();
-                    recievedPreset->presetId = presetId;
-                }
-            }else{}
-        if (argsReader.name() == QString("save"))
-            save = true;
-        if (argsReader.name() == QString("apply"))
-            apply = true;
-        if (argsReader.name() == QString("delete"))
-            deletePreset = true;
-
-
-        if (argsReader.name() == QString("tempLimitValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->tempLimitChecked = true;
-                    recievedPreset->tempLimitValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("apuSkinValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->apuSkinChecked = true;
-                    recievedPreset->apuSkinValue = attr.value().toInt();
-                }
-            }else{}
-
-
-        if (argsReader.name() == QString("stampLimitValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->stampLimitChecked = true;
-                    recievedPreset->stampLimitValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("fastLimitValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->fastLimitChecked = true;
-                    recievedPreset->fastLimitValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("fastTimeValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->fastTimeChecked = true;
-                    recievedPreset->fastTimeValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("slowLimitValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->slowLimitChecked = true;
-                    recievedPreset->slowLimitValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("slowTimeValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->slowTimeChecked = true;
-                    recievedPreset->slowTimeValue = attr.value().toInt();
-                }
-            }else{}
-
-
-        if (argsReader.name() == QString("vrmCurrentValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->vrmCurrentChecked = true;
-                    recievedPreset->vrmCurrentValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("vrmMaxValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->vrmMaxChecked = true;
-                    recievedPreset->vrmMaxValue = attr.value().toInt();
-                }
-            }else{}
-
-
-        if (argsReader.name() == QString("minFclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->minFclkChecked = true;
-                    recievedPreset->minFclkValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("maxFclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->maxFclkChecked = true;
-                    recievedPreset->maxFclkValue = attr.value().toInt();
-                }
-            }else{}
-
-
-        if (argsReader.name() == QString("minGfxclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->minGfxclkChecked = true;
-                    recievedPreset->minGfxclkValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("maxGfxclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->maxGfxclkChecked = true;
-                    recievedPreset->maxGfxclkValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("minSocclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->minSocclkChecked = true;
-                    recievedPreset->minSocclkValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("maxSocclkValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->maxSocclkChecked = true;
-                    recievedPreset->maxSocclkValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("minVcnValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->minVcnChecked = true;
-                    recievedPreset->minVcnValue = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("maxVcnValue"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->maxVcnChecked = true;
-                    recievedPreset->maxVcnValue = attr.value().toInt();
-                }
-            }else{}
-
-
-        if (argsReader.name() == QString("smuMaxPerfomance"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->smuMaxPerfomance = true;
-                }
-            }else{}
-        if (argsReader.name() == QString("smuPowerSaving"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->smuPowerSaving = true;
-                }
-            }else{}
-
-
-        if (argsReader.name() == QString("fanPresetId"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value")
-                    recievedPreset->fanPresetId = attr.value().toInt();
-            }else{}
-        //NEW VARS
-        if (argsReader.name() == QString("vrmSocCurrent"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->vrmSocCurrentChecked = true;
-                    recievedPreset->vrmSocCurrent = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("vrmSocMax"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->vrmSocMaxChecked = true;
-                    recievedPreset->vrmSocMax = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("psi0Current"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->psi0CurrentChecked = true;
-                    recievedPreset->psi0Current = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("psi0SocCurrent"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->psi0SocCurrentChecked = true;
-                    recievedPreset->psi0SocCurrent = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("maxLclk"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->maxLclkChecked = true;
-                    recievedPreset->maxLclk = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("minLclk"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->minLclkChecked = true;
-                    recievedPreset->minLclk = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("prochotDeassertionRamp"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->prochotDeassertionRampChecked = true;
-                    recievedPreset->prochotDeassertionRamp = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("dgpuSkinTempLimit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->dgpuSkinTempLimitChecked = true;
-                    recievedPreset->dgpuSkinTempLimit = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("apuSlowLimit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->apuSlowLimitChecked = true;
-                    recievedPreset->apuSlowLimit = attr.value().toInt();
-                }
-            }else{}
-        if (argsReader.name() == QString("skinTempPowerLimit"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                    recievedPreset->skinTempPowerLimitChecked = true;
-                    recievedPreset->skinTempPowerLimit = attr.value().toInt();
-                }
-            }else{}
-
-
-        if (argsReader.name() == QString("exit")){
-            qDebug() << "Ctrl Service - Recieved Exit Command";
-            qDebug() << "Ctrl Service - Stoped";
-            cleanup_ryzenadj(adjEntryPoint);
-            exit(0);
-        }
-
-
-
-        if (argsReader.name() == QString("autoPresetApplyDurationChecked"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                        settingsBuffer->autoPresetApplyDurationChecked
-                                = attr.value().toInt();
-                        qDebug() << "Ctrl Service - Recieved autoPresetApplyDurationChecked set to "
-                                 << settingsBuffer->autoPresetApplyDurationChecked;
-                        reapplyPresetTimer->stop();
-                        if(settingsBuffer->autoPresetApplyDurationChecked)
-                            reapplyPresetTimer->start(settingsBuffer
-                                                        ->autoPresetApplyDuration * 1000);
-                    }
-            }else{}
-        if (argsReader.name() == QString("autoPresetApplyDuration"))
-            foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                if (attr.name().toString() == "value"){
-                        settingsBuffer->autoPresetApplyDuration
-                                = attr.value().toInt();
-                        qDebug() << "Ctrl Service - Recieved autoPresetApplyDuration set to "
-                                 << settingsBuffer->autoPresetApplyDuration;
-                        reapplyPresetTimer->stop();
-                        if(settingsBuffer->autoPresetApplyDurationChecked)
-                            reapplyPresetTimer->start(settingsBuffer
-                                                        ->autoPresetApplyDuration * 1000);
-                    }
-            }else{}
-
-            if (argsReader.name() == QString("autoPresetSwitchAC"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->autoPresetSwitchAC
-                                    = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved autoPresetSwitchAC set to "
-                                     << settingsBuffer->autoPresetSwitchAC;
-                            disconnect(acCallback,&CtrlACCallback::currentACStateChanged,
-                                       this, &CtrlService::currentACStateChanged);
-                            if(settingsBuffer->autoPresetSwitchAC) {
-                                connect(acCallback, &CtrlACCallback::currentACStateChanged,
-                                        this, &CtrlService::currentACStateChanged);
-                                acCallback->emitCurrentACState();
-                            }
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-            if (argsReader.name() == QString("dcStatePresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->dcStatePresetId = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved dcStatePresetId set to "
-                                     << settingsBuffer->dcStatePresetId;
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-            if (argsReader.name() == QString("acStatePresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->acStatePresetId = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved acStatePresetId set to "
-                                     << settingsBuffer->acStatePresetId;
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-
-            if (argsReader.name() == QString("epmAutoPresetSwitch"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->epmAutoPresetSwitch
-                                    = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved epmAutoPresetSwitch set to "
-                                     << settingsBuffer->epmAutoPresetSwitch;
+        reapplyPresetTimer->stop();
+        disconnect(acCallback,&CtrlACCallback::currentACStateChanged,
+                   this, &CtrlService::currentACStateChanged);
 #ifdef WIN32
-                            disconnect(epmCallback, &CtrlEPMCallback::epmIdChanged,
-                                    this, &CtrlService::epmIdChanged);
-                            if(settingsBuffer->epmAutoPresetSwitch) {
-                                connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
-                                        this, &CtrlService::epmIdChanged);
-                                epmCallback->emitCurrentEPMState();
-                            }
+        disconnect(epmCallback, &CtrlEPMCallback::epmIdChanged,
+                   this, &CtrlService::epmIdChanged);
+        if(conf->getSettingsBuffer()->epmAutoPresetSwitch) {
+            connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
+                    this, &CtrlService::epmIdChanged);
+            epmCallback->emitCurrentEPMState();
+        }
 #endif
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-            if (argsReader.name() == QString("epmBatterySaverPresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->epmBatterySaverPresetId = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved epmBatterySaverPresetId set to "
-                                     << settingsBuffer->epmBatterySaverPresetId;
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-            if (argsReader.name() == QString("epmBetterBatteryPresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->epmBetterBatteryPresetId = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved epmBetterBatteryPresetId set to "
-                                     << settingsBuffer->epmBetterBatteryPresetId;
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-            if (argsReader.name() == QString("epmBalancedPresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->epmBalancedPresetId = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved epmBalancedPresetId set to "
-                                     << settingsBuffer->epmBalancedPresetId;
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-            if (argsReader.name() == QString("epmMaximumPerfomancePresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->epmMaximumPerfomancePresetId = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved epmMaximumPerfomancePresetId set to "
-                                     << settingsBuffer->epmMaximumPerfomancePresetId;
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-            if (argsReader.name() == QString("epmGamingPresetId"))
-                foreach(const QXmlStreamAttribute &attr, argsReader.attributes()){
-                    if (attr.name().toString() == "value"){
-                            settingsBuffer->epmGamingPresetId = attr.value().toInt();
-                            qDebug() << "Ctrl Service - Recieved epmGamingPresetId set to "
-                                     << settingsBuffer->epmGamingPresetId;
-                            reapplyPresetTimeout();
-                        }
-                }else{}
-        //
-
-        argsReader.readNext();
-    }
-
-    if(apply) {
-        qDebug() << "Ctrl Service - Recieved Apply Preset" << presetId;
-        sendCurrentPresetIdToGui(presetId, save);
-        lastPresetSaved = save;
-        loadPreset(recievedPreset);
-    }
-    if (save){
-        qDebug() << "Ctrl Service - Recieved Save Preset" << presetId;
-        conf->setPresetBuffer(presetId, recievedPreset);
-        if(recievedPreset->presetId == lastPreset->presetId)
-            lastPresetSaved = save;
-        reapplyPresetTimeout();
-    }
-    if (deletePreset){
-        qDebug() << "Ctrl Service - Recieved Delete Preset" << presetId;
-        conf->deletePreset(presetId);
+        if(conf->getSettingsBuffer()->autoPresetSwitchAC) {
+            connect(acCallback, &CtrlACCallback::currentACStateChanged,
+                    this, &CtrlService::currentACStateChanged);
+            acCallback->emitCurrentACState();
+        }
+        if(conf->getSettingsBuffer()->autoPresetApplyDurationChecked){
+            reapplyPresetTimer->start(conf->getSettingsBuffer()
+                                      ->autoPresetApplyDuration * 1000);
+            reapplyPresetTimeout();
+        }
     }
 }
 
@@ -575,7 +239,9 @@ void CtrlService::reapplyPresetTimeout(){
 void CtrlService::loadPreset(presetStr *preset){
     if(preset != nullptr){
         qDebug() << "Ctrl Service - Load Preset"<<preset->presetId;
-        lastPreset = preset;
+        if(lastPreset == nullptr)
+            lastPreset = new presetStr;
+        memcpy(lastPreset, preset, sizeof(presetStr));
 
 #ifdef WIN32
         if(preset->fanPresetId > 0) {
@@ -659,168 +325,61 @@ void CtrlService::loadPreset(presetStr *preset){
 
 void CtrlService::sendCurrentPresetIdToGui(int presetId, bool saved = true){
     qDebug() << "Ctrl Service - Send Current Loaded Preset ID to GUI" << presetId << "Saved" << saved;
-    QByteArray data;
-    QXmlStreamWriter argsWriter(&data);
-    argsWriter.setAutoFormatting(true);
-    argsWriter.writeStartDocument();
-    argsWriter.writeStartElement("bufferToGui");
-    //
-        argsWriter.writeStartElement("currentPresetId");
-            argsWriter.writeAttribute("value", QString::number(presetId));
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("saved");
-            argsWriter.writeAttribute("value", QString::number(saved));
-        argsWriter.writeEndElement();
-    //
-    argsWriter.writeEndElement();
-    argsWriter.writeEndDocument();
-    bus->sendMessageToGui(data);
+
+    messageToGuiStr messageToGui;
+    messageToGui.currentPresetId = presetId;
+    messageToGui.presetSaved = saved;
+    bus->sendMessageToGui(messageToGui);
 }
 
 void CtrlService::currentInfoTimeoutChanged(int timeout){
-    if(timeout == 0)
+    if(timeout <= 0)
         takeCurrentInfoTimer->stop();
     else {
         takeCurrentInfoTimer->stop();
         takeCurrentInfoTimer->start(timeout);
+        conf->getSettingsBuffer()->lastUsedPMTableUpdateInterval = timeout;
+        conf->saveSettings();
     }
 }
 
 void CtrlService::takeCurrentInfo() {
     refresh_table(adjEntryPoint);
 
-    pmTable.stapm_limit = QString::number(get_stapm_limit(adjEntryPoint));
-    pmTable.stapm_value = QString::number(get_stapm_value(adjEntryPoint));
-    pmTable.fast_limit = QString::number(get_fast_limit(adjEntryPoint));
-    pmTable.fast_value = QString::number(get_fast_value(adjEntryPoint));
-    pmTable.slow_limit = QString::number(get_slow_limit(adjEntryPoint));
-    pmTable.slow_value = QString::number(get_slow_value(adjEntryPoint));
-    pmTable.apu_slow_limit = QString::number(get_apu_slow_limit(adjEntryPoint));
-    pmTable.apu_slow_value = QString::number(get_apu_slow_value(adjEntryPoint));
-    pmTable.vrm_current = QString::number(get_vrm_current(adjEntryPoint));
-    pmTable.vrm_current_value = QString::number(get_vrm_current_value(adjEntryPoint));
-    pmTable.vrmsoc_current = QString::number(get_vrmsoc_current(adjEntryPoint));
-    pmTable.vrmsoc_current_value = QString::number(get_vrmsoc_current_value(adjEntryPoint));
-    pmTable.vrmmax_current = QString::number(get_vrmmax_current(adjEntryPoint));
-    pmTable.vrmmax_current_value = QString::number(get_vrmmax_current_value(adjEntryPoint));
-    pmTable.vrmsocmax_current = QString::number(get_vrmsocmax_current(adjEntryPoint));
-    pmTable.vrmsocmax_current_value = QString::number(get_vrmsocmax_current_value(adjEntryPoint));
-    pmTable.tctl_temp = QString::number(get_tctl_temp(adjEntryPoint));
-    pmTable.tctl_temp_value = QString::number(get_tctl_temp_value(adjEntryPoint));
-    pmTable.apu_skin_temp_limit = QString::number(get_apu_skin_temp_limit(adjEntryPoint));
-    pmTable.apu_skin_temp_value = QString::number(get_apu_skin_temp_value(adjEntryPoint));
-    pmTable.dgpu_skin_temp_limit = QString::number(get_dgpu_skin_temp_limit(adjEntryPoint));
-    pmTable.dgpu_skin_temp_value = QString::number(get_dgpu_skin_temp_value(adjEntryPoint));
-    pmTable.stapm_time = QString::number(get_stapm_time(adjEntryPoint));
-    pmTable.slow_time = QString::number(get_slow_time(adjEntryPoint));
+    pmTable.stapm_limit = get_stapm_limit(adjEntryPoint);
+    pmTable.stapm_value = get_stapm_value(adjEntryPoint);
+    pmTable.fast_limit = get_fast_limit(adjEntryPoint);
+    pmTable.fast_value = get_fast_value(adjEntryPoint);
+    pmTable.slow_limit = get_slow_limit(adjEntryPoint);
+    pmTable.slow_value = get_slow_value(adjEntryPoint);
+    pmTable.apu_slow_limit = get_apu_slow_limit(adjEntryPoint);
+    pmTable.apu_slow_value = get_apu_slow_value(adjEntryPoint);
+    pmTable.vrm_current = get_vrm_current(adjEntryPoint);
+    pmTable.vrm_current_value = get_vrm_current_value(adjEntryPoint);
+    pmTable.vrmsoc_current = get_vrmsoc_current(adjEntryPoint);
+    pmTable.vrmsoc_current_value = get_vrmsoc_current_value(adjEntryPoint);
+    pmTable.vrmmax_current = get_vrmmax_current(adjEntryPoint);
+    pmTable.vrmmax_current_value = get_vrmmax_current_value(adjEntryPoint);
+    pmTable.vrmsocmax_current = get_vrmsocmax_current(adjEntryPoint);
+    pmTable.vrmsocmax_current_value = get_vrmsocmax_current_value(adjEntryPoint);
+    pmTable.tctl_temp = get_tctl_temp(adjEntryPoint);
+    pmTable.tctl_temp_value = get_tctl_temp_value(adjEntryPoint);
+    pmTable.apu_skin_temp_limit = get_apu_skin_temp_limit(adjEntryPoint);
+    pmTable.apu_skin_temp_value = get_apu_skin_temp_value(adjEntryPoint);
+    pmTable.dgpu_skin_temp_limit = get_dgpu_skin_temp_limit(adjEntryPoint);
+    pmTable.dgpu_skin_temp_value = get_dgpu_skin_temp_value(adjEntryPoint);
+    pmTable.stapm_time = get_stapm_time(adjEntryPoint);
+    pmTable.slow_time = get_slow_time(adjEntryPoint);
     //NEW VARS
-    pmTable.psi0_current = QString::number(get_psi0_current(adjEntryPoint));
-    pmTable.psi0soc_current = QString::number(get_psi0soc_current(adjEntryPoint));
+    pmTable.psi0_current = get_psi0_current(adjEntryPoint);
+    pmTable.psi0soc_current = get_psi0soc_current(adjEntryPoint);
 
     sendCurrentInfoToGui();
 }
 
 void CtrlService::sendCurrentInfoToGui(){
-    QByteArray data;
-    QXmlStreamWriter argsWriter(&data);
-    argsWriter.setAutoFormatting(true);
-    argsWriter.writeStartDocument();
-    argsWriter.writeStartElement("bufferToGui");
-    //
-        argsWriter.writeStartElement("ryzenFamily");
-            argsWriter.writeAttribute("value", pmTable.ryzenFamily);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("biosVersion");
-            argsWriter.writeAttribute("value", pmTable.biosVersion);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("pmTableVersion");
-            argsWriter.writeAttribute("value", pmTable.pmTableVersion);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("ryzenAdjVersion");
-            argsWriter.writeAttribute("value", pmTable.ryzenAdjVersion);
-        argsWriter.writeEndElement();
-
-        argsWriter.writeStartElement("stapm_limit");
-            argsWriter.writeAttribute("value", pmTable.stapm_limit);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("stapm_value");
-            argsWriter.writeAttribute("value", pmTable.stapm_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("fast_limit");
-            argsWriter.writeAttribute("value", pmTable.fast_limit);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("fast_value");
-            argsWriter.writeAttribute("value", pmTable.fast_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("slow_limit");
-            argsWriter.writeAttribute("value", pmTable.slow_limit);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("slow_value");
-            argsWriter.writeAttribute("value", pmTable.slow_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("apu_slow_limit");
-            argsWriter.writeAttribute("value", pmTable.apu_slow_limit);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("apu_slow_value");
-            argsWriter.writeAttribute("value", pmTable.apu_slow_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("vrm_current");
-            argsWriter.writeAttribute("value", pmTable.vrm_current);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("vrm_current_value");
-            argsWriter.writeAttribute("value", pmTable.vrm_current_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("vrmsoc_current");
-            argsWriter.writeAttribute("value", pmTable.vrmsoc_current);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("vrmsoc_current_value");
-            argsWriter.writeAttribute("value", pmTable.vrmsoc_current_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("vrmmax_current");
-            argsWriter.writeAttribute("value", pmTable.vrmmax_current);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("vrmmax_current_value");
-            argsWriter.writeAttribute("value", pmTable.vrmmax_current_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("vrmsocmax_current");
-            argsWriter.writeAttribute("value", pmTable.vrmsocmax_current);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("vrmsocmax_current_value");
-            argsWriter.writeAttribute("value", pmTable.vrmsocmax_current_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("tctl_temp");
-            argsWriter.writeAttribute("value", pmTable.tctl_temp);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("tctl_temp_value");
-            argsWriter.writeAttribute("value", pmTable.tctl_temp_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("apu_skin_temp_limit");
-            argsWriter.writeAttribute("value", pmTable.apu_skin_temp_limit);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("apu_skin_temp_value");
-            argsWriter.writeAttribute("value", pmTable.apu_skin_temp_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("dgpu_skin_temp_limit");
-            argsWriter.writeAttribute("value", pmTable.dgpu_skin_temp_limit);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("dgpu_skin_temp_value");
-            argsWriter.writeAttribute("value", pmTable.dgpu_skin_temp_value);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("stapm_time");
-            argsWriter.writeAttribute("value", pmTable.stapm_time);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("slow_time");
-            argsWriter.writeAttribute("value", pmTable.slow_time);
-        argsWriter.writeEndElement();
-        //NEW VARS
-        argsWriter.writeStartElement("psi0_current");
-            argsWriter.writeAttribute("value", pmTable.psi0_current);
-        argsWriter.writeEndElement();
-        argsWriter.writeStartElement("psi0soc_current");
-            argsWriter.writeAttribute("value", pmTable.psi0soc_current);
-        argsWriter.writeEndElement();
-    //
-    argsWriter.writeEndElement();
-    argsWriter.writeEndDocument();
-    bus->sendMessageToGui(data);
+    messageToGuiStr messageToGui;
+    messageToGui.pmUpdated = true;
+    messageToGui.pmTable = pmTable;
+    bus->sendMessageToGui(messageToGui);
 }
