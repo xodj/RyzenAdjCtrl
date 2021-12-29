@@ -145,6 +145,7 @@ public:
     CtrlSettings();
     ~CtrlSettings();
 
+    void checkSettings();
     bool saveSettings();
     bool openSettings();
     bool savePresets();

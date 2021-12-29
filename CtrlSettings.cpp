@@ -12,7 +12,13 @@ CtrlSettings::CtrlSettings()
       configQFile(new QFile("/etc/RyzenCtrl/Config.xml")),
       presetsQFile(new QFile("/etc/RyzenCtrl/Presets.xml"))
 #endif //WIN32
-{
+{}
+
+CtrlSettings::~CtrlSettings() {
+    qDebug() << "Ctrl Settings - Desroyed";
+}
+
+void CtrlSettings::checkSettings() {
     if (!configQFile->exists()){
         qDebug() << "Ctrl Settings - Create New Settings File.";
         saveSettings();
@@ -40,10 +46,6 @@ CtrlSettings::CtrlSettings()
     }
     else openPresets();
     qDebug() << "Ctrl Settings - Started";
-}
-
-CtrlSettings::~CtrlSettings() {
-    qDebug() << "Ctrl Settings - Desroyed";
 }
 
 bool CtrlSettings::saveSettings() {

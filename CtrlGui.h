@@ -26,7 +26,7 @@ class CtrlGui : public QMainWindow
     Q_OBJECT
 
 public:
-    CtrlGui(CtrlBus *bus, CtrlSettings *conf);
+    CtrlGui(CtrlBus *bus);
     ~CtrlGui();
 
 private:

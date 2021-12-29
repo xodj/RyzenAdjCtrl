@@ -1,9 +1,9 @@
 #include "CtrlService.h"
 
-CtrlService::CtrlService(CtrlBus *bus, CtrlSettings *conf)
+CtrlService::CtrlService(CtrlBus *bus)
     : QObject(nullptr),
       bus(bus),
-      conf(conf)
+      conf(bus->getSettingsFromFile())
 {
     initPmTable();
 

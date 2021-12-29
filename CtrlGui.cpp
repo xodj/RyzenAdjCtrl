@@ -13,12 +13,11 @@
 #include "CtrlConfig.h"
 #include <QThread>
 
-CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
+CtrlGui::CtrlGui(CtrlBus *bus)
     : ui(new Ui::CtrlGui),
       ui_settings(new Ui::CtrlGuiSettings),
       ui_infoWidget(new Ui::CtrlInfoWidget),
-      bus(bus),
-      conf(conf)
+      bus(bus)
 {
     qtLanguageTranslator = new QTranslator;
 
@@ -32,26 +31,36 @@ CtrlGui::CtrlGui(CtrlBus *bus, CtrlSettings *conf)
                                 "\nNeed to start service.");
         dialog->addButton(QString::fromUtf8("&Start"),
                                 QMessageBox::AcceptRole);
+        dialog->addButton(QString::fromUtf8("&Install"),
+                                QMessageBox::AcceptRole);
         dialog->addButton(QString::fromUtf8("&Retry"),
-                                QMessageBox::ActionRole);
+                                QMessageBox::AcceptRole);
         dialog->addButton(QString::fromUtf8("&Cancel"),
                                 QMessageBox::RejectRole);
         dialog->setModal(true);
-        int role = dialog->exec();
-        if (role == 0){
+        int actionNumber = dialog->exec();
+        if (actionNumber == 0){
             startService();
             for(int i = 0;i < 100;i++){
                 if(bus->isServiseRuning()) break;
                 QThread::msleep(100);
             }
         }
-        if (role == 1)
+        if (actionNumber == 1){
+            installService();
+            for(int i = 0;i < 100;i++){
+                if(bus->isServiseRuning()) break;
+                QThread::msleep(100);
+            }
+        }
+        if (actionNumber == 2)
             QThread::msleep(333);
-        if (role == 2)
+        if (actionNumber == 3)
             exit(0);
         delete dialog;
     }
 #endif
+    conf = bus->getSettingsFromService();
 
     setupUi();
     loadPresets();

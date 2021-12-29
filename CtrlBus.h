@@ -13,6 +13,7 @@
 
 struct messageToServiceStr{
     bool exit = false;
+    bool getSettings = false;
     bool saveSettings = false;
     settingsStr settings;
     bool savePreset = false;
@@ -66,6 +67,12 @@ struct messageToGuiStr{
     PMTable pmTable;
 };
 
+struct settingsToGuiStr{
+    settingsStr settings;
+    presetStr preset;
+    bool lastPreset = false;
+};
+
 #ifdef BUILD_SERVICE
 class CtrlBus : public QObject
 {
@@ -75,16 +82,73 @@ public:
             QSharedMemory *bufferToServiceFlag,
             QSharedMemory *bufferToGui,
             QSharedMemory *bufferToGuiFlag,
-            QSharedMemory *guiAlreadyRunning)
+            QSharedMemory *guiAlreadyRunning,
+            QSharedMemory *bufferSettingsToGui,
+            QSharedMemory *bufferSettingsToGuiFlag)
         : QObject(nullptr),
           bufferToService(bufferToService),
           bufferToServiceFlag(bufferToServiceFlag),
           bufferToGui(bufferToGui),
           bufferToGuiFlag(bufferToGuiFlag),
-          guiAlreadyRunning(guiAlreadyRunning)
+          guiAlreadyRunning(guiAlreadyRunning),
+          bufferSettingsToGui(bufferSettingsToGui),
+          bufferSettingsToGuiFlag(bufferSettingsToGuiFlag),
+          conf(new CtrlSettings)
     {}
     ~CtrlBus(){
         refresh_timer->stop();
+    }
+
+    CtrlSettings *getSettingsFromFile(){
+        conf->checkSettings();
+        return conf;
+    }
+
+    CtrlSettings *getSettingsFromService(){
+        messageToServiceStr messageToService;
+        messageToService.getSettings = true;
+        sendMessageToService(messageToService);
+        settingsToGuiStr settingsToGui;
+        do{
+            if(bufferSettingsToGuiFlag->attach(QSharedMemory::ReadWrite)){
+                if (bufferSettingsToGuiFlag->lock()) {
+                    bool flag = false;
+                    memcpy(&flag, bufferSettingsToGuiFlag->data(), sizeof(bool));
+                    if(flag){
+                        /**/
+                        if(bufferSettingsToGui->attach(QSharedMemory::ReadWrite)){
+                            if (bufferSettingsToGui->lock()) {
+                                memcpy(&settingsToGui, bufferSettingsToGui->data(), sizeof(settingsToGuiStr));
+                                memcpy(conf->getSettingsBuffer(), &settingsToGui.settings, sizeof(settingsStr));
+                                presetStr *preset = new presetStr;
+                                memcpy(preset, &settingsToGui.preset, sizeof(presetStr));
+                                conf->insertNewPreset(preset->presetId, preset);
+                                for (int i=0;i < sizeof(settingsToGuiStr);i++)
+                                    ((char*)bufferSettingsToGui->data())[i] = '\0';
+                                bufferSettingsToGui->unlock();
+                                flag = false;
+                                memcpy(bufferSettingsToGuiFlag->data(), &flag, sizeof(bool));
+                                qDebug()<<"Ctrl Bus - Recieved message from Service";
+                            } else {
+                                qDebug()<<"Ctrl Bus - Can't lock bufferSettingsToGui!";
+                            }
+                            /**/
+                        } else {
+                            qDebug()<<"Ctrl Bus - Can't attach bufferSettingsToGui!";
+                        }
+                        bufferSettingsToGui->detach();
+                    }
+                } else {
+                    qDebug()<<"Ctrl Bus - Can't lock bufferSettingsToGuiFlag!";
+                }
+                bufferSettingsToGuiFlag->unlock();
+            } else {
+                qDebug()<<"Ctrl Bus - Can't attach bufferSettingsToGuiFlag!";
+            }
+            bufferSettingsToGuiFlag->detach();
+        }
+        while(!settingsToGui.lastPreset);
+        return conf;
     }
 
     void sendMessageToService(messageToServiceStr messageToService){
@@ -137,6 +201,10 @@ public:
             qDebug()<<"Ctrl Bus - Can't create bufferToGui!";
         if(!bufferToGuiFlag->create(sizeof(bool)))
             qDebug()<<"Ctrl Bus - Can't create bufferToGuiFlag!";
+        if(!bufferSettingsToGui->create(buffer_size))
+            qDebug()<<"Ctrl Bus - Can't create bufferToGui!";
+        if(!bufferSettingsToGuiFlag->create(sizeof(bool)))
+            qDebug()<<"Ctrl Bus - Can't create bufferToGuiFlag!";
 
         refresh_timer = new QTimer;
         connect(refresh_timer, &QTimer::timeout,
@@ -165,6 +233,39 @@ public:
             qDebug()<<"Ctrl Bus - Can't lock bufferToGuiFlag!";
         }
         bufferToGuiFlag->unlock();
+    }
+    void sendSettingsToGui(){
+        qDebug()<<"Ctrl Bus - sendSettingsToGui";
+        settingsToGuiStr settingsToGui;
+        settingsToGui.settings = *conf->getSettingsBuffer();
+        for(size_t i=0;i<conf->getPresetsCount();){
+            settingsToGui.preset = *(conf->getPresetsList()->at(i));
+            if (bufferSettingsToGuiFlag->lock()) {
+                bool flag = false;
+                memcpy(&flag, bufferSettingsToGuiFlag->data(), sizeof(bool));
+                if(flag){
+                    qDebug()<<"Ctrl Bus - Preveous message to GUI is not readed!";
+                } else {
+                    /**/
+                    if (bufferSettingsToGui->lock()) {
+                        if(i + 1 == conf->getPresetsCount())
+                            settingsToGui.lastPreset = true;
+                        memcpy(bufferSettingsToGui->data(), &settingsToGui,
+                               sizeof(settingsToGuiStr));
+                        i++;
+                    } else {
+                        qDebug()<<"Ctrl Bus - Can't lock bufferSettingsToGui!";
+                    }
+                    bufferSettingsToGui->unlock();
+                    /**/
+                    flag = true;
+                    memcpy(bufferSettingsToGuiFlag->data(), &flag, sizeof(bool));
+                }
+            } else {
+                qDebug()<<"Ctrl Bus - Can't lock bufferSettingsToGuiFlag!";
+            }
+            bufferSettingsToGuiFlag->unlock();
+        }
     }
     bool isGUIRuning(){
         if(guiAlreadyRunning->attach()){
@@ -203,8 +304,13 @@ private:
                 /**/
                 messageToServiceStr messageToService;
                 if (bufferToService->lock()) {
-                    memcpy(&messageToService, bufferToService->data(), sizeof(messageToServiceStr));
-                    emit messageFromGUIRecieved(messageToService);
+                    memcpy(&messageToService, bufferToService->data(),
+                           sizeof(messageToServiceStr));
+                    if(messageToService.getSettings){
+                        sendSettingsToGui();
+                    } else {
+                        emit messageFromGUIRecieved(messageToService);
+                    }
                     for (int i=0;i < sizeof(messageToServiceStr);i++)
                         ((char*)bufferToService->data())[i] = '\0';
                     bufferToService->unlock();
@@ -254,7 +360,12 @@ private:
             }
             bufferToGuiFlag->unlock();
         } else {
-            qDebug()<<"Ctrl Bus - Can't attach bufferToGuiFlag!";
+            qDebug()<<"Ctrl Bus - Can't attach bufferToGuiFlag: "<<errorCount + 1;
+            errorCount++;
+            if(errorCount == 100){
+                qDebug()<<"Ctrl Bus - To much errors, exiting...";
+                exit(1);
+            }
         }
         bufferToGuiFlag->detach();
     }
@@ -279,8 +390,12 @@ private:
     QSharedMemory *bufferToGui;
     QSharedMemory *bufferToGuiFlag;
     QSharedMemory *guiAlreadyRunning;
+    QSharedMemory *bufferSettingsToGui;
+    QSharedMemory *bufferSettingsToGuiFlag;
 
     QTimer *refresh_timer;
+    CtrlSettings *conf;
+    int errorCount = 0;
 };
 #else //BUILD_SERVICE
 class CtrlBus : public QObject
@@ -289,8 +404,18 @@ class CtrlBus : public QObject
 public:
     CtrlBus(QSharedMemory *guiAlreadyRunning)
         : QObject(nullptr),
-          guiAlreadyRunning(guiAlreadyRunning){}
+          guiAlreadyRunning(guiAlreadyRunning)
+    {
+        conf->checkSettings();
+    }
     ~CtrlBus(){}
+
+    CtrlSettings *getSettingsFromFile(){
+        return conf;
+    }
+    CtrlSettings *getSettingsFromService(){
+        return conf;
+    }
 
     void sendMessageToService(messageToServiceStr data){
         emit messageFromGUIRecieved(data);
@@ -341,6 +466,7 @@ private:
     QSharedMemory *guiAlreadyRunning;
 
     QTimer *refresh_timer;
+    CtrlSettings *conf;
 };
 #endif //BUILD_SERVICE
 #endif // CTRLBUS_H

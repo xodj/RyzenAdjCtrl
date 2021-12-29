@@ -17,7 +17,7 @@
 class CtrlService : public QObject {
     Q_OBJECT
 public:
-    CtrlService(CtrlBus *bus, CtrlSettings *conf);
+    CtrlService(CtrlBus *bus);
     ~CtrlService();
 
 private:

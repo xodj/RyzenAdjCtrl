@@ -160,12 +160,18 @@ int main(int argc, char *argv[])
             new QSharedMemory("bufferToGuiFlag:" + qSharedMemoryKey);
     QSharedMemory *guiAlreadyRunning =
             new QSharedMemory("guiAlreadyRunning:" + qSharedMemoryKey);
+    QSharedMemory *bufferSettingsToGui =
+            new QSharedMemory("bufferSettingsToGui:" + qSharedMemoryKey);
+    QSharedMemory *bufferSettingsToGuiFlag =
+            new QSharedMemory("bufferSettingsToGuiFlag:" + qSharedMemoryKey);
 
     CtrlBus *bus = new CtrlBus(bufferToService,
                                bufferToServiceFlag,
                                bufferToGui,
                                bufferToGuiFlag,
-                               guiAlreadyRunning);
+                               guiAlreadyRunning,
+                               bufferSettingsToGui,
+                               bufferSettingsToGuiFlag);
 
     if(a.arguments().contains("exit"))
         return exitCommand(bus);
@@ -192,7 +198,7 @@ int main(int argc, char *argv[])
             qDebug() << "Ctrl Main - Exit.";
             return 1;
         } else {
-            (new CtrlService(bus, new CtrlSettings));
+            new CtrlService(bus);
         }
     } else {
         fileName = "Logs/RyzenCtrl - Gui.log";
@@ -201,7 +207,7 @@ int main(int argc, char *argv[])
             qDebug() << "Ctrl Main - Exit.";
             return 1;
         } else {
-            new CtrlGui(bus, new CtrlSettings);
+            new CtrlGui(bus);
         }
     }
     return a.exec();
@@ -288,8 +294,8 @@ int main(int argc, char *argv[])
         qDebug() << "Ctrl Main - Exit.";
         return 1;
     } else {
-        new CtrlService(bus, new CtrlSettings);
-        new CtrlGui(bus, new CtrlSettings);
+        new CtrlService(bus);
+        new CtrlGui(bus);
     }
 
     return a.exec();
