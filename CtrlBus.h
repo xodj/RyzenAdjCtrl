@@ -397,7 +397,7 @@ private:
     CtrlSettings *conf;
     int errorCount = 0;
 };
-#else //BUILD_SERVICE
+#elif WIN32 //NOT BUILD_SERVICE
 class CtrlBus : public QObject
 {
     Q_OBJECT
@@ -469,5 +469,48 @@ private:
     QTimer *refresh_timer;
     CtrlSettings *conf;
 };
-#endif //BUILD_SERVICE
+#else //NOT BUILD_SERVICE and WIN32
+class CtrlBus : public QObject
+{
+    Q_OBJECT
+public:
+    CtrlBus(QSharedMemory *guiAlreadyRunning)
+        : QObject(nullptr),
+          conf(new CtrlSettings)
+    {
+        Q_UNUSED(guiAlreadyRunning)
+        conf->checkSettings();
+    }
+    ~CtrlBus(){}
+
+    CtrlSettings *getSettingsFromFile(){
+        return conf;
+    }
+    CtrlSettings *getSettingsFromService(){
+        return conf;
+    }
+
+    void sendMessageToService(messageToServiceStr data){
+        emit messageFromGUIRecieved(data);
+    }
+    void sendMessageToGui(messageToGuiStr data){
+        emit messageFromServiceRecieved(data);
+    }
+    bool isGUIRuning(){
+        return false;
+    }
+    void setGUIRuning(){}
+
+signals:
+    void messageFromServiceRecieved(messageToGuiStr messageToGui);
+    void messageFromGUIRecieved(messageToServiceStr messageToService);
+    void messageFromAnotherGui();
+
+private:
+    void guiAlreadyRunningCheck(){}
+
+    QTimer *refresh_timer;
+    CtrlSettings *conf;
+};
+#endif //BUILD_SERVICE and WIN32
 #endif // CTRLBUS_H

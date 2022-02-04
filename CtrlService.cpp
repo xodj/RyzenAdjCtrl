@@ -49,7 +49,11 @@ static inline char* charFromString(std::string str, char *cstr = NULL){
     int charLength = str.length() + 1;
     if(cstr == NULL)
         cstr = new char[charLength];
+#ifdef WIN32
     strcpy_s(cstr, charLength, str.c_str());
+#else
+    strcpy(cstr, str.c_str());
+#endif
     cstr[str.length()] = '\0';
     return cstr;
 }

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenCtrl VERSION 0.5.1.870 LANGUAGES CXX)
+PROJECT(RyzenCtrl VERSION 0.5.1.872 LANGUAGES CXX)
 #Set version number here  ^^^^^^^^^
 #BUILD_STANDALONE on UNIX or choose on Windows
 if(WIN32)
@@ -96,7 +96,7 @@ endif(WIN32)
 if(UNIX)
     message("UNIX OS")
     set(RyzenAdjLib
-        ${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj/build/libryzenadjd.so
+        /usr/lib/libryzenadj.so
         )
 endif(UNIX)
 #Add project exec
