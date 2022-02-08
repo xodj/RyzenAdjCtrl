@@ -21,13 +21,13 @@ CtrlService::CtrlService(CtrlBus *bus)
     acCallback->emitCurrentACState();
 
 #ifdef WIN32
-    armour = new CtrlArmour;
     epmCallback = new CtrlEPMCallback;
     if(settingsBuffer->epmAutoPresetSwitch)
         connect(epmCallback, &CtrlEPMCallback::epmIdChanged,
                 this, &CtrlService::epmIdChanged);
     epmCallback->emitCurrentEPMState();
 #endif
+    armour = new CtrlArmour;
 
     takeCurrentInfoTimer = new QTimer;
     takeCurrentInfoTimer->connect(takeCurrentInfoTimer, &QTimer::timeout, this, &CtrlService::takeCurrentInfo);
@@ -46,13 +46,13 @@ CtrlService::~CtrlService() {
 }
 
 static inline char* charFromString(std::string str, char *cstr = NULL){
-    int charLength = str.length() + 1;
+    size_t charLength = str.length() + 1;
     if(cstr == NULL)
         cstr = new char[charLength];
 #ifdef WIN32
     strcpy_s(cstr, charLength, str.c_str());
 #else
-    strcpy(cstr, str.c_str());
+    memcpy(cstr, str.c_str(), charLength);
 #endif
     cstr[str.length()] = '\0';
     return cstr;
@@ -247,12 +247,9 @@ void CtrlService::loadPreset(presetStr *preset){
             lastPreset = new presetStr;
         memcpy(lastPreset, preset, sizeof(presetStr));
 
-#ifdef WIN32
         if(preset->fanPresetId > 0) {
             armour->sendArmourThrottlePlan((preset->fanPresetId) - 1);
         }
-#endif
-
 
         if(preset->tempLimitChecked)
             set_tctl_temp(adjEntryPoint, preset->tempLimitValue);

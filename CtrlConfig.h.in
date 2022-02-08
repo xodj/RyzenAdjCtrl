@@ -1,11 +1,7 @@
 #ifndef CTRLCONFIG_H
 #define CTRLCONFIG_H
 
-#define sharedMemoryKey \
-"${RANDOM_DATA}"
-
-#ifdef WIN32
+#define sharedMemoryKey "${RANDOM_DATA}"
 ${DEF_UNDEF_BUILD_SERVICE}
-#endif
 
 #endif // CTRLCONFIG_H

@@ -27,7 +27,7 @@ void CtrlSettings::checkSettings() {
 
     if (!presetsQFile->exists()) {
         qDebug() << "Ctrl Settings - Create New Presets File.";
-        char presetNames[5][16] = {
+        char presetNames[5][PresetNameLenth] = {
             {'B', 'a', 't', 't', 'e', 'r', 'y', ' ', 'S', 'a', 'v', 'e', 'r', '\0'},
             {'B', 'e', 't', 't', 'e', 'r', ' ', 'B', 'a', 't', 't', 'e', 'r', 'y', '\0'},
             {'B', 'a', 'l', 'a', 'n', 'c', 'e', 'd', '\0'},
@@ -38,7 +38,7 @@ void CtrlSettings::checkSettings() {
         for(int i = 0;i < 5; i++){
             preset = new presetStr;
             preset->presetId = i;
-            for(int y = 0;y < sizeof(preset->presetName) + 1; y++)
+            for(int y = 0;y <= sizeof(presetNames[i]); y++)
                 preset->presetName[y] = presetNames[i][y];
             presets->append(preset);
         }
@@ -647,7 +647,8 @@ const QList<presetStr*>* CtrlSettings::getPresetsList() {
 }
 
 qsizetype CtrlSettings::getPresetsCount() {
-    qDebug() << "Ctrl Settings - Get Presets Count";
+    qDebug() << "Ctrl Settings - Get Presets Count"
+             << presets->count();
     return presets->count();
 }
 

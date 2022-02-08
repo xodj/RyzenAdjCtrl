@@ -13,8 +13,21 @@
 #include "CtrlConfig.h"
 
 #define logFileSizeTreshold 10000000
+#ifdef WIN32
+#define LOGFILE "Logs/RyzenCtrl.log"
+#define LOGFILESERVICE "Logs/RyzenCtrl - Service.log"
+#define LOGFILEGUI "Logs/RyzenCtrl - Gui.log"
+#define CONFIGDIR "Config"
+#define LOGDIR "Logs"
+#else
+#define LOGFILE "/tmp/RyzenCtrl.log"
+#define LOGFILESERVICE "/tmp/RyzenCtrl - Service.log"
+#define LOGFILEGUI "/tmp/RyzenCtrl - Gui.log"
+#define CONFIGDIR "/etc/RyzenCtrl/"
+#define LOGDIR "/tmp/RyzenCtr/"
+#endif
 
-QString fileName = "Logs/RyzenCtrl - Service.log";
+QString fileName = LOGFILE;
 
 void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
     QFile log(fileName);
@@ -27,32 +40,23 @@ void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
 }
 
 void checkLogsSize() {
-#ifdef WIN32
-    QDir dir("Config");
+    QDir dir(CONFIGDIR);
     if (!dir.exists())
         dir.mkpath(".");
-    dir.setPath("Logs");
-    if (!dir.exists())
-        dir.mkpath(".");
-
-    QFile log("Logs/RyzenCtrl - Gui.log");
-    if(log.size() > logFileSizeTreshold)
-        log.remove("Logs/RyzenCtrl - Gui.log");
-    log.setFileName("Logs/RyzenCtrl - Service.log");
-    if(log.size() > logFileSizeTreshold)
-        log.remove("Logs/RyzenCtrl - Service.log");
-    log.setFileName("Logs/RyzenCtrl.log");
-    if(log.size() > logFileSizeTreshold)
-        log.remove("Logs/RyzenCtrl.log");
-#else //WIN32
-    QDir dir("/etc/RyzenCtrl/");
+    dir.setPath(LOGDIR);
     if (!dir.exists())
         dir.mkpath(".");
 
-    QFile log("/etc/RyzenCtrl/RyzenCtrl.log");
+    QFile log(LOGFILEGUI);
     if(log.size() > logFileSizeTreshold)
-        log.remove("/etc/RyzenCtrl/RyzenCtrl.log");
-#endif //WIN32
+        log.remove(LOGFILEGUI);
+    log.setFileName(LOGFILESERVICE);
+    if(log.size() > logFileSizeTreshold)
+        log.remove(LOGFILESERVICE);
+    log.setFileName(LOGFILE);
+    if(log.size() > logFileSizeTreshold)
+        log.remove(LOGFILE);
+
 }
 
 #ifdef BUILD_SERVICE
@@ -149,6 +153,12 @@ int main(int argc, char *argv[])
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
 
+    if(!a.arguments().contains("startup"))
+        fileName = LOGFILEGUI;
+    else
+        fileName = LOGFILESERVICE;
+
+#ifdef WIN32
     QString qSharedMemoryKey = sharedMemoryKey;
     QSharedMemory *bufferToService =
             new QSharedMemory("bufferToService:" + qSharedMemoryKey);
@@ -172,6 +182,9 @@ int main(int argc, char *argv[])
                                guiAlreadyRunning,
                                bufferSettingsToGui,
                                bufferSettingsToGuiFlag);
+#else
+    CtrlBus *bus = new CtrlBus;
+#endif //WIN32
 
     if(a.arguments().contains("exit"))
         return exitCommand(bus);
@@ -201,7 +214,6 @@ int main(int argc, char *argv[])
             new CtrlService(bus);
         }
     } else {
-        fileName = "Logs/RyzenCtrl - Gui.log";
         if(bus->isGUIRuning()){
             qDebug() << "Ctrl Main - Application Is Already Running.";
             qDebug() << "Ctrl Main - Exit.";
@@ -258,15 +270,6 @@ bool sudoersCheck(){
         msgBox.setIcon(QMessageBox::Critical);
         msgBox.setText("Need sudo priviliges!\n");
         msgBox.exec();
-        /*QProcess process;
-        process.start("pkexec", QStringList({"env", "DISPLAY=$DISPLAY", "XAUTHORITY=$XAUTHORITY", qApp->arguments().value(0)}));
-        for(;!process.waitForStarted();){}
-        for(;!process.waitForFinished();){}
-        QString error = process.readAllStandardError();
-        QString output = process.readAllStandardOutput();
-        qDebug() << "Ctrl Main - error:" << error;
-        qDebug() << "Ctrl Main - output:" << output;
-        for(;true;){}*/
         return false;
     } else
         return true;
@@ -278,17 +281,17 @@ int main(int argc, char *argv[])
 
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
-#ifdef WIN32
-    fileName = "Logs/RyzenCtrl.log";
-#else //Linux
-    fileName = "/etc/RyzenCtrl/RyzenCtrl.log";
-#endif
-
     if(!sudoersCheck())
         return 1;
+#ifdef WIN32
+    CtrlBus *bus =
+            new CtrlBus(
+                new QSharedMemory(
+                    "guiAlreadyRunning:"
+                    + QString(sharedMemoryKey)
+                    )
+                );
 
-    QSharedMemory *guiAlreadyRunning = new QSharedMemory("guiAlreadyRunning:" + QString(sharedMemoryKey));
-    CtrlBus *bus = new CtrlBus(guiAlreadyRunning);
     if(bus->isGUIRuning()){
         qDebug() << "Ctrl Main - Application Is Already Running.";
         qDebug() << "Ctrl Main - Exit.";
@@ -297,6 +300,11 @@ int main(int argc, char *argv[])
         new CtrlService(bus);
         new CtrlGui(bus);
     }
+#else //Linux
+    CtrlBus *bus = new CtrlBus;
+    new CtrlService(bus);
+    new CtrlGui(bus);
+#endif
 
     return a.exec();
 }

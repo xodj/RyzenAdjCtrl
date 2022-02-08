@@ -73,6 +73,12 @@ struct settingsToGuiStr{
     bool lastPreset = false;
 };
 
+enum busType{
+    busTypeService = 0,
+    busTypeGui
+};
+
+#ifdef WIN32
 #ifdef BUILD_SERVICE
 class CtrlBus : public QObject
 {
@@ -397,7 +403,7 @@ private:
     CtrlSettings *conf;
     int errorCount = 0;
 };
-#elif WIN32 //NOT BUILD_SERVICE
+#else //NOT BUILD_SERVICE
 class CtrlBus : public QObject
 {
     Q_OBJECT
@@ -469,19 +475,284 @@ private:
     QTimer *refresh_timer;
     CtrlSettings *conf;
 };
-#else //NOT BUILD_SERVICE and WIN32
+#endif //BUILD_SERVICE
+#else //NOT WIN32
+#ifdef BUILD_SERVICE
+#include <QtDBus/QtDBus>
+#include <QObject>
+
+#define INTERFACE_NAME "ru.ryzenctrl.service.ctrl"
+#define SERVICE_NAME "ru.ryzenctrl.service"
+#define GUI_NAME "ru.ryzenctrl.gui"
+#define OBJECT_NAME "/control"
+#define DBUS_CONFIG_FILE_NAME "ru.ryzenctrl.service.conf"
+#define DBUS_CONFIG_FILE_PATH "/etc/dbus-1/system.d/ru.ryzenctrl.service.conf"
+
+class CtrlBus : public QObject
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", INTERFACE_NAME)
+public:
+    explicit CtrlBus(QObject *parent = nullptr) :
+        QObject(parent),
+        conf(new CtrlSettings)
+    { qDebug() << __PRETTY_FUNCTION__; }
+    ~CtrlBus(){
+        qDebug() << __PRETTY_FUNCTION__;
+        QDBusConnection dbus = QDBusConnection::sessionBus();
+        dbus.unregisterService(SERVICE_NAME);
+        dbus.unregisterObject(OBJECT_NAME);
+        dbus = QDBusConnection::systemBus();
+        dbus.unregisterService(SERVICE_NAME);
+        dbus.unregisterObject(OBJECT_NAME);
+    }
+    CtrlSettings *getSettingsFromFile(){
+        qDebug() << __PRETTY_FUNCTION__;
+        conf->checkSettings();
+        return conf;
+    }
+    CtrlSettings *getSettingsFromService(){
+        qDebug() << __PRETTY_FUNCTION__;
+        QDBusConnection dbus = QDBusConnection::systemBus();
+        if (!dbus.isConnected())
+            qCritical() << "Cannot connect to the D-Bus system bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "connect to the D-Bus system bus succesful";
+        QDBusInterface iface(SERVICE_NAME, OBJECT_NAME, INTERFACE_NAME, dbus);
+        if (iface.isValid()) {
+            QDBusReply<QByteArray> configReply = iface.call("getConfigFile");
+            if (configReply.isValid()) {
+                qDebug() << "Reply from getConfigFile was: "
+                         << configReply.value();
+                memcpy(conf->getSettingsBuffer(),
+                       configReply.value().constData(),
+                       sizeof(settingsStr));
+            } else
+                qCritical() << "Call to getConfigFile failed:" <<
+                               qPrintable(configReply.error().message());
+
+            int presetsCount = 0;
+            QDBusReply<int> presetsCountReply = iface.call("getPresetsCount");
+            if (presetsCountReply.isValid()) {
+                qDebug() << "Reply from getPresetsCount was: "
+                         << presetsCountReply.value();
+                presetsCount = presetsCountReply.value();
+            } else
+                qCritical() << "Call to getPresetsCount failed:" <<
+                               qPrintable(presetsCountReply.error().message());
+
+            if(presetsCount != 0)
+                for(int n = 0;n < presetsCount;n++){
+                    QDBusReply<QByteArray> presetReply = iface.call("getPresetFile", n);
+                    if (presetReply.isValid()) {
+                        qDebug() << "Reply from getPresetFile was: "
+                                 << presetReply.value();
+                        presetStr *preset = new presetStr;
+                        memcpy(preset,
+                               presetReply.value().constData(),
+                               sizeof(presetStr));
+                        conf->insertNewPreset(preset->presetId, preset);
+                    } else
+                        qCritical() << "Call to getPresetFile failed:" <<
+                                       qPrintable(presetReply.error().message());
+                }
+        } else
+            qCritical() << "QDBusInterface is invalid.\n";
+        return conf;
+    }
+    void sendMessageToService(messageToServiceStr data){
+        qDebug() << __PRETTY_FUNCTION__;
+        QDBusConnection dbus = QDBusConnection::systemBus();
+        if (!dbus.isConnected())
+            qCritical() << "Cannot connect to the D-Bus system bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "connect to the D-Bus system bus succesful";
+        QDBusInterface iface(SERVICE_NAME, OBJECT_NAME, INTERFACE_NAME, dbus);
+        if (iface.isValid()) {
+            QByteArray var(sizeof(messageToServiceStr),
+                           Qt::Initialization::Uninitialized);
+            memcpy(var.data(), &data,
+                   sizeof(messageToServiceStr));
+            iface.call("sendMessageToService", var);
+        } else
+            qCritical() << "QDBusInterface is invalid.\n";
+    }
+    void sendMessageToGui(messageToGuiStr data){
+        qDebug() << __PRETTY_FUNCTION__;
+        QByteArray var(sizeof(messageToGuiStr),
+                       Qt::Initialization::Uninitialized);
+        memcpy(var.data(), &data,
+               sizeof(messageToGuiStr));
+        emit messageFromServiceSignal();
+    }
+    bool isGUIRuning(){
+        qDebug() << __PRETTY_FUNCTION__;
+        bool answer = false;
+        QDBusConnection dbus = QDBusConnection::sessionBus();
+        if (!dbus.isConnected())
+            qCritical() << "Cannot connect to the D-Bus system bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "connect to the D-Bus system bus succesful";
+        QDBusInterface iface(GUI_NAME, OBJECT_NAME, INTERFACE_NAME, dbus);
+        if (iface.isValid()) {
+            QDBusReply<bool> reply = iface.call("checkGuiRunning");
+            if (reply.isValid()) {
+                qDebug() << "Reply from checkGuiRunning was: "
+                         << reply.value();
+                answer = reply.value();
+            } else
+                qCritical() << "Call to checkGuiRunning failed:"
+                            << qPrintable(reply.error().message());
+        } else
+            qCritical() << "QDBusInterface is invalid.\n";
+        return answer;
+    }
+    void setGUIRuning(){
+        qDebug() << __PRETTY_FUNCTION__;
+        QDBusConnection dbus = QDBusConnection::sessionBus();
+        if (!dbus.isConnected())
+            qCritical() << "Cannot connect to the D-Bus system bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "connect to the D-Bus system bus succesful";
+
+        if (!dbus.registerService(GUI_NAME))
+            qCritical() << "Cannot registerService to the D-Bus system bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "registerService succesful";
+
+        if (!dbus.registerObject(OBJECT_NAME, this,
+                                 QDBusConnection::ExportAllSlots))
+            qCritical() << "Cannot registerObject to the D-Bus system bus."
+                        << dbus.lastError().message();
+        else
+            qDebug() << "registerObject succesful";
+
+        bool cnt = dbus.connect(SERVICE_NAME, OBJECT_NAME,
+                     INTERFACE_NAME, "messageFromServiceSignal",
+                     this, SLOT(messageFromServiceSlot()));
+        if (!cnt)
+            qCritical() << "Cannot connect to the D-Bus system bus."
+                        << dbus.lastError().message();
+        else
+            qDebug() << "connect succesful";
+    }
+    bool isServiseRuning(){
+        qDebug() << __PRETTY_FUNCTION__;
+        bool answer = false;
+        QDBusConnection dbus = QDBusConnection::systemBus();
+        if (!dbus.isConnected())
+            qCritical() << "Cannot connect to the D-Bus system bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "connect to the D-Bus system bus succesful";
+        QDBusInterface iface(SERVICE_NAME, OBJECT_NAME, INTERFACE_NAME, dbus);
+        if (iface.isValid()) {
+            QDBusReply<bool> reply = iface.call("checkServiceRunning");
+            if (reply.isValid()) {
+                qDebug() << "Reply from checkServiceRunning was: "
+                         << reply.value();
+                answer = reply.value();
+            } else
+                qCritical() << "Call to checkServiceRunning failed:"
+                            << qPrintable(reply.error().message());
+        } else
+            qCritical() << "QDBusInterface is invalid.\n";
+        return answer;
+    }
+    void setServiseRuning(){
+        qDebug() << __PRETTY_FUNCTION__;
+        QDBusConnection dbus = QDBusConnection::systemBus();
+        if (!dbus.isConnected())
+            qCritical() << "Cannot connect to the D-Bus system bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "connect to the D-Bus system bus succesful";
+
+        if (!dbus.registerService(SERVICE_NAME))
+            qCritical() << "Cannot registerService to the D-Bus system bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "registerService succesful";
+
+        if (!dbus.registerObject(OBJECT_NAME, this,
+                                 QDBusConnection::ExportAllSlots |
+                                 QDBusConnection::ExportAllSignals))
+            qCritical() << "Cannot registerObject to the D-Bus system bus."
+                        << dbus.lastError().message();
+        else
+            qDebug() << "registerObject succesful";
+    }
+
+public slots:
+    bool checkGuiRunning()
+    {
+        qDebug() << __PRETTY_FUNCTION__;
+        emit messageFromAnotherGui();
+        return true;
+    }
+    bool checkServiceRunning()
+    {
+        qDebug() << __PRETTY_FUNCTION__;
+        return true;
+    }
+    void sendMessageToService(QByteArray data){
+        qDebug() << __PRETTY_FUNCTION__;
+        messageToServiceStr messageToService;
+        memcpy(&messageToService, data.constData(),
+               sizeof(messageToServiceStr));
+        qDebug() << messageToService.getSettings;
+        emit messageFromGUIRecieved(messageToService);
+    }
+    QByteArray getConfigFile(){
+        QByteArray configArray(sizeof(settingsStr),
+                                   Qt::Initialization::Uninitialized);
+        memcpy(configArray.data(), conf->getSettingsBuffer(),
+               sizeof(settingsStr));
+        return configArray;
+    }
+    int getPresetsCount(){
+        int presetsCount = static_cast<int>(conf->getPresetsCount());
+        return presetsCount;
+    }
+    QByteArray getPresetFile(int number){
+        QByteArray presetArray(sizeof(presetStr),
+                                   Qt::Initialization::Uninitialized);
+        memcpy(presetArray.data(), conf->getPresetsList()->at(number),
+               sizeof(presetStr));
+        return presetArray;
+    }
+    void messageFromServiceSlot(){
+        qDebug() << "__PRETTY_FUNCTION__";
+    }
+
+signals:
+    void messageFromServiceSignal();
+    void messageFromServiceRecieved(messageToGuiStr messageToGui);
+    void messageFromGUIRecieved(messageToServiceStr messageToService);
+    void messageFromAnotherGui();
+
+private:
+    CtrlSettings *conf;
+};
+#else //NOT BUILD_SERVICE and NOT WIN32
 class CtrlBus : public QObject
 {
     Q_OBJECT
 public:
-    CtrlBus(QSharedMemory *guiAlreadyRunning)
-        : QObject(nullptr),
-          conf(new CtrlSettings)
+    CtrlBus()
+        : conf(new CtrlSettings)
     {
-        Q_UNUSED(guiAlreadyRunning)
+        qDebug() << __PRETTY_FUNCTION__;
         conf->checkSettings();
     }
-    ~CtrlBus(){}
+    ~CtrlBus(){
+        qDebug() << __PRETTY_FUNCTION__;
+    }
 
     CtrlSettings *getSettingsFromFile(){
         return conf;
@@ -509,8 +780,8 @@ signals:
 private:
     void guiAlreadyRunningCheck(){}
 
-    QTimer *refresh_timer;
     CtrlSettings *conf;
 };
-#endif //BUILD_SERVICE and WIN32
+#endif //BUILD_SERVICE
+#endif //WIN32
 #endif // CTRLBUS_H

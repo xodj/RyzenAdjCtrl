@@ -6,9 +6,9 @@
 #include "CtrlSettings.h"
 #ifdef WIN32
 #include "CtrlEPMCallback.h"
-#include "CtrlArmour.h"
 #endif
 #include "CtrlACCallback.h"
+#include "CtrlArmour.h"
 #include "lib/ryzenadj.h"
 #include "CtrlBus.h"
 
@@ -42,8 +42,8 @@ private:
 #ifdef WIN32
     epmMode currentEPMode;
     CtrlEPMCallback *epmCallback;
-    CtrlArmour *armour;
 #endif
+    CtrlArmour *armour;
 
     presetStr *lastPreset = nullptr;
     bool lastPresetSaved = true;

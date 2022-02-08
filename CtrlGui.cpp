@@ -186,7 +186,6 @@ void CtrlGui::setupUi(){
 
 #ifndef WIN32
     ui_settings->epmAutoPresetSwitchGroupBox->setHidden(true);
-    ui_settings->showArmourCheckBox->setHidden(true);
 #endif
 #ifndef BUILD_SERVICE
     ui_settings->installPushButton->setHidden(true);

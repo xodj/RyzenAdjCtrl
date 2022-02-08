@@ -5,9 +5,11 @@
 #include <QFile>
 #include "CtrlConfig.h"
 
+#define PresetNameLenth 17
+
 struct presetStr {
     int presetId = 0;
-    char presetName[17] = {'P', 'r', 'e', 's', 'e', 't', ' ', 'N', 'a', 'm', 'e', '\0'};
+    char presetName[PresetNameLenth] = {'P', 'r', 'e', 's', 'e', 't', ' ', 'N', 'a', 'm', 'e', '\0'};
 
     int fanPresetId = 0;
 
