@@ -5,12 +5,13 @@
 #include <QDebug>
 #include "CtrlConfig.h"
 #include "CtrlSettings.h"
+#ifdef WIN32
 #include <QSharedMemory>
 #include <QTimer>
 
 #define buffer_size 512
 #define refresh_time 10
-
+#endif
 struct messageToServiceStr{
     bool exit = false;
     bool getSettings = false;
@@ -73,13 +74,7 @@ struct settingsToGuiStr{
     bool lastPreset = false;
 };
 
-enum busType{
-    busTypeService = 0,
-    busTypeGui
-};
-
-#ifdef WIN32
-#ifdef BUILD_SERVICE
+#if defined(BUILD_SERVICE) && defined(WIN32)
 class CtrlBus : public QObject
 {
     Q_OBJECT
@@ -403,7 +398,8 @@ private:
     CtrlSettings *conf;
     int errorCount = 0;
 };
-#else //NOT BUILD_SERVICE
+#endif //if defined(BUILD_SERVICE) && defined(WIN32)
+#if !defined(BUILD_SERVICE) && defined(WIN32)
 class CtrlBus : public QObject
 {
     Q_OBJECT
@@ -475,11 +471,9 @@ private:
     QTimer *refresh_timer;
     CtrlSettings *conf;
 };
-#endif //BUILD_SERVICE
-#else //NOT WIN32
-#ifdef BUILD_SERVICE
+#endif //#if !defined(BUILD_SERVICE) && defined(WIN32)
+#if defined(BUILD_SERVICE) && !defined(WIN32)
 #include <QtDBus/QtDBus>
-#include <QObject>
 
 #define INTERFACE_NAME "ru.ryzenctrl.service.ctrl"
 #define SERVICE_NAME "ru.ryzenctrl.service"
@@ -585,7 +579,7 @@ public:
                        Qt::Initialization::Uninitialized);
         memcpy(var.data(), &data,
                sizeof(messageToGuiStr));
-        emit messageFromServiceSignal();
+        emit messageFromServiceSignal(var);
     }
     bool isGUIRuning(){
         qDebug() << __PRETTY_FUNCTION__;
@@ -614,30 +608,36 @@ public:
         qDebug() << __PRETTY_FUNCTION__;
         QDBusConnection dbus = QDBusConnection::sessionBus();
         if (!dbus.isConnected())
+            qCritical() << "Cannot connect to the D-Bus session bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "connect to the D-Bus session bus succesful";
+
+        if (!dbus.registerService(GUI_NAME))
+            qCritical() << "Cannot registerService to the D-Bus session bus.\n"
+                        << dbus.lastError().message();
+        else
+            qDebug() << "registerService to the D-Bus session bus succesful";
+
+        if (!dbus.registerObject(OBJECT_NAME, this,
+                                 QDBusConnection::ExportNonScriptableSlots))
+            qCritical() << "Cannot registerObject to the D-Bus session bus."
+                        << dbus.lastError().message();
+        else
+            qDebug() << "registerObject to the D-Bus session bus succesful";
+
+        QDBusConnection sysdbus = QDBusConnection::systemBus();
+        if (!sysdbus.isConnected())
             qCritical() << "Cannot connect to the D-Bus system bus.\n"
                         << dbus.lastError().message();
         else
             qDebug() << "connect to the D-Bus system bus succesful";
-
-        if (!dbus.registerService(GUI_NAME))
-            qCritical() << "Cannot registerService to the D-Bus system bus.\n"
-                        << dbus.lastError().message();
-        else
-            qDebug() << "registerService succesful";
-
-        if (!dbus.registerObject(OBJECT_NAME, this,
-                                 QDBusConnection::ExportAllSlots))
-            qCritical() << "Cannot registerObject to the D-Bus system bus."
-                        << dbus.lastError().message();
-        else
-            qDebug() << "registerObject succesful";
-
-        bool cnt = dbus.connect(SERVICE_NAME, OBJECT_NAME,
+        bool cnt = sysdbus.connect(SERVICE_NAME, OBJECT_NAME,
                      INTERFACE_NAME, "messageFromServiceSignal",
-                     this, SLOT(messageFromServiceSlot()));
+                     this, SLOT(messageFromServiceSlot(QByteArray)));
         if (!cnt)
-            qCritical() << "Cannot connect to the D-Bus system bus."
-                        << dbus.lastError().message();
+            qCritical() << "Cannot connect to the messageFromServiceSignal D-Bus system bus."
+                        << sysdbus.lastError().message();
         else
             qDebug() << "connect succesful";
     }
@@ -680,8 +680,8 @@ public:
             qDebug() << "registerService succesful";
 
         if (!dbus.registerObject(OBJECT_NAME, this,
-                                 QDBusConnection::ExportAllSlots |
-                                 QDBusConnection::ExportAllSignals))
+                                 QDBusConnection::ExportScriptableSlots |
+                                 QDBusConnection::ExportScriptableSignals))
             qCritical() << "Cannot registerObject to the D-Bus system bus."
                         << dbus.lastError().message();
         else
@@ -695,12 +695,12 @@ public slots:
         emit messageFromAnotherGui();
         return true;
     }
-    bool checkServiceRunning()
+    Q_SCRIPTABLE bool checkServiceRunning()
     {
         qDebug() << __PRETTY_FUNCTION__;
         return true;
     }
-    void sendMessageToService(QByteArray data){
+    Q_SCRIPTABLE void sendMessageToService(QByteArray data){
         qDebug() << __PRETTY_FUNCTION__;
         messageToServiceStr messageToService;
         memcpy(&messageToService, data.constData(),
@@ -708,30 +708,34 @@ public slots:
         qDebug() << messageToService.getSettings;
         emit messageFromGUIRecieved(messageToService);
     }
-    QByteArray getConfigFile(){
+    Q_SCRIPTABLE QByteArray getConfigFile(){
         QByteArray configArray(sizeof(settingsStr),
                                    Qt::Initialization::Uninitialized);
         memcpy(configArray.data(), conf->getSettingsBuffer(),
                sizeof(settingsStr));
         return configArray;
     }
-    int getPresetsCount(){
+    Q_SCRIPTABLE int getPresetsCount(){
         int presetsCount = static_cast<int>(conf->getPresetsCount());
         return presetsCount;
     }
-    QByteArray getPresetFile(int number){
+    Q_SCRIPTABLE QByteArray getPresetFile(int number){
         QByteArray presetArray(sizeof(presetStr),
                                    Qt::Initialization::Uninitialized);
         memcpy(presetArray.data(), conf->getPresetsList()->at(number),
                sizeof(presetStr));
         return presetArray;
     }
-    void messageFromServiceSlot(){
-        qDebug() << "__PRETTY_FUNCTION__";
+    void messageFromServiceSlot(QByteArray data){
+        qDebug() << __PRETTY_FUNCTION__;
+        messageToGuiStr messageToGui;
+        memcpy(&messageToGui, data.data(),
+               sizeof(messageToGuiStr));
+        emit messageFromServiceRecieved(messageToGui);
     }
 
 signals:
-    void messageFromServiceSignal();
+    Q_SCRIPTABLE void messageFromServiceSignal(QByteArray data);
     void messageFromServiceRecieved(messageToGuiStr messageToGui);
     void messageFromGUIRecieved(messageToServiceStr messageToService);
     void messageFromAnotherGui();
@@ -739,7 +743,8 @@ signals:
 private:
     CtrlSettings *conf;
 };
-#else //NOT BUILD_SERVICE and NOT WIN32
+#endif //#if defined(BUILD_SERVICE) && !defined(WIN32)
+#if !defined(BUILD_SERVICE) && !defined(WIN32)
 class CtrlBus : public QObject
 {
     Q_OBJECT
@@ -782,6 +787,5 @@ private:
 
     CtrlSettings *conf;
 };
-#endif //BUILD_SERVICE
-#endif //WIN32
+#endif //#if !defined(BUILD_SERVICE) && !defined(WIN32)
 #endif // CTRLBUS_H

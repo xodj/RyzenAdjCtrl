@@ -29,6 +29,7 @@ CtrlGui::CtrlGui(CtrlBus *bus)
                                 "RyzenCtrl Service is not runing!",
                                 "RyzenCtrl Service is not runing!"
                                 "\nNeed to start service.");
+#ifdef WIN32
         dialog->addButton(QString::fromUtf8("&Install"),
                                 QMessageBox::AcceptRole);
         dialog->addButton(QString::fromUtf8("&Start"),
@@ -57,6 +58,18 @@ CtrlGui::CtrlGui(CtrlBus *bus)
             QThread::msleep(333);
         if (actionNumber == 3)
             exit(0);
+#else
+        dialog->addButton(QString::fromUtf8("&Retry"),
+                                QMessageBox::AcceptRole);
+        dialog->addButton(QString::fromUtf8("&Exit"),
+                                QMessageBox::RejectRole);
+        dialog->setModal(true);
+        int actionNumber = dialog->exec();
+        if (actionNumber == 0)
+            QThread::msleep(333);
+        if (actionNumber == 1)
+            exit(0);
+#endif
         delete dialog;
     }
 #endif
@@ -224,8 +237,7 @@ void CtrlGui::setupConnections(){
     connect(ui_settings->epmAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
     connect(ui_settings->acAutoPresetSwitchGroupBox, &QGroupBox::clicked, this, &CtrlGui::settingsAutomaticPresetSwitchClicked);
     connect(ui_infoWidget->spinBox, &QSpinBox::textChanged, this, &CtrlGui::sendRyzenAdjInfo);
-
-#ifdef BUILD_SERVICE
+#if defined(BUILD_SERVICE) && defined(WIN32)
     connect(ui_settings->installPushButton, &QPushButton::clicked, this, &CtrlGui::installService);
 #endif
     connect(ui_settings->openAdvancedInfoUrlPushButton, &QPushButton::clicked, this, &CtrlGui::openAdvancedInfoUrl);
@@ -1021,7 +1033,7 @@ void CtrlGui::cancelSettings(){
     readSettings();
 }
 
-#ifdef BUILD_SERVICE
+#if defined(BUILD_SERVICE) && defined(WIN32)
 void CtrlGui::startService(){
     QString runas = ("\"" + qApp->arguments().value(0) + "\" startup");
     QProcess process;

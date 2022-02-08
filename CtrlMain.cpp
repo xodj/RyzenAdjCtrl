@@ -68,7 +68,7 @@ int exitCommand(CtrlBus *bus) {
         bus->sendMessageToService(messageToService);
         return 0;
 }
-
+#ifdef WIN32
 bool checkService(){
     QProcess process;
     QStringList powerShellCLI = {
@@ -145,7 +145,7 @@ void uninstallService(){
     msgBox.setText("RyzenCtrl Service Uninstalled\n");
     msgBox.exec();
 }
-
+#endif
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -188,6 +188,8 @@ int main(int argc, char *argv[])
 
     if(a.arguments().contains("exit"))
         return exitCommand(bus);
+
+#ifdef WIN32
     if(a.arguments().contains("check")){
         exitCommand(bus);
         if(checkService()) installService();
@@ -204,7 +206,7 @@ int main(int argc, char *argv[])
         uninstallService();
         return 0;
     }
-
+#endif
     if(a.arguments().contains("startup")) {
         if(bus->isServiseRuning()){
             qDebug() << "Ctrl Main - Service Is Already Running.";

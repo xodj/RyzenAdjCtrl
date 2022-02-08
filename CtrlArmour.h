@@ -2,6 +2,7 @@
 #define CTRLARMOUR_H
 
 #include <QObject>
+
 #ifdef WIN32
 #include <windows.h>
 #include <winioctl.h>
@@ -89,17 +90,35 @@ private:
     HANDLE atkacpiHandle = INVALID_HANDLE_VALUE;
 };
 #else
+#include <QFile>
+#include <QDebug>
+#define THERMAL_PATH "/sys/devices/platform/faustus/throttle_thermal_policy"
+
 class CtrlArmour : public QObject
 {
     //Add armory preset switch for unix
     Q_OBJECT
 public:
-    CtrlArmour(){}
-    ~CtrlArmour(){}
-
-    bool sendArmourThrottlePlan(int idx) {
-        return 0;
+    CtrlArmour(){
+        atkpci.setFileName(THERMAL_PATH);
     }
+    bool sendArmourThrottlePlan(int idx) {
+        QString newThrottleThermalPolicy = QString::number(idx) + "\n";
+        atkpci.open(QIODevice::ReadWrite);
+        atkpci.write(newThrottleThermalPolicy.toUtf8());
+        atkpci.close();
+
+        atkpci.open(QIODevice::ReadOnly);
+        int rertieveNumber = QString::fromUtf8(atkpci.readAll()).remove(1,2).toInt();
+        atkpci.close();
+
+        bool retrieve = rertieveNumber == idx;
+        qDebug() << "Retrieve Throttle Thermal Policy:" << retrieve;
+        return retrieve;
+    }
+
+private:
+    QFile atkpci;
 };
 #endif
 #endif // CTRLARMOUR_H

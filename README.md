@@ -4,13 +4,13 @@ RyzenAdjCtrl is tool to increase Ryzen's laptops performance.
 Support project on [Patreon](https://www.patreon.com/bePatron?u=62001804) or [yoomoney](https://yoomoney.ru/to/410017318965665)
 
 # Some features:
-- Runing as separeted service from gui (Windows only)
+- Runing as separeted service from gui
 - RyzenAdj as library (faster then cli)
 - Info widget (you can realtime control your states)
 - Avaliable swithing presets by Effective Power Mode (Windows only)
 - Avaliable swithing presets by AC Power Mode
 - Agent with notifications
-- For ASUS (ROG or TUF) users have "Armory Crate" profile switch (Windows only)
+- For ASUS (ROG or TUF) users have "Armory Crate" profile switch
 
 # Usage:
 > Service started automaticaly after GUI started, or run it as task:
