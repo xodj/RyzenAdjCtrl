@@ -20,11 +20,11 @@
 #define CONFIGDIR "Config"
 #define LOGDIR "Logs"
 #else
-#define LOGFILE "/tmp/RyzenCtrl.log"
-#define LOGFILESERVICE "/tmp/RyzenCtrl - Service.log"
+#define LOGFILE "/var/tmp/RyzenCtrl.log"
+#define LOGFILESERVICE "/var/tmp/RyzenCtrl - Service.log"
 #define LOGFILEGUI "/tmp/RyzenCtrl - Gui.log"
 #define CONFIGDIR "/etc/RyzenCtrl/"
-#define LOGDIR "/tmp/RyzenCtr/"
+#define LOGDIR "/var/tmp/"
 #endif
 
 QString fileName = LOGFILE;
@@ -146,17 +146,17 @@ void uninstallService(){
     msgBox.exec();
 }
 #endif
+#include <string>
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    bool startup = false;
+    if(argc > 1)
+        startup = (std::string(argv[1]) == std::string("startup"));
+    auto *a = (startup ? new QCoreApplication(argc, argv) : new QApplication(argc, argv));
+    fileName = (startup ? LOGFILESERVICE : LOGFILEGUI);
 
     checkLogsSize();
     qInstallMessageHandler(messageHandler);
-
-    if(!a.arguments().contains("startup"))
-        fileName = LOGFILEGUI;
-    else
-        fileName = LOGFILESERVICE;
 
 #ifdef WIN32
     QString qSharedMemoryKey = sharedMemoryKey;
@@ -186,28 +186,28 @@ int main(int argc, char *argv[])
     CtrlBus *bus = new CtrlBus;
 #endif //WIN32
 
-    if(a.arguments().contains("exit"))
+    if(a->arguments().contains("exit"))
         return exitCommand(bus);
 
 #ifdef WIN32
-    if(a.arguments().contains("check")){
+    if(a->arguments().contains("check")){
         exitCommand(bus);
         if(checkService()) installService();
         else uninstallService();
         return 0;
     }
-    if(a.arguments().contains("install")){
+    if(a->arguments().contains("install")){
         exitCommand(bus);
         installService();
         return 0;
     }
-    if(a.arguments().contains("uninstall")){
+    if(a->arguments().contains("uninstall")){
         exitCommand(bus);
         uninstallService();
         return 0;
     }
 #endif
-    if(a.arguments().contains("startup")) {
+    if(startup) {
         if(bus->isServiseRuning()){
             qDebug() << "Ctrl Main - Service Is Already Running.";
             qDebug() << "Ctrl Main - Exit.";
@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
             new CtrlGui(bus);
         }
     }
-    return a.exec();
+    return a->exec();
 }
 #else //BUILD_SERVICE
 #ifdef WIN32
