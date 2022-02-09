@@ -1,14 +1,10 @@
 [Unit]
 Description=Fine-tuning of power limits and frequency of APU Ryzen Mobile
-DefaultDependencies=yes
+After=systemd-udevd.service
 
 [Service]
 ExecStart=/usr/bin/RyzenCtrl startup
-Type=idle
-KillMode=process
-SyslogIdentifier=ryzenctrl
-SyslogFacility=daemon
 Restart=on-failure
 
 [Install]
-WantedBy=multiuser.target
+WantedBy=multi-user.target
