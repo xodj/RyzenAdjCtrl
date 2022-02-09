@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=RyzenCtrl
+GenericName=RyzenCtrl
+Comment=Fine-tuning of power limits and frequency of APU Ryzen Mobile
+Icon=preferences-system
+StartupNotify=true
+Exec=ryzenctrl
+Categories=System;Settings;

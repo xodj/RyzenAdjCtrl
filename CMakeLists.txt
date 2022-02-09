@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenCtrl VERSION 0.5.2.923 LANGUAGES CXX)
+PROJECT(RyzenCtrl VERSION 0.5.2.924 LANGUAGES CXX)
 #Set version number here  ^^^^^^^^^
 #BUILD_STANDALONE
 set(BUILD_STANDALONE FALSE CACHE BOOL "Build without service")
@@ -99,11 +99,8 @@ if(UNIX)
         ${RyzenCtrl_SOURCES}
         CtrlArmour.h
         ru.ryzenctrl.service.conf
+        ryzenctrl-root.service
         )
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/ru.ryzenctrl.service.conf
-        ${PROJECT_BINARY_DIR}/Appfolder/ru.ryzenctrl.service.conf
-        COPYONLY)
 endif(UNIX)
 #Add project exec
 add_executable(RyzenCtrl
