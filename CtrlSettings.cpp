@@ -12,7 +12,9 @@ CtrlSettings::CtrlSettings()
       configQFile(new QFile("/etc/RyzenCtrl/Config.xml")),
       presetsQFile(new QFile("/etc/RyzenCtrl/Presets.xml"))
 #endif //WIN32
-{}
+{
+    qDebug() << "Ctrl Settings - Started";
+}
 
 CtrlSettings::~CtrlSettings() {
     qDebug() << "Ctrl Settings - Desroyed";
@@ -45,7 +47,6 @@ void CtrlSettings::checkSettings() {
         savePresets();
     }
     else openPresets();
-    qDebug() << "Ctrl Settings - Started";
 }
 
 bool CtrlSettings::saveSettings() {
@@ -394,6 +395,26 @@ bool CtrlSettings::savePresets() {
             xmlWriter.writeStartElement("smuPowerSaving");
                 xmlWriter.writeAttribute("value", QString::number(presets->at(i)->smuPowerSaving));
             xmlWriter.writeEndElement();
+            //new 0.8.3
+            xmlWriter.writeStartElement("gfx_clk");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->gfx_clk));
+            xmlWriter.writeEndElement();
+            //new 0.8.4
+            xmlWriter.writeStartElement("vrmgfx_current");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmgfx_current));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("vrmcvip_current");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmcvip_current));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("vrmgfxmax_current");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmgfxmax_current));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("psi3cpu_current");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->psi3cpu_current));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("psi3gfx_current");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->psi3gfx_current));
+            xmlWriter.writeEndElement();
 
         xmlWriter.writeEndElement();
     }
@@ -626,6 +647,38 @@ bool CtrlSettings::openPresets(){
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     presetReadBuffer->smuPowerSaving = attr.value().toString().toInt();
+            }else{}
+        //new 0.8.3
+        if (xmlReader.name() == QString("gfx_clk"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->gfx_clk = attr.value().toString().toInt();
+            }else{}
+        //new 0.8.4
+        if (xmlReader.name() == QString("vrmgfx_current"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->vrmgfx_current = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("vrmcvip_current"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->vrmcvip_current = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("vrmgfxmax_current"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->vrmgfxmax_current = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("psi3cpu_current"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->psi3cpu_current = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("psi3gfx_current"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->psi3gfx_current = attr.value().toString().toInt();
             }else{}
         //
         xmlReader.readNext();

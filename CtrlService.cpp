@@ -83,6 +83,12 @@ void CtrlService::initPmTable(){
     case 5:
         charFromString("Lucienne", pmTable.ryzenFamily);
         break;
+    case 6:
+        charFromString("Vangogh", pmTable.ryzenFamily);
+        break;
+    case 7:
+        charFromString("Rembrant", pmTable.ryzenFamily);
+        break;
     default:
         break;
     }
@@ -295,7 +301,6 @@ void CtrlService::loadPreset(presetStr *preset){
         if(preset->smuMaxPerfomance)
             set_max_performance(adjEntryPoint);
 
-        //NEW VARS
         if(preset->vrmSocCurrentChecked)
             set_vrmsoc_current(adjEntryPoint, preset->vrmSocCurrent * 1000);
         if(preset->vrmSocMaxChecked)
@@ -320,6 +325,20 @@ void CtrlService::loadPreset(presetStr *preset){
             set_apu_slow_limit(adjEntryPoint, preset->apuSlowLimit * 1000);
         if(preset->skinTempPowerLimitChecked)
             set_skin_temp_power_limit(adjEntryPoint, preset->skinTempPowerLimit);
+        //new 0.8.3
+        if(preset->gfx_clkChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->gfx_clk);
+        //new 0.8.4
+        if(preset->vrmgfx_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->vrmgfx_current);
+        if(preset->vrmcvip_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->vrmcvip_current);
+        if(preset->vrmgfxmax_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->vrmgfxmax_current);
+        if(preset->psi3cpu_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->psi3cpu_current);
+        if(preset->psi3gfx_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->psi3gfx_current);
     } else
         qDebug()<<"Ctrl Service - Try to load nullptr (deleted) preset!";
 }
@@ -371,9 +390,11 @@ void CtrlService::takeCurrentInfo() {
     pmTable.dgpu_skin_temp_value = get_dgpu_skin_temp_value(adjEntryPoint);
     pmTable.stapm_time = get_stapm_time(adjEntryPoint);
     pmTable.slow_time = get_slow_time(adjEntryPoint);
-    //NEW VARS
     pmTable.psi0_current = get_psi0_current(adjEntryPoint);
     pmTable.psi0soc_current = get_psi0soc_current(adjEntryPoint);
+    //new v0.8.2
+    pmTable.cclk_setpoint = get_cclk_setpoint(adjEntryPoint);
+    pmTable.cclk_busy_value = get_cclk_busy_value(adjEntryPoint);
 
     sendCurrentInfoToGui();
 }

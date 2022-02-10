@@ -1568,6 +1568,9 @@ void CtrlGui::recieveMessageToGui(messageToGuiStr messageToGui){
         ui_infoWidget->slow_time->setText(QString::number(messageToGui.pmTable.slow_time) + " Sec.");
         ui_infoWidget->psi0_current->setText(QString::number(messageToGui.pmTable.psi0_current) + " A");
         ui_infoWidget->psi0soc_current->setText(QString::number(messageToGui.pmTable.psi0soc_current) + " A");
+        //new v0.8.2
+        ui_infoWidget->cclk_setpoint->setText(QString::number(messageToGui.pmTable.cclk_setpoint) + " N/A");
+        ui_infoWidget->cclk_busy_value->setText(QString::number(messageToGui.pmTable.cclk_busy_value) + " N/A");
     }
 
     if(currentPresetId != -1){

@@ -54,7 +54,7 @@ struct presetStr {
 
     bool smuMaxPerfomance = false;
     bool smuPowerSaving = false;
-    //NEW VARS
+
     int vrmSocCurrent = 10;
     bool vrmSocCurrentChecked = false;
     int vrmSocMax = 13;
@@ -79,6 +79,20 @@ struct presetStr {
     bool apuSlowLimitChecked = false;
     int skinTempPowerLimit = 25;
     bool skinTempPowerLimitChecked = false;
+    //new 0.8.3
+    int gfx_clk = 0;
+    bool gfx_clkChecked = false;
+    //new 0.8.4
+    int vrmgfx_current = 0;
+    bool vrmgfx_currentChecked = false;
+    int vrmcvip_current = 0;
+    bool vrmcvip_currentChecked = false;
+    int vrmgfxmax_current = 0;
+    bool vrmgfxmax_currentChecked = false;
+    int psi3cpu_current = 0;
+    bool psi3cpu_currentChecked = false;
+    int psi3gfx_current = 0;
+    bool psi3gfx_currentChecked = false;
 };
 
 struct settingsStr {
@@ -139,6 +153,16 @@ struct hideShow {
     bool shwSkinTempLimit = true;
     bool shwPowerSaving = true;
     bool shwMaxPerformance = true;
+
+    //new 0.8.3
+    bool show_gfx_clk = true;
+    //new 0.8.4
+    bool show_vrmgfx_current = true;
+    bool show_vrmcvip_current = true;
+    bool show_vrmgfxmax_current = true;
+    bool show_psi3cpu_current = true;
+    bool show_psi3gfx_current = true;
+
 };
 
 class CtrlSettings : public QObject
@@ -218,7 +242,15 @@ private:
         false,
         false,
         true,
-        true
+        true,
+        //new 0.8.3
+        false,
+        //new 0.8.4
+        false,
+        false,
+        false,
+        false,
+        false
     };
     hideShow shwpvPicasso = {
         true,
@@ -249,7 +281,15 @@ private:
         false,
         false,
         true,
-        true
+        true,
+        //new 0.8.3
+        false,
+        //new 0.8.4
+        false,
+        false,
+        false,
+        false,
+        false
     };
     hideShow shwpvRenoir = {
         true,
@@ -280,7 +320,15 @@ private:
         true,
         true,
         true,
-        true
+        true,
+        //new 0.8.3
+        false,
+        //new 0.8.4
+        false,
+        false,
+        false,
+        false,
+        false
     };
     hideShow shwpvCezanne = {
         true,
@@ -311,7 +359,15 @@ private:
         true,
         true,
         true,
-        true
+        true,
+        //new 0.8.3
+        false,
+        //new 0.8.4
+        false,
+        false,
+        false,
+        false,
+        false
     };
     hideShow shwpvDali = {
         true,
@@ -342,7 +398,15 @@ private:
         false,
         false,
         true,
-        true
+        true,
+        //new 0.8.3
+        false,
+        //new 0.8.4
+        false,
+        false,
+        false,
+        false,
+        false
     };
     hideShow shwpvLucienne = {
         true,
@@ -373,7 +437,15 @@ private:
         true,
         true,
         true,
-        true
+        true,
+        //new 0.8.3
+        false,
+        //new 0.8.4
+        false,
+        false,
+        false,
+        false,
+        false
     };
 
 };

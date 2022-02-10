@@ -59,6 +59,9 @@ struct PMTable{
     float slow_time = 0.f;
     float psi0_current = 0.f;
     float psi0soc_current = 0.f;
+    //new v0.8.2
+    float cclk_setpoint = 0.f;
+    float cclk_busy_value = 0.f;
 };
 
 struct messageToGuiStr{
