@@ -1,7 +1,536 @@
 #ifndef CTRLCONFIG_H
 #define CTRLCONFIG_H
 
-#define sharedMemoryKey "${RANDOM_DATA}"
+#include <stdint.h>
+
+/*DEFINE*/
+
 ${DEF_UNDEF_BUILD_SERVICE}
+#define SHARED_MEMORY_RANDOM_BYTE "${RANDOM_BYTE}"
+#define PRESET_NAME_LENGTH_TERMINATOR 17
+#define LOG_FILE_SIZE_TRESHOLD_BYTES 10000000
+#define PRESET_NAME {'P', 'r', 'e', 's', 'e', 't', ' ', 'N', 'a', 'm', 'e', '\0'}
+#define UNKNOWN_PRESET_NAME {'U','n','k','n','o','w','n','\0'}
+#define NEW_PRESET_NAME {'N', 'e', 'w', ' ', 'p', 'r', 'e', 's', 'e', 't', '\0'}
+#define SAVER_PRESET_NAME {'B', 'a', 't', 't', 'e', 'r', 'y', ' ', 'S', 'a', 'v', 'e', 'r', '\0'}
+#define BETTER_PRESET_NAME {'B', 'e', 't', 't', 'e', 'r', ' ', 'B', 'a', 't', 't', 'e', 'r', 'y', '\0'}
+#define BALANCED_PRESET_NAME {'B', 'a', 'l', 'a', 'n', 'c', 'e', 'd', '\0'}
+#define PERFOMANCE_PRESET_NAME {'P', 'e', 'r', 'f', 'o', 'm', 'a', 'n', 'c', 'e', '\0'}
+#define GAMING_PRESET_NAME {'G', 'a', 'm', 'i', 'n', 'g', '\0'}
+
+#ifdef WIN32
+#define LOGFILE "Logs/RyzenCtrl.log"
+#define LOGFILESERVICE "Logs/RyzenCtrl - Service.log"
+#define LOGFILEGUI "Logs/RyzenCtrl - Gui.log"
+#define CONFIGDIR "Config"
+#define LOGDIR "Logs"
+#define BUFFER_REFRESH_TIME_MS 10
+#define AC_STATE_REFRESH_TIME 333
+#define THERMAL_PATH L"\\\\.\\ATKACPI"
+#define ATK_ACPI_WMIFUNCTION 0x22240c
+#define CONFIG_FILE "Config/Config.xml"
+#define PRESETS_FILE "Config/Presets.xml"
+#endif // WIN32
+
+#ifndef WIN32
+#define LOGFILE "/var/tmp/RyzenCtrl.log"
+#define LOGFILESERVICE "/var/tmp/RyzenCtrl - Service.log"
+#define LOGFILEGUI "/tmp/RyzenCtrl - Gui.log"
+#define CONFIGDIR "/etc/RyzenCtrl/"
+#define LOGDIR "/var/tmp/"
+#define AC_STATE_REFRESH_TIME 1332
+#define THERMAL_PATH "/sys/devices/platform/faustus/throttle_thermal_policy"
+#define CONFIG_FILE "/etc/RyzenCtrl/Config.xml"
+#define PRESETS_FILE "/etc/RyzenCtrl/Presets.xml"
+#endif // !WIN32
+
+#if defined(BUILD_SERVICE) && !defined(WIN32)
+#define INTERFACE_NAME "ru.ryzenctrl.service.ctrl"
+#define SERVICE_NAME "ru.ryzenctrl.service"
+#define GUI_NAME "ru.ryzenctrl.gui"
+#define OBJECT_NAME "/control"
+#define DBUS_CONFIG_FILE_NAME "ru.ryzenctrl.service.conf"
+#define DBUS_CONFIG_FILE_PATH "/etc/dbus-1/system.d/ru.ryzenctrl.service.conf"
+#endif //defined(BUILD_SERVICE) && !defined(WIN32)
+
+/*ENUM*/
+
+enum ACState {
+    Battery = 0,
+    ACPower,
+    ACNone
+};
+
+#ifdef WIN32
+enum epmMode{
+    BatterySaver = 0,
+    BetterBattery,
+    Balanced,
+    MaxPerformance,
+    GameMode,
+    MixedReality,
+    epmNone
+};
+#endif // WIN32
+
+/*STRUCT*/
+
+struct presetStr {
+    int presetId = 0;
+    char presetName[PRESET_NAME_LENGTH_TERMINATOR] = PRESET_NAME;
+
+    int fanPresetId = 0;
+
+    int tempLimitValue = 85;
+    bool tempLimitChecked = false;
+    int apuSkinValue = 85;
+    bool apuSkinChecked = false;
+
+    int stampLimitValue = 25;
+    bool stampLimitChecked = false;
+    int fastLimitValue = 25;
+    bool fastLimitChecked = false;
+    int fastTimeValue = 900;
+    bool fastTimeChecked = false;
+    int slowLimitValue = 10;
+    bool slowLimitChecked = false;
+    int slowTimeValue = 60;
+    bool slowTimeChecked = false;
+
+    int vrmCurrentValue = 25;
+    bool vrmCurrentChecked = false;
+    int vrmMaxValue = 45;
+    bool vrmMaxChecked = false;
+
+    int minFclkValue = 800;
+    bool minFclkChecked = false;
+    int maxFclkValue = 1200;
+    bool maxFclkChecked = false;
+
+    int minGfxclkValue = 400;
+    bool minGfxclkChecked = false;
+    int maxGfxclkValue = 2200;
+    bool maxGfxclkChecked = false;
+    int minSocclkValue = 800;
+    bool minSocclkChecked = false;
+    int maxSocclkValue = 1200;
+    bool maxSocclkChecked = false;
+    int minVcnValue = 400;
+    bool minVcnChecked = false;
+    int maxVcnValue = 1200;
+    bool maxVcnChecked = false;
+
+    bool smuMaxPerfomance = false;
+    bool smuPowerSaving = false;
+
+    int vrmSocCurrent = 10;
+    bool vrmSocCurrentChecked = false;
+    int vrmSocMax = 13;
+    bool vrmSocMaxChecked = false;
+
+    int psi0Current = 13;
+    bool psi0CurrentChecked = false;
+    int psi0SocCurrent = 5;
+    bool psi0SocCurrentChecked = false;
+
+    int maxLclk = 1200;
+    bool maxLclkChecked = false;
+    int minLclk = 400;
+    bool minLclkChecked = false;
+
+    int prochotDeassertionRamp = 2;
+    bool prochotDeassertionRampChecked = false;
+
+    int dgpuSkinTempLimit = 85;
+    bool dgpuSkinTempLimitChecked = false;
+    int apuSlowLimit = 25;
+    bool apuSlowLimitChecked = false;
+    int skinTempPowerLimit = 25;
+    bool skinTempPowerLimitChecked = false;
+    /*new 0.8.3*/
+    int gfx_clk = 0;
+    bool gfx_clkChecked = false;
+    /*new 0.8.4*/
+    int vrmgfx_current = 0;
+    bool vrmgfx_currentChecked = false;
+    int vrmcvip_current = 0;
+    bool vrmcvip_currentChecked = false;
+    int vrmgfxmax_current = 0;
+    bool vrmgfxmax_currentChecked = false;
+    int psi3cpu_current = 0;
+    bool psi3cpu_currentChecked = false;
+    int psi3gfx_current = 0;
+    bool psi3gfx_currentChecked = false;
+};
+
+struct settingsStr {
+    bool useAgent = true;
+    bool showNotifications = true;
+
+    int lastUsedPMTableUpdateInterval = 100;
+
+    bool showNotificationToDisableAutoSwitcher = false;
+
+    bool autoPresetApplyDurationChecked = false;
+    int autoPresetApplyDuration = 180;
+
+    bool autoPresetSwitchAC = false;
+    int dcStatePresetId = 1;
+    int acStatePresetId = 2;
+
+    bool epmAutoPresetSwitch = false;
+    int epmBatterySaverPresetId = 0;
+    int epmBetterBatteryPresetId = 1;
+    int epmBalancedPresetId = 2;
+    int epmMaximumPerfomancePresetId = 3;
+    int epmGamingPresetId = 4;
+
+    bool hideNotSupportedVariables = false;
+    int apuFamilyIdx = 0;
+
+    bool showArmourPlugin = false;
+};
+
+struct hideShow {
+    bool shwStapmLimit = true;
+    bool shwFastLimit = true;
+    bool shwSlowLimit = true;
+    bool shwSlowTime = true;
+    bool shwStapmTime = true;
+    bool shwTctlTemp = true;
+    bool shwVrmCurrent = true;
+    bool shwVrmSocCurrent = true;
+    bool shwVrmMaxCurrent = true;
+    bool shwVrmSocMaxCurrent = true;
+    bool shwPsi0Current = true;
+    bool shwPsi0SocCurrent = true;
+    bool shwMaxSocclkFrequency = true;
+    bool shwMinSocclkFrequency = true;
+    bool shwMaxFclkFrequency = true;
+    bool shwMinFclkFrequency = true;
+    bool shwMaxVcn = true;
+    bool shwMinVcn = true;
+    bool shwMaxLclk = true;
+    bool shwMinLclk = true;
+    bool shwMaxGfxclk = true;
+    bool shwMinGfxclk = true;
+    bool shwProchotDeassertionRamp = true;
+    bool shwApuSkinTemp = true;
+    bool shwDgpuSkinTemp = true;
+    bool shwApuSlowLimit = true;
+    bool shwSkinTempLimit = true;
+    bool shwPowerSaving = true;
+    bool shwMaxPerformance = true;
+
+    /*new 0.8.3*/
+    bool show_gfx_clk = true;
+    /*new 0.8.4*/
+    bool show_vrmgfx_current = true;
+    bool show_vrmcvip_current = true;
+    bool show_vrmgfxmax_current = true;
+    bool show_psi3cpu_current = true;
+    bool show_psi3gfx_current = true;
+};
+
+struct messageToServiceStr{
+    bool exit = false;
+    bool getSettings = false;
+    bool saveSettings = false;
+    settingsStr settings;
+    bool savePreset = false;
+    bool applyPreset = false;
+    bool deletePreset = false;
+    presetStr preset;
+    bool ryzenAdjInfo = false;
+    int ryzenAdjInfoTimeout = 0;
+};
+
+struct PMTable{
+    char ryzenFamily[16] = UNKNOWN_PRESET_NAME;
+    int biosVersion = 0;
+    uint32_t pmTableVersion = 0;
+    int ryzenAdjVersion = 0;
+    int ryzenAdjMajorVersion = 0;
+    int ryzenAdjMinorVersion = 0;
+
+    float stapm_limit = 0.f;
+    float stapm_value = 0.f;
+    float fast_limit = 0.f;
+    float fast_value = 0.f;
+    float slow_limit = 0.f;
+    float slow_value = 0.f;
+    float apu_slow_limit = 0.f;
+    float apu_slow_value = 0.f;
+    float vrm_current = 0.f;
+    float vrm_current_value = 0.f;
+    float vrmsoc_current = 0.f;
+    float vrmsoc_current_value = 0.f;
+    float vrmmax_current = 0.f;
+    float vrmmax_current_value = 0.f;
+    float vrmsocmax_current = 0.f;
+    float vrmsocmax_current_value = 0.f;
+    float tctl_temp = 0.f;
+    float tctl_temp_value = 0.f;
+    float apu_skin_temp_limit = 0.f;
+    float apu_skin_temp_value = 0.f;
+    float dgpu_skin_temp_limit = 0.f;
+    float dgpu_skin_temp_value = 0.f;
+    float stapm_time = 0.f;
+    float slow_time = 0.f;
+    float psi0_current = 0.f;
+    float psi0soc_current = 0.f;
+    //new v0.8.2
+    float cclk_setpoint = 0.f;
+    float cclk_busy_value = 0.f;
+};
+
+struct messageToGuiStr{
+    int currentPresetId = -1;
+    bool presetSaved = false;
+    bool pmUpdated = false;
+    PMTable pmTable;
+};
+
+struct settingsToGuiStr{
+    settingsStr settings;
+    presetStr preset;
+    bool lastPreset = false;
+};
+
+/*SHOW_ONLY_DEFS*/\
+
+#define SHOW_ONLY_RAVEN \
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    false,\
+    false,\
+    false,\
+    false,\
+    true,\
+    true,\
+    /*new 0.8.3*/ \
+    false,\
+    /*new 0.8.4*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    false
+
+#define SHOW_ONLY_PICASSO \
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    false,\
+    false,\
+    false,\
+    false,\
+    true,\
+    true,\
+    /*new 0.8.3*/ \
+    false,\
+    /*new 0.8.4*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    false
+
+#define SHOW_ONLY_RENOIR \
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    /*new 0.8.3*/ \
+    false,\
+    /*new 0.8.4*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    false
+
+#define SHOW_ONLY_CEZANNE \
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    /*new 0.8.3*/ \
+    false,\
+    /*new 0.8.4*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    false
+
+#define SHOW_ONLY_DALI \
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    false,\
+    false,\
+    false,\
+    false,\
+    true,\
+    true,\
+    /*new 0.8.3*/ \
+    false,\
+    /*new 0.8.4*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    false
+
+#define SHOW_ONLY_LUCIENNE \
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    false,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    true,\
+    /*new 0.8.3*/ \
+    false,\
+    /*new 0.8.4*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    false
 
 #endif // CTRLCONFIG_H

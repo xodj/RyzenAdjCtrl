@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenCtrl VERSION 0.5.3.934 LANGUAGES CXX)
+PROJECT(RyzenCtrl VERSION 0.5.3.944 LANGUAGES CXX)
 #Set version number here  ^^^^^^^^^
 #BUILD_STANDALONE
 set(BUILD_STANDALONE FALSE CACHE BOOL "Build without service")
@@ -10,7 +10,7 @@ else(BUILD_STANDALONE)
     set(DEF_UNDEF_BUILD_SERVICE "#define BUILD_SERVICE")
 endif(BUILD_STANDALONE)
 #Generate and place key for shared memory in CtrlConfig.h
-string(RANDOM LENGTH 32 RANDOM_DATA)
+string(RANDOM LENGTH 4 RANDOM_BYTE)
 configure_file(CtrlConfig.h.in ${PROJECT_BINARY_DIR}/CtrlConfig.h)
 #Cmake+Qt default args
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

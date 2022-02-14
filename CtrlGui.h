@@ -104,6 +104,5 @@ private:
 
 protected:
     virtual void closeEvent(QCloseEvent *event);
-
 };
 #endif // CTRLGUI_H

@@ -867,51 +867,51 @@ void CtrlGui::saveSettings(){
 
     //Hide not supported variables
     Ui::CtrlGuiAPUForm *presetForm = nullptr;
-    hideShow *var = conf->hideShowWarnPresetVariable(
+    hideShow var = conf->hideShowWarnPresetVariable(
                 settings->hideNotSupportedVariables
                 ? settings->apuFamilyIdx : -1);
     for(qsizetype i = 0;i < presetFormList->count();i++){
         presetForm = presetFormList->at(i);
 
-        presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
-        presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
-        presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
-        presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
-        presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
-        presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
-        presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+        presetForm->tempLimitWidget->setVisible(var.shwTctlTemp);
+        presetForm->apuSkinWidget->setVisible(var.shwApuSkinTemp);
+        presetForm->stampLimitWidget->setVisible(var.shwStapmLimit);
+        presetForm->fastLimitWidget->setVisible(var.shwFastLimit);
+        presetForm->slowLimitWidget->setVisible(var.shwSlowLimit);
+        presetForm->slowTimeWidget->setVisible(var.shwSlowTime);
+        presetForm->fastTimeWidget->setVisible(var.shwStapmTime);
 
-        presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
-        presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+        presetForm->vrmCurrentWidget->setVisible(var.shwVrmCurrent);
+        presetForm->vrmMaxWidget->setVisible(var.shwVrmMaxCurrent);
 
-        presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
-        presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+        presetForm->minFclkWidget->setVisible(var.shwMinFclkFrequency);
+        presetForm->maxFclkWidget->setVisible(var.shwMaxFclkFrequency);
 
-        presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
-        presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
-        presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
-        presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
-        presetForm->minVcnWidget->setVisible(var->shwMinVcn);
-        presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+        presetForm->minGfxclkWidget->setVisible(var.shwMinGfxclk);
+        presetForm->maxGfxclkWidget->setVisible(var.shwMaxGfxclk);
+        presetForm->minSocclkWidget->setVisible(var.shwMinSocclkFrequency);
+        presetForm->maxSocclkWidget->setVisible(var.shwMaxSocclkFrequency);
+        presetForm->minVcnWidget->setVisible(var.shwMinVcn);
+        presetForm->maxVcnWidget->setVisible(var.shwMaxVcn);
 
-        presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
-        presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+        presetForm->smuMaxPerformanceCheckBox->setVisible(var.shwMaxPerformance);
+        presetForm->smuPowerSavingCheckBox->setVisible(var.shwPowerSaving);
 
         //NEW VARS
-        presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
-        presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+        presetForm->vrmSocCurrentWidget->setVisible(var.shwVrmSocCurrent);
+        presetForm->vrmSocMaxWidget->setVisible(var.shwVrmSocMaxCurrent);
 
-        presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
-        presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+        presetForm->psi0CurrentWidget->setVisible(var.shwPsi0Current);
+        presetForm->psi0SocCurrentWidget->setVisible(var.shwPsi0SocCurrent);
 
-        presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
-        presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+        presetForm->maxLclkWidget->setVisible(var.shwMaxLclk);
+        presetForm->minLclkWidget->setVisible(var.shwMinLclk);
 
-        presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+        presetForm->prochotDeassertionRampWidget->setVisible(var.shwProchotDeassertionRamp);
 
-        presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
-        presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
-        presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+        presetForm->dgpuSkinTempLimitWidget->setVisible(var.shwDgpuSkinTemp);
+        presetForm->apuSlowLimitWidget->setVisible(var.shwApuSlowLimit);
+        presetForm->skinTempPowerLimitWidget->setVisible(var.shwSkinTempLimit);
 
         //Show Armour Plugin
         presetForm->armourGroupBox->setVisible(settings->showArmourPlugin);
@@ -977,51 +977,51 @@ void CtrlGui::readSettings(){
 
     //Hide not supported variables
     Ui::CtrlGuiAPUForm *presetForm = nullptr;
-    hideShow *var = conf->hideShowWarnPresetVariable(
+    hideShow var = conf->hideShowWarnPresetVariable(
                 settings->hideNotSupportedVariables
                 ? settings->apuFamilyIdx : -1);
     for(qsizetype i = 0;i < presetFormList->count();i++){
         presetForm = presetFormList->at(i);
 
-        presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
-        presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
-        presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
-        presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
-        presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
-        presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
-        presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+        presetForm->tempLimitWidget->setVisible(var.shwTctlTemp);
+        presetForm->apuSkinWidget->setVisible(var.shwApuSkinTemp);
+        presetForm->stampLimitWidget->setVisible(var.shwStapmLimit);
+        presetForm->fastLimitWidget->setVisible(var.shwFastLimit);
+        presetForm->slowLimitWidget->setVisible(var.shwSlowLimit);
+        presetForm->slowTimeWidget->setVisible(var.shwSlowTime);
+        presetForm->fastTimeWidget->setVisible(var.shwStapmTime);
 
-        presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
-        presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+        presetForm->vrmCurrentWidget->setVisible(var.shwVrmCurrent);
+        presetForm->vrmMaxWidget->setVisible(var.shwVrmMaxCurrent);
 
-        presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
-        presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+        presetForm->minFclkWidget->setVisible(var.shwMinFclkFrequency);
+        presetForm->maxFclkWidget->setVisible(var.shwMaxFclkFrequency);
 
-        presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
-        presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
-        presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
-        presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
-        presetForm->minVcnWidget->setVisible(var->shwMinVcn);
-        presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+        presetForm->minGfxclkWidget->setVisible(var.shwMinGfxclk);
+        presetForm->maxGfxclkWidget->setVisible(var.shwMaxGfxclk);
+        presetForm->minSocclkWidget->setVisible(var.shwMinSocclkFrequency);
+        presetForm->maxSocclkWidget->setVisible(var.shwMaxSocclkFrequency);
+        presetForm->minVcnWidget->setVisible(var.shwMinVcn);
+        presetForm->maxVcnWidget->setVisible(var.shwMaxVcn);
 
-        presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
-        presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+        presetForm->smuMaxPerformanceCheckBox->setVisible(var.shwMaxPerformance);
+        presetForm->smuPowerSavingCheckBox->setVisible(var.shwPowerSaving);
 
         //NEW VARS
-        presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
-        presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+        presetForm->vrmSocCurrentWidget->setVisible(var.shwVrmSocCurrent);
+        presetForm->vrmSocMaxWidget->setVisible(var.shwVrmSocMaxCurrent);
 
-        presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
-        presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+        presetForm->psi0CurrentWidget->setVisible(var.shwPsi0Current);
+        presetForm->psi0SocCurrentWidget->setVisible(var.shwPsi0SocCurrent);
 
-        presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
-        presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+        presetForm->maxLclkWidget->setVisible(var.shwMaxLclk);
+        presetForm->minLclkWidget->setVisible(var.shwMinLclk);
 
-        presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+        presetForm->prochotDeassertionRampWidget->setVisible(var.shwProchotDeassertionRamp);
 
-        presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
-        presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
-        presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+        presetForm->dgpuSkinTempLimitWidget->setVisible(var.shwDgpuSkinTemp);
+        presetForm->apuSlowLimitWidget->setVisible(var.shwApuSlowLimit);
+        presetForm->skinTempPowerLimitWidget->setVisible(var.shwSkinTempLimit);
 
         //Show Armour Plugin
         presetForm->armourGroupBox->setVisible(settings->showArmourPlugin);
@@ -1273,48 +1273,48 @@ void CtrlGui::presetPlusPushButtonClicked(){
     Hide/Show elements by settings
     */
     settingsStr *settings = conf->getSettingsBuffer();
-    hideShow *var = conf->hideShowWarnPresetVariable(
+    hideShow var = conf->hideShowWarnPresetVariable(
                 settings->hideNotSupportedVariables
                 ? settings->apuFamilyIdx : -1);
 
-    presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
-    presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
-    presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
-    presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
-    presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
-    presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
-    presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+    presetForm->tempLimitWidget->setVisible(var.shwTctlTemp);
+    presetForm->apuSkinWidget->setVisible(var.shwApuSkinTemp);
+    presetForm->stampLimitWidget->setVisible(var.shwStapmLimit);
+    presetForm->fastLimitWidget->setVisible(var.shwFastLimit);
+    presetForm->slowLimitWidget->setVisible(var.shwSlowLimit);
+    presetForm->slowTimeWidget->setVisible(var.shwSlowTime);
+    presetForm->fastTimeWidget->setVisible(var.shwStapmTime);
 
-    presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
-    presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+    presetForm->vrmCurrentWidget->setVisible(var.shwVrmCurrent);
+    presetForm->vrmMaxWidget->setVisible(var.shwVrmMaxCurrent);
 
-    presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
-    presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+    presetForm->minFclkWidget->setVisible(var.shwMinFclkFrequency);
+    presetForm->maxFclkWidget->setVisible(var.shwMaxFclkFrequency);
 
-    presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
-    presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
-    presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
-    presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
-    presetForm->minVcnWidget->setVisible(var->shwMinVcn);
-    presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+    presetForm->minGfxclkWidget->setVisible(var.shwMinGfxclk);
+    presetForm->maxGfxclkWidget->setVisible(var.shwMaxGfxclk);
+    presetForm->minSocclkWidget->setVisible(var.shwMinSocclkFrequency);
+    presetForm->maxSocclkWidget->setVisible(var.shwMaxSocclkFrequency);
+    presetForm->minVcnWidget->setVisible(var.shwMinVcn);
+    presetForm->maxVcnWidget->setVisible(var.shwMaxVcn);
 
-    presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
-    presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+    presetForm->smuMaxPerformanceCheckBox->setVisible(var.shwMaxPerformance);
+    presetForm->smuPowerSavingCheckBox->setVisible(var.shwPowerSaving);
 
-    presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
-    presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+    presetForm->vrmSocCurrentWidget->setVisible(var.shwVrmSocCurrent);
+    presetForm->vrmSocMaxWidget->setVisible(var.shwVrmSocMaxCurrent);
 
-    presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
-    presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+    presetForm->psi0CurrentWidget->setVisible(var.shwPsi0Current);
+    presetForm->psi0SocCurrentWidget->setVisible(var.shwPsi0SocCurrent);
 
-    presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
-    presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+    presetForm->maxLclkWidget->setVisible(var.shwMaxLclk);
+    presetForm->minLclkWidget->setVisible(var.shwMinLclk);
 
-    presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+    presetForm->prochotDeassertionRampWidget->setVisible(var.shwProchotDeassertionRamp);
 
-    presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
-    presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
-    presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+    presetForm->dgpuSkinTempLimitWidget->setVisible(var.shwDgpuSkinTemp);
+    presetForm->apuSlowLimitWidget->setVisible(var.shwApuSlowLimit);
+    presetForm->skinTempPowerLimitWidget->setVisible(var.shwSkinTempLimit);
     /*
     Hide/ShowShow Armour Plugin
     */

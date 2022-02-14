@@ -5,13 +5,8 @@
 
 CtrlSettings::CtrlSettings()
     : presets(new QList<presetStr*>),
-#ifdef WIN32
-      configQFile(new QFile("Config/Config.xml")),
-      presetsQFile(new QFile("Config/Presets.xml"))
-#else //WIN32
-      configQFile(new QFile("/etc/RyzenCtrl/Config.xml")),
-      presetsQFile(new QFile("/etc/RyzenCtrl/Presets.xml"))
-#endif //WIN32
+      configQFile(new QFile(CONFIG_FILE)),
+      presetsQFile(new QFile(PRESETS_FILE))
 {
     qDebug() << "Ctrl Settings - Started";
 }
@@ -29,12 +24,12 @@ void CtrlSettings::checkSettings() {
 
     if (!presetsQFile->exists()) {
         qDebug() << "Ctrl Settings - Create New Presets File.";
-        char presetNames[5][PresetNameLenth] = {
-            {'B', 'a', 't', 't', 'e', 'r', 'y', ' ', 'S', 'a', 'v', 'e', 'r', '\0'},
-            {'B', 'e', 't', 't', 'e', 'r', ' ', 'B', 'a', 't', 't', 'e', 'r', 'y', '\0'},
-            {'B', 'a', 'l', 'a', 'n', 'c', 'e', 'd', '\0'},
-            {'P', 'e', 'r', 'f', 'o', 'm', 'a', 'n', 'c', 'e', '\0'},
-            {'G', 'a', 'm', 'i', 'n', 'g', '\0'}
+        char presetNames[5][PRESET_NAME_LENGTH_TERMINATOR] = {
+            SAVER_PRESET_NAME,
+            BETTER_PRESET_NAME,
+            BALANCED_PRESET_NAME,
+            PERFOMANCE_PRESET_NAME,
+            GAMING_PRESET_NAME
         };
         presetStr *preset;
         for(int i = 0;i < 5; i++){
@@ -729,7 +724,7 @@ int CtrlSettings::insertNewPreset(int newidx, presetStr* newPreset) {
     qDebug() << "Ctrl Settings - Insert New Preset ID" << newidx;
     if (newPreset == nullptr) {
         newPreset = new presetStr;
-        char newPresetName[] = {'N', 'e', 'w', ' ', 'p', 'r', 'e', 's', 'e', 't', '\0'};
+        char newPresetName[] = NEW_PRESET_NAME;
         for(int i = 0;i < sizeof(newPresetName) + 1; i++)
             newPreset->presetName[i] = newPresetName[i];
     }

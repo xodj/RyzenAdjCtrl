@@ -3,16 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
-
-enum epmMode{
-    BatterySaver = 0,
-    BetterBattery,
-    Balanced,
-    MaxPerformance,
-    GameMode,
-    MixedReality,
-    epmNone
-};
+#include "CtrlConfig.h"
 
 class CtrlEPMCallback : public QObject
 {
