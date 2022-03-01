@@ -11,6 +11,7 @@
 #include "CtrlBus.h"
 #include "CtrlFrame.h"
 #include <QMouseEvent>
+#include <QScreen>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
