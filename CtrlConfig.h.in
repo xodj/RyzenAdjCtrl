@@ -161,6 +161,23 @@ struct presetStr {
     bool psi3cpu_currentChecked = false;
     int psi3gfx_current = 0;
     bool psi3gfx_currentChecked = false;
+    /*new 0.10.0*/
+    int oc_clk = 0;
+    bool oc_clkChecked = false;
+    int per_core_oc_clk = 0;
+    bool per_core_oc_clkChecked = false;
+    int oc_volt = 0;
+    bool oc_voltChecked = false;
+
+    bool disable_oc = false;
+    bool enable_oc = false;
+    /*new 0.11.0*/
+    int coall = 0;
+    bool coallChecked = false;
+    int coper = 0;
+    bool coperChecked = false;
+    int cogfx = 0;
+    bool cogfxChecked = false;
 };
 
 struct settingsStr {
@@ -221,7 +238,6 @@ struct hideShow {
     bool shwSkinTempLimit = true;
     bool shwPowerSaving = true;
     bool shwMaxPerformance = true;
-
     /*new 0.8.3*/
     bool show_gfx_clk = true;
     /*new 0.8.4*/
@@ -230,6 +246,15 @@ struct hideShow {
     bool show_vrmgfxmax_current = true;
     bool show_psi3cpu_current = true;
     bool show_psi3gfx_current = true;
+    /*new 0.10.0*/
+    bool show_oc_clk = true;
+    bool show_per_core_oc_clk = true;
+    bool show_oc_volt = true;
+    bool show_enable_oc = true;
+    /*new 0.11.0*/
+    bool show_coall= true;
+    bool show_coper = true;
+    bool show_cogfx = true;
 };
 
 struct messageToServiceStr{
@@ -282,6 +307,23 @@ struct PMTable{
     //new v0.8.2
     float cclk_setpoint = 0.f;
     float cclk_busy_value = 0.f;
+    //new v0.10.0
+    float l3_clk = 0.f;
+    float l3_logic = 0.f;
+    float l3_vddm = 0.f;
+    float l3_temp = 0.f;
+
+    float gfx_clk = 0.f;
+    float gfx_temp = 0.f;
+    float gfx_volt = 0.f;
+
+    float mem_clk = 0.f;
+    float fclk = 0.f;
+
+    float soc_power = 0.f;
+    float soc_volt = 0.f;
+
+    float socket_power = 0.f;
 };
 
 struct messageToGuiStr{
@@ -336,6 +378,15 @@ struct settingsToGuiStr{
     false,\
     false,\
     false,\
+    false,\
+    /*new 0.10.0*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.11.0*/ \
+    false,\
+    false,\
     false
 
 #define SHOW_ONLY_PICASSO \
@@ -373,6 +424,15 @@ struct settingsToGuiStr{
     /*new 0.8.4*/ \
     false,\
     false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.10.0*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.11.0*/ \
     false,\
     false,\
     false
@@ -414,6 +474,15 @@ struct settingsToGuiStr{
     false,\
     false,\
     false,\
+    false,\
+    /*new 0.10.0*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.11.0*/ \
+    false,\
+    false,\
     false
 
 #define SHOW_ONLY_CEZANNE \
@@ -451,6 +520,15 @@ struct settingsToGuiStr{
     /*new 0.8.4*/ \
     false,\
     false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.10.0*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.11.0*/ \
     false,\
     false,\
     false
@@ -492,6 +570,15 @@ struct settingsToGuiStr{
     false,\
     false,\
     false,\
+    false,\
+    /*new 0.10.0*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.11.0*/ \
+    false,\
+    false,\
     false
 
 #define SHOW_ONLY_LUCIENNE \
@@ -529,6 +616,15 @@ struct settingsToGuiStr{
     /*new 0.8.4*/ \
     false,\
     false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.10.0*/ \
+    false,\
+    false,\
+    false,\
+    false,\
+    /*new 0.11.0*/ \
     false,\
     false,\
     false

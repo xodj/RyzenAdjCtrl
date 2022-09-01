@@ -1571,6 +1571,23 @@ void CtrlGui::recieveMessageToGui(messageToGuiStr messageToGui){
         //new v0.8.2
         ui_infoWidget->cclk_setpoint->setText(QString::number(messageToGui.pmTable.cclk_setpoint) + " N/A");
         ui_infoWidget->cclk_busy_value->setText(QString::number(messageToGui.pmTable.cclk_busy_value) + " N/A");
+        //new v0.10.0
+        ui_infoWidget->l3_clk->setText(QString::number(messageToGui.pmTable.l3_clk) + " N/A");
+        ui_infoWidget->l3_logic->setText(QString::number(messageToGui.pmTable.l3_logic) + " N/A");
+        ui_infoWidget->l3_vddm->setText(QString::number(messageToGui.pmTable.l3_vddm) + " N/A");
+        ui_infoWidget->l3_temp->setText(QString::number(messageToGui.pmTable.l3_temp) + " N/A");
+
+        ui_infoWidget->gfx_clk->setText(QString::number(messageToGui.pmTable.gfx_clk) + " N/A");
+        ui_infoWidget->gfx_temp->setText(QString::number(messageToGui.pmTable.gfx_temp) + " N/A");
+        ui_infoWidget->gfx_volt->setText(QString::number(messageToGui.pmTable.gfx_volt) + " N/A");
+
+        ui_infoWidget->mem_clk->setText(QString::number(messageToGui.pmTable.mem_clk) + " N/A");
+        ui_infoWidget->fclk->setText(QString::number(messageToGui.pmTable.fclk) + " N/A");
+
+        ui_infoWidget->soc_power->setText(QString::number(messageToGui.pmTable.soc_power) + " N/A");
+        ui_infoWidget->soc_volt->setText(QString::number(messageToGui.pmTable.soc_volt) + " N/A");
+
+        ui_infoWidget->socket_power->setText(QString::number(messageToGui.pmTable.socket_power) + " N/A");
     }
 
     if(currentPresetId != -1){

@@ -339,6 +339,25 @@ void CtrlService::loadPreset(presetStr *preset){
             set_skin_temp_power_limit(adjEntryPoint, preset->psi3cpu_current);
         if(preset->psi3gfx_currentChecked)
             set_skin_temp_power_limit(adjEntryPoint, preset->psi3gfx_current);
+        //new 0.10.0
+        if(preset->oc_clkChecked)
+            set_oc_clk(adjEntryPoint, preset->oc_clk);
+        if(preset->per_core_oc_clkChecked)
+            set_per_core_oc_clk(adjEntryPoint, preset->per_core_oc_clk);
+        if(preset->oc_voltChecked)
+            set_oc_volt(adjEntryPoint, preset->oc_volt);
+
+        if(preset->disable_oc)
+            set_disable_oc(adjEntryPoint);
+        if(preset->enable_oc)
+            set_enable_oc(adjEntryPoint);
+        //new 0.11.0
+        if(preset->coallChecked)
+            set_coall(adjEntryPoint, preset->coall);
+        if(preset->coperChecked)
+            set_coper(adjEntryPoint, preset->coper);
+        if(preset->cogfxChecked)
+            set_cogfx(adjEntryPoint, preset->cogfx);
     } else
         qDebug()<<"Ctrl Service - Try to load nullptr (deleted) preset!";
 }
@@ -395,6 +414,23 @@ void CtrlService::takeCurrentInfo() {
     //new v0.8.2
     pmTable.cclk_setpoint = get_cclk_setpoint(adjEntryPoint);
     pmTable.cclk_busy_value = get_cclk_busy_value(adjEntryPoint);
+    //new v0.10.0
+    pmTable.l3_clk = get_l3_clk(adjEntryPoint);
+    pmTable.l3_logic = get_l3_logic(adjEntryPoint);
+    pmTable.l3_vddm = get_l3_vddm(adjEntryPoint);
+    pmTable.l3_temp = get_l3_temp(adjEntryPoint);
+
+    pmTable.gfx_clk = get_gfx_clk(adjEntryPoint);
+    pmTable.gfx_temp = get_gfx_temp(adjEntryPoint);
+    pmTable.gfx_volt = get_gfx_volt(adjEntryPoint);
+
+    pmTable.mem_clk = get_mem_clk(adjEntryPoint);
+    pmTable.fclk = get_fclk(adjEntryPoint);
+
+    pmTable.soc_power = get_soc_power(adjEntryPoint);
+    pmTable.soc_volt = get_soc_volt(adjEntryPoint);
+
+    pmTable.socket_power = get_socket_power(adjEntryPoint);
 
     sendCurrentInfoToGui();
 }

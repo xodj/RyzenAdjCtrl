@@ -394,21 +394,84 @@ bool CtrlSettings::savePresets() {
             xmlWriter.writeStartElement("gfx_clk");
                 xmlWriter.writeAttribute("value", QString::number(presets->at(i)->gfx_clk));
             xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("gfx_clkChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->gfx_clkChecked));
+            xmlWriter.writeEndElement();
             //new 0.8.4
             xmlWriter.writeStartElement("vrmgfx_current");
                 xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmgfx_current));
             xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("vrmgfx_currentChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmgfx_currentChecked));
+            xmlWriter.writeEndElement();
             xmlWriter.writeStartElement("vrmcvip_current");
                 xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmcvip_current));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("vrmcvip_currentChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmcvip_currentChecked));
             xmlWriter.writeEndElement();
             xmlWriter.writeStartElement("vrmgfxmax_current");
                 xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmgfxmax_current));
             xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("vrmgfxmax_currentChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->vrmgfxmax_currentChecked));
+            xmlWriter.writeEndElement();
             xmlWriter.writeStartElement("psi3cpu_current");
                 xmlWriter.writeAttribute("value", QString::number(presets->at(i)->psi3cpu_current));
             xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("psi3cpu_currentChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->psi3cpu_currentChecked));
+            xmlWriter.writeEndElement();
             xmlWriter.writeStartElement("psi3gfx_current");
                 xmlWriter.writeAttribute("value", QString::number(presets->at(i)->psi3gfx_current));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("psi3gfx_currentChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->psi3gfx_currentChecked));
+            xmlWriter.writeEndElement();
+            //new 0.10.0
+            xmlWriter.writeStartElement("oc_clk");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->oc_clk));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("oc_clkChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->oc_clkChecked));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("per_core_oc_clk");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->per_core_oc_clk));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("per_core_oc_clkChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->per_core_oc_clkChecked));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("oc_volt");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->oc_volt));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("oc_voltChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->oc_voltChecked));
+            xmlWriter.writeEndElement();
+
+            xmlWriter.writeStartElement("disable_oc");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->disable_oc));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("enable_oc");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->enable_oc));
+            xmlWriter.writeEndElement();
+            //new 0.11.0
+            xmlWriter.writeStartElement("coall");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->coall));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("coallChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->coallChecked));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("coper");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->coper));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("coperChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->coperChecked));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("cogfx");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->cogfx));
+            xmlWriter.writeEndElement();
+            xmlWriter.writeStartElement("cogfxChecked");
+                xmlWriter.writeAttribute("value", QString::number(presets->at(i)->cogfxChecked));
             xmlWriter.writeEndElement();
 
         xmlWriter.writeEndElement();
@@ -649,31 +712,134 @@ bool CtrlSettings::openPresets(){
                 if (attr.name().toString() == "value")
                     presetReadBuffer->gfx_clk = attr.value().toString().toInt();
             }else{}
+        if (xmlReader.name() == QString("gfx_clkChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->gfx_clkChecked = attr.value().toString().toInt();
+            }else{}
         //new 0.8.4
         if (xmlReader.name() == QString("vrmgfx_current"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     presetReadBuffer->vrmgfx_current = attr.value().toString().toInt();
             }else{}
+        if (xmlReader.name() == QString("vrmgfx_currentChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->vrmgfx_currentChecked = attr.value().toString().toInt();
+            }else{}
         if (xmlReader.name() == QString("vrmcvip_current"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     presetReadBuffer->vrmcvip_current = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("vrmcvip_currentChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->vrmcvip_currentChecked = attr.value().toString().toInt();
             }else{}
         if (xmlReader.name() == QString("vrmgfxmax_current"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     presetReadBuffer->vrmgfxmax_current = attr.value().toString().toInt();
             }else{}
+        if (xmlReader.name() == QString("vrmgfxmax_currentChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->vrmgfxmax_currentChecked = attr.value().toString().toInt();
+            }else{}
         if (xmlReader.name() == QString("psi3cpu_current"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     presetReadBuffer->psi3cpu_current = attr.value().toString().toInt();
             }else{}
+        if (xmlReader.name() == QString("psi3cpu_currentChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->psi3cpu_currentChecked = attr.value().toString().toInt();
+            }else{}
         if (xmlReader.name() == QString("psi3gfx_current"))
             foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
                 if (attr.name().toString() == "value")
                     presetReadBuffer->psi3gfx_current = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("psi3gfx_currentChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->psi3gfx_currentChecked = attr.value().toString().toInt();
+            }else{}
+        //new 0.10.0
+        if (xmlReader.name() == QString("oc_clk"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->oc_clk = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("oc_clkChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->oc_clkChecked = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("per_core_oc_clk"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->per_core_oc_clk = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("per_core_oc_clkChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->per_core_oc_clkChecked = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("oc_volt"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->oc_volt = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("oc_voltChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->oc_voltChecked = attr.value().toString().toInt();
+            }else{}
+
+        if (xmlReader.name() == QString("disable_oc"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->disable_oc = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("enable_oc"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->enable_oc = attr.value().toString().toInt();
+            }else{}
+        //new 0.11.0
+        if (xmlReader.name() == QString("coall"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->coall = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("coallChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->coallChecked = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("coper"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->coper = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("coperChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->coperChecked = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("cogfx"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->cogfx = attr.value().toString().toInt();
+            }else{}
+        if (xmlReader.name() == QString("cogfxChecked"))
+            foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()){
+                if (attr.name().toString() == "value")
+                    presetReadBuffer->cogfxChecked = attr.value().toString().toInt();
             }else{}
         //
         xmlReader.readNext();

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 #Project name and version
-PROJECT(RyzenCtrl VERSION 0.5.3.944 LANGUAGES CXX)
+PROJECT(RyzenCtrl VERSION 0.5.3.969 LANGUAGES CXX)
 #Set version number here  ^^^^^^^^^
 #BUILD_STANDALONE
 set(BUILD_STANDALONE FALSE CACHE BOOL "Build without service")

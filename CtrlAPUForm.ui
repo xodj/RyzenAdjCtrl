@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>708</width>
-    <height>389</height>
+    <width>712</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -22,7 +22,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_10">
+  <layout class="QVBoxLayout" name="verticalLayout_13">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_30">
      <item>
@@ -30,7 +30,6 @@
        <property name="font">
         <font>
          <pointsize>10</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -49,7 +48,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -91,9 +89,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-380</y>
-        <width>674</width>
-        <height>682</height>
+        <y>-577</y>
+        <width>675</width>
+        <height>878</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -102,7 +100,6 @@
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -172,7 +169,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -201,7 +197,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -267,7 +262,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -296,7 +290,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -362,7 +355,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -391,7 +383,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -477,7 +468,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -506,7 +496,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -572,7 +561,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -601,7 +589,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -667,7 +654,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -696,7 +682,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -746,7 +731,6 @@
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -816,7 +800,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -845,7 +828,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -908,7 +890,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -937,7 +918,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1000,7 +980,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1029,7 +1008,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1106,7 +1084,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1135,7 +1112,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1195,7 +1171,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1224,7 +1199,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1284,7 +1258,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1313,7 +1286,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1351,7 +1323,6 @@
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -1421,7 +1392,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1450,7 +1420,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1516,7 +1485,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1545,7 +1513,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1608,7 +1575,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1637,7 +1603,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1703,7 +1668,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1732,7 +1696,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1792,7 +1755,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1821,7 +1783,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1887,7 +1848,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1916,7 +1876,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1982,7 +1941,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2011,7 +1969,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2071,7 +2028,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2100,7 +2056,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2177,7 +2132,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2206,7 +2160,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2272,7 +2225,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2301,7 +2253,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2364,7 +2315,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2393,7 +2343,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2459,7 +2408,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2488,7 +2436,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2548,7 +2495,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2577,7 +2523,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2643,7 +2588,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2672,7 +2616,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2735,7 +2678,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2764,7 +2706,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2805,7 +2746,6 @@
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2821,7 +2761,6 @@
             <property name="font">
              <font>
               <pointsize>8</pointsize>
-              <weight>50</weight>
               <italic>true</italic>
               <bold>false</bold>
              </font>
@@ -2844,7 +2783,6 @@
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -2864,7 +2802,6 @@
               <property name="font">
                <font>
                 <pointsize>8</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -2883,7 +2820,6 @@
          <property name="font">
           <font>
            <pointsize>10</pointsize>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -2911,7 +2847,6 @@
             <property name="font">
              <font>
               <pointsize>8</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
              </font>
             </property>
@@ -2939,6 +2874,1100 @@
              </property>
             </item>
            </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="title">
+          <string>Beta features</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="font">
+             <font>
+              <pointsize>8</pointsize>
+              <italic>true</italic>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Please use carefully...</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <item>
+               <widget class="QWidget" name="vrmgfx_currentWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_73">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_41">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="vrmgfx_currentCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>vrmgfx_current</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="vrmgfx_currentSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="psi3gfx_currentWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_77">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_45">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="psi3gfx_currentCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>psi3gfx_current</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="psi3gfx_currentSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="psi3cpu_currentWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_76">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_44">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="psi3cpu_currentCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>psi3cpu_current</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="psi3cpu_currentSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="gfx_clkWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_62">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_30">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="gfx_clkCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>gfx_clk</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="gfx_clkSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="vrmcvip_currentWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_74">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_42">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="vrmcvip_currentCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>vrmcvip_current</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="vrmcvip_currentSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="vrmgfxmax_currentWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_75">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_43">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="vrmgfxmax_currentCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>vrmgfxmax_current</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="vrmgfxmax_currentSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_12">
+              <item>
+               <widget class="QWidget" name="oc_clkWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_78">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_46">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="oc_clkCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>oc_clk</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="oc_clkSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="per_core_oc_clkWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_79">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_47">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="per_core_oc_clkCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>per_core_oc_clk</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="per_core_oc_clkSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="oc_voltWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_80">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_48">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="oc_voltCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>oc_volt</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="oc_voltSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="coallWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_81">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_49">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="coallCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>coall</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="coallSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="coperWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_82">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_50">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="coperCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>coper</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="coperSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="cogfxWidget" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_83">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <spacer name="horizontalSpacer_51">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>1</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="cogfxCheckBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="layoutDirection">
+                    <enum>Qt::RightToLeft</enum>
+                   </property>
+                   <property name="text">
+                    <string>cogfx</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CtrlSpinBox" name="cogfxSpinBox">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>85</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QCheckBox" name="enable_ocCheckBox">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>enable_oc</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="disable_ocCheckBox">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>disable_oc</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -2990,7 +4019,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3028,7 +4056,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3053,7 +4080,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3078,7 +4104,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -3103,7 +4128,6 @@
        </property>
        <property name="font">
         <font>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
