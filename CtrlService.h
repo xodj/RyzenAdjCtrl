@@ -9,7 +9,7 @@
 #endif
 #include "CtrlACCallback.h"
 #include "CtrlArmour.h"
-#include "lib/ryzenadj.h"
+#include "ryzenadj.h"
 #include "CtrlBus.h"
 
 #include <QDebug>
