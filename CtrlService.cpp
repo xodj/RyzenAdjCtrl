@@ -89,6 +89,18 @@ void CtrlService::initPmTable(){
     case 7:
         charFromString("Rembrant", pmTable.ryzenFamily);
         break;
+    case 8:
+        charFromString("Mendocino", pmTable.ryzenFamily);
+        break;
+    case 9:
+        charFromString("Phoenix", pmTable.ryzenFamily);
+        break;
+    case 10:
+        charFromString("Hawkpoint", pmTable.ryzenFamily);
+        break;
+    case 11:
+        charFromString("Strixpoint", pmTable.ryzenFamily);
+        break;
     default:
         break;
     }
@@ -414,6 +426,11 @@ void CtrlService::takeCurrentInfo() {
     //new v0.8.2
     pmTable.cclk_setpoint = get_cclk_setpoint(adjEntryPoint);
     pmTable.cclk_busy_value = get_cclk_busy_value(adjEntryPoint);
+    //new vars by core
+    pmTable.core_clk_0 = get_core_clk(adjEntryPoint, 0);
+    pmTable.core_volt_0 = get_core_volt(adjEntryPoint, 0);
+    pmTable.core_power_0 = get_core_power(adjEntryPoint, 0);
+    pmTable.core_temp_0 = get_core_temp(adjEntryPoint, 0);
     //new v0.10.0
     pmTable.l3_clk = get_l3_clk(adjEntryPoint);
     pmTable.l3_logic = get_l3_logic(adjEntryPoint);

@@ -89,9 +89,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-577</y>
+        <y>0</y>
         <width>675</width>
-        <height>878</height>
+        <height>886</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -2879,7 +2879,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_7">
+        <widget class="QGroupBox" name="betaGroupBox">
          <property name="font">
           <font>
            <pointsize>10</pointsize>
@@ -3928,46 +3928,54 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QCheckBox" name="enable_ocCheckBox">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>enable_oc</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="disable_ocCheckBox">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>disable_oc</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QWidget" name="enableOcWidget" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QCheckBox" name="enable_ocCheckBox">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>enable_oc</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="disable_ocCheckBox">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>8</pointsize>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>disable_oc</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -4034,7 +4042,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_3">
+      <spacer name="horizontalSpacer_3222">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
