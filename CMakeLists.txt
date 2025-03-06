@@ -24,9 +24,6 @@ if(NOT CMAKE_PREFIX_PATH)
     message("Please add QTDIR to CMAKE_PREFIX_PATH")
     set(CMAKE_PREFIX_PATH "D:/Qt/6.0.4/msvc2019_64")
 endif()
-#Find Qt Libraries
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets DBus REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets DBus REQUIRED)
 #Source Files:
 set(RyzenCtrl_HEADERS
     CtrlAgent.h
@@ -61,6 +58,9 @@ set(RyzenCtrl_TS_FILES
     )
 #Only Windows Sources
 if(WIN32)
+    #Find Qt Libraries
+    find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
     message("WINDOWS OS")
     #Place version to .rc
     set(STR_CTRL_VERSION ${RyzenCtrl_VERSION})
@@ -90,6 +90,9 @@ if(WIN32)
 endif(WIN32)
 #Linux
 if(UNIX)
+    #Find Qt Libraries
+    find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets DBus REQUIRED)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets DBus REQUIRED)
     message("UNIX OS")
     set(RyzenAdjLib
         /usr/lib/libryzenadj.so
@@ -131,4 +134,5 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../RyzenAdj)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ryzenadj)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ryzenadj-git)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../ryzenadj/lib)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
