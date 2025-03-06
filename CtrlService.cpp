@@ -65,43 +65,43 @@ void CtrlService::initPmTable(){
     refresh_table(adjEntryPoint);
 
     switch(get_cpu_family(adjEntryPoint)){
-    case 0:
+    case FAM_RAVEN:
         charFromString("Raven", pmTable.ryzenFamily);
         break;
-    case 1:
+    case FAM_PICASSO:
         charFromString("Picasso", pmTable.ryzenFamily);
         break;
-    case 2:
+    case FAM_RENOIR:
         charFromString("Renoir", pmTable.ryzenFamily);
         break;
-    case 3:
+    case FAM_CEZANNE:
         charFromString("Cezanne", pmTable.ryzenFamily);
         break;
-    case 4:
+    case FAM_DALI:
         charFromString("Dali", pmTable.ryzenFamily);
         break;
-    case 5:
+    case FAM_LUCIENNE:
         charFromString("Lucienne", pmTable.ryzenFamily);
         break;
-    case 6:
+    case FAM_VANGOGH:
         charFromString("Vangogh", pmTable.ryzenFamily);
         break;
-    case 7:
+    case FAM_REMBRANDT:
         charFromString("Rembrant", pmTable.ryzenFamily);
         break;
-    case 8:
+    case FAM_MENDOCINO:
         charFromString("Mendocino", pmTable.ryzenFamily);
         break;
-    case 9:
+    case FAM_PHOENIX:
         charFromString("Phoenix", pmTable.ryzenFamily);
         break;
-    case 10:
+    case FAM_HAWKPOINT:
         charFromString("Hawkpoint", pmTable.ryzenFamily);
         break;
-    case 11:
+    case FAM_STRIXPOINT:
         charFromString("Strixpoint", pmTable.ryzenFamily);
         break;
-    default:
+    default: // Unknown
         break;
     }
     pmTable.biosVersion = get_bios_if_ver(adjEntryPoint);

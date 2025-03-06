@@ -307,6 +307,11 @@ struct PMTable{
     //new v0.8.2
     float cclk_setpoint = 0.f;
     float cclk_busy_value = 0.f;
+    //new vars by core
+    float core_clk_0 = 0.f;
+    float core_volt_0 = 0.f;
+    float core_power_0 = 0.f;
+    float core_temp_0 = 0.f;
     //new v0.10.0
     float l3_clk = 0.f;
     float l3_logic = 0.f;
