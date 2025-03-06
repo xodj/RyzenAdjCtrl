@@ -3,7 +3,7 @@
 
 pkgname="ryzenctrl-git"
 epoch=1
-pkgver=0.5.1.870+9.r140.20220301.baf6084
+pkgver=0.5.3.969
 pkgrel=2
 pkgdesc="Fine-tuning of power limits and frequency of APU Ryzen Mobile"
 url="https://github.com/xodj/RyzenAdjCtrl"

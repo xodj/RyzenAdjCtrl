@@ -9,6 +9,7 @@ post_upgrade() {
 
 pre_remove() {
     systemctl stop ryzenctrl-root.service
+    systemctl disable ryzenctrl-root.service
 }
 
 pre_upgrade() {

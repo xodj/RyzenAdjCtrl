@@ -327,6 +327,40 @@ void CtrlGui::loadPresets(){
         presetForm->skinTempPowerLimitSpinBox->setValue(presetBuffer->skinTempPowerLimit);
         presetForm->skinTempPowerLimitCheckBox->setChecked(presetBuffer->skinTempPowerLimitChecked);
 
+        /*new 0.8.3*/
+        presetForm->gfx_clkSpinBox->setValue(presetBuffer->gfx_clk);
+        presetForm->gfx_clkCheckBox->setChecked(presetBuffer->gfx_clkChecked);
+
+        /*new 0.8.4*/
+        presetForm->vrmgfx_currentSpinBox->setValue(presetBuffer->vrmgfx_current);
+        presetForm->vrmgfx_currentCheckBox->setChecked(presetBuffer->vrmgfx_currentChecked);
+        presetForm->vrmcvip_currentSpinBox->setValue(presetBuffer->vrmcvip_current);
+        presetForm->vrmcvip_currentCheckBox->setChecked(presetBuffer->vrmcvip_currentChecked);
+        presetForm->vrmgfxmax_currentSpinBox->setValue(presetBuffer->vrmgfxmax_current);
+        presetForm->vrmgfxmax_currentCheckBox->setChecked(presetBuffer->vrmgfxmax_currentChecked);
+        presetForm->psi3cpu_currentSpinBox->setValue(presetBuffer->psi3cpu_current);
+        presetForm->psi3cpu_currentCheckBox->setChecked(presetBuffer->psi3cpu_currentChecked);
+        presetForm->psi3gfx_currentSpinBox->setValue(presetBuffer->psi3gfx_current);
+        presetForm->psi3gfx_currentCheckBox->setChecked(presetBuffer->psi3gfx_currentChecked);
+
+        /*new 0.10.0*/
+        presetForm->oc_clkSpinBox->setValue(presetBuffer->oc_clk);
+        presetForm->oc_clkCheckBox->setChecked(presetBuffer->oc_clkChecked);
+        presetForm->per_core_oc_clkSpinBox->setValue(presetBuffer->per_core_oc_clk);
+        presetForm->per_core_oc_clkCheckBox->setChecked(presetBuffer->per_core_oc_clkChecked);
+        presetForm->oc_voltSpinBox->setValue(presetBuffer->oc_volt);
+        presetForm->oc_voltCheckBox->setChecked(presetBuffer->oc_voltChecked);
+        presetForm->disable_ocCheckBox->setChecked(presetBuffer->disable_oc);
+        presetForm->enable_ocCheckBox->setChecked(presetBuffer->enable_oc);
+
+        /*new 0.11.0*/
+        presetForm->coallSpinBox->setValue(presetBuffer->coall);
+        presetForm->coallCheckBox->setChecked(presetBuffer->coallChecked);
+        presetForm->coperSpinBox->setValue(presetBuffer->coper);
+        presetForm->coperCheckBox->setChecked(presetBuffer->coperChecked);
+        presetForm->cogfxSpinBox->setValue(presetBuffer->cogfx);
+        presetForm->cogfxCheckBox->setChecked(presetBuffer->cogfxChecked);
+
         //Add idxes to settings
         ui_settings->dcStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
         ui_settings->acStateComboBox->insertItem(idx, presetBuffer->presetName, idx);
@@ -462,6 +496,41 @@ void CtrlGui::savePreset(){
     presetBuffer->skinTempPowerLimit = presetForm->skinTempPowerLimitSpinBox->value();
     presetBuffer->skinTempPowerLimitChecked = presetForm->skinTempPowerLimitCheckBox->isChecked();
 
+
+    /*new 0.8.3*/
+    presetBuffer->gfx_clk = presetForm->gfx_clkSpinBox->value();
+    presetBuffer->gfx_clkChecked = presetForm->gfx_clkCheckBox->isChecked();
+
+    /*new 0.8.4*/
+    presetBuffer->vrmgfx_current = presetForm->vrmgfx_currentSpinBox->value();
+    presetBuffer->vrmgfx_currentChecked = presetForm->vrmgfx_currentCheckBox->isChecked();
+    presetBuffer->vrmcvip_current = presetForm->vrmcvip_currentSpinBox->value();
+    presetBuffer->vrmcvip_currentChecked = presetForm->vrmcvip_currentCheckBox->isChecked();
+    presetBuffer->vrmgfxmax_current = presetForm->vrmgfxmax_currentSpinBox->value();
+    presetBuffer->vrmgfxmax_currentChecked = presetForm->vrmgfxmax_currentCheckBox->isChecked();
+    presetBuffer->psi3cpu_current = presetForm->psi3cpu_currentSpinBox->value();
+    presetBuffer->psi3cpu_currentChecked = presetForm->psi3cpu_currentCheckBox->isChecked();
+    presetBuffer->psi3gfx_current = presetForm->psi3gfx_currentSpinBox->value();
+    presetBuffer->psi3gfx_currentChecked = presetForm->psi3gfx_currentCheckBox->isChecked();
+
+    /*new 0.10.0*/
+    presetBuffer->oc_clk = presetForm->oc_clkSpinBox->value();
+    presetBuffer->oc_clkChecked = presetForm->oc_clkCheckBox->isChecked();
+    presetBuffer->per_core_oc_clk = presetForm->per_core_oc_clkSpinBox->value();
+    presetBuffer->per_core_oc_clkChecked = presetForm->per_core_oc_clkCheckBox->isChecked();
+    presetBuffer->oc_volt = presetForm->oc_voltSpinBox->value();
+    presetBuffer->oc_voltChecked = presetForm->oc_voltCheckBox->isChecked();
+    presetBuffer->disable_oc = presetForm->disable_ocCheckBox->isChecked();
+    presetBuffer->enable_oc = presetForm->enable_ocCheckBox->isChecked();
+
+    /*new 0.11.0*/
+    presetBuffer->coall = presetForm->coallSpinBox->value();
+    presetBuffer->coallChecked = presetForm->coallCheckBox->isChecked();
+    presetBuffer->coper = presetForm->coperSpinBox->value();
+    presetBuffer->coperChecked = presetForm->coperCheckBox->isChecked();
+    presetBuffer->cogfx = presetForm->cogfxSpinBox->value();
+    presetBuffer->cogfxChecked = presetForm->cogfxCheckBox->isChecked();
+
     sendPreset(idx, true, false);
 }
 
@@ -567,6 +636,40 @@ void CtrlGui::saveApplyPreset(){
     presetBuffer->skinTempPowerLimit = presetForm->skinTempPowerLimitSpinBox->value();
     presetBuffer->skinTempPowerLimitChecked = presetForm->skinTempPowerLimitCheckBox->isChecked();
 
+    /*new 0.8.3*/
+    presetBuffer->gfx_clk = presetForm->gfx_clkSpinBox->value();
+    presetBuffer->gfx_clkChecked = presetForm->gfx_clkCheckBox->isChecked();
+
+    /*new 0.8.4*/
+    presetBuffer->vrmgfx_current = presetForm->vrmgfx_currentSpinBox->value();
+    presetBuffer->vrmgfx_currentChecked = presetForm->vrmgfx_currentCheckBox->isChecked();
+    presetBuffer->vrmcvip_current = presetForm->vrmcvip_currentSpinBox->value();
+    presetBuffer->vrmcvip_currentChecked = presetForm->vrmcvip_currentCheckBox->isChecked();
+    presetBuffer->vrmgfxmax_current = presetForm->vrmgfxmax_currentSpinBox->value();
+    presetBuffer->vrmgfxmax_currentChecked = presetForm->vrmgfxmax_currentCheckBox->isChecked();
+    presetBuffer->psi3cpu_current = presetForm->psi3cpu_currentSpinBox->value();
+    presetBuffer->psi3cpu_currentChecked = presetForm->psi3cpu_currentCheckBox->isChecked();
+    presetBuffer->psi3gfx_current = presetForm->psi3gfx_currentSpinBox->value();
+    presetBuffer->psi3gfx_currentChecked = presetForm->psi3gfx_currentCheckBox->isChecked();
+
+    /*new 0.10.0*/
+    presetBuffer->oc_clk = presetForm->oc_clkSpinBox->value();
+    presetBuffer->oc_clkChecked = presetForm->oc_clkCheckBox->isChecked();
+    presetBuffer->per_core_oc_clk = presetForm->per_core_oc_clkSpinBox->value();
+    presetBuffer->per_core_oc_clkChecked = presetForm->per_core_oc_clkCheckBox->isChecked();
+    presetBuffer->oc_volt = presetForm->oc_voltSpinBox->value();
+    presetBuffer->oc_voltChecked = presetForm->oc_voltCheckBox->isChecked();
+    presetBuffer->disable_oc = presetForm->disable_ocCheckBox->isChecked();
+    presetBuffer->enable_oc = presetForm->enable_ocCheckBox->isChecked();
+
+    /*new 0.11.0*/
+    presetBuffer->coall = presetForm->coallSpinBox->value();
+    presetBuffer->coallChecked = presetForm->coallCheckBox->isChecked();
+    presetBuffer->coper = presetForm->coperSpinBox->value();
+    presetBuffer->coperChecked = presetForm->coperCheckBox->isChecked();
+    presetBuffer->cogfx = presetForm->cogfxSpinBox->value();
+    presetBuffer->cogfxChecked = presetForm->cogfxCheckBox->isChecked();
+
     sendPreset(idx, true, true);
 }
 
@@ -671,6 +774,40 @@ void CtrlGui::cancelPreset(){
     presetForm->skinTempPowerLimitSpinBox->setValue(presetBuffer->skinTempPowerLimit);
     presetForm->skinTempPowerLimitCheckBox->setChecked(presetBuffer->skinTempPowerLimitChecked);
 
+    /*new 0.8.3*/
+    presetForm->gfx_clkSpinBox->setValue(presetBuffer->gfx_clk);
+    presetForm->gfx_clkCheckBox->setChecked(presetBuffer->gfx_clkChecked);
+
+    /*new 0.8.4*/
+    presetForm->vrmgfx_currentSpinBox->setValue(presetBuffer->vrmgfx_current);
+    presetForm->vrmgfx_currentCheckBox->setChecked(presetBuffer->vrmgfx_currentChecked);
+    presetForm->vrmcvip_currentSpinBox->setValue(presetBuffer->vrmcvip_current);
+    presetForm->vrmcvip_currentCheckBox->setChecked(presetBuffer->vrmcvip_currentChecked);
+    presetForm->vrmgfxmax_currentSpinBox->setValue(presetBuffer->vrmgfxmax_current);
+    presetForm->vrmgfxmax_currentCheckBox->setChecked(presetBuffer->vrmgfxmax_currentChecked);
+    presetForm->psi3cpu_currentSpinBox->setValue(presetBuffer->psi3cpu_current);
+    presetForm->psi3cpu_currentCheckBox->setChecked(presetBuffer->psi3cpu_currentChecked);
+    presetForm->psi3gfx_currentSpinBox->setValue(presetBuffer->psi3gfx_current);
+    presetForm->psi3gfx_currentCheckBox->setChecked(presetBuffer->psi3gfx_currentChecked);
+
+    /*new 0.10.0*/
+    presetForm->oc_clkSpinBox->setValue(presetBuffer->oc_clk);
+    presetForm->oc_clkCheckBox->setChecked(presetBuffer->oc_clkChecked);
+    presetForm->per_core_oc_clkSpinBox->setValue(presetBuffer->per_core_oc_clk);
+    presetForm->per_core_oc_clkCheckBox->setChecked(presetBuffer->per_core_oc_clkChecked);
+    presetForm->oc_voltSpinBox->setValue(presetBuffer->oc_volt);
+    presetForm->oc_voltCheckBox->setChecked(presetBuffer->oc_voltChecked);
+    presetForm->disable_ocCheckBox->setChecked(presetBuffer->disable_oc);
+    presetForm->enable_ocCheckBox->setChecked(presetBuffer->enable_oc);
+
+    /*new 0.11.0*/
+    presetForm->coallSpinBox->setValue(presetBuffer->coall);
+    presetForm->coallCheckBox->setChecked(presetBuffer->coallChecked);
+    presetForm->coperSpinBox->setValue(presetBuffer->coper);
+    presetForm->coperCheckBox->setChecked(presetBuffer->coperChecked);
+    presetForm->cogfxSpinBox->setValue(presetBuffer->cogfx);
+    presetForm->cogfxCheckBox->setChecked(presetBuffer->cogfxChecked);
+
     sendPreset(idx, false, true);
 }
 
@@ -756,6 +893,40 @@ void CtrlGui::sendPreset(int idx, bool save, bool apply){
     presetBuffer.apuSlowLimitChecked = presetForm->apuSlowLimitCheckBox->isChecked();
     presetBuffer.skinTempPowerLimit = presetForm->skinTempPowerLimitSpinBox->value();
     presetBuffer.skinTempPowerLimitChecked = presetForm->skinTempPowerLimitCheckBox->isChecked();
+
+    /*new 0.8.3*/
+    presetBuffer.gfx_clk = presetForm->gfx_clkSpinBox->value();
+    presetBuffer.gfx_clkChecked = presetForm->gfx_clkCheckBox->isChecked();
+
+    /*new 0.8.4*/
+    presetBuffer.vrmgfx_current = presetForm->vrmgfx_currentSpinBox->value();
+    presetBuffer.vrmgfx_currentChecked = presetForm->vrmgfx_currentCheckBox->isChecked();
+    presetBuffer.vrmcvip_current = presetForm->vrmcvip_currentSpinBox->value();
+    presetBuffer.vrmcvip_currentChecked = presetForm->vrmcvip_currentCheckBox->isChecked();
+    presetBuffer.vrmgfxmax_current = presetForm->vrmgfxmax_currentSpinBox->value();
+    presetBuffer.vrmgfxmax_currentChecked = presetForm->vrmgfxmax_currentCheckBox->isChecked();
+    presetBuffer.psi3cpu_current = presetForm->psi3cpu_currentSpinBox->value();
+    presetBuffer.psi3cpu_currentChecked = presetForm->psi3cpu_currentCheckBox->isChecked();
+    presetBuffer.psi3gfx_current = presetForm->psi3gfx_currentSpinBox->value();
+    presetBuffer.psi3gfx_currentChecked = presetForm->psi3gfx_currentCheckBox->isChecked();
+
+    /*new 0.10.0*/
+    presetBuffer.oc_clk = presetForm->oc_clkSpinBox->value();
+    presetBuffer.oc_clkChecked = presetForm->oc_clkCheckBox->isChecked();
+    presetBuffer.per_core_oc_clk = presetForm->per_core_oc_clkSpinBox->value();
+    presetBuffer.per_core_oc_clkChecked = presetForm->per_core_oc_clkCheckBox->isChecked();
+    presetBuffer.oc_volt = presetForm->oc_voltSpinBox->value();
+    presetBuffer.oc_voltChecked = presetForm->oc_voltCheckBox->isChecked();
+    presetBuffer.disable_oc = presetForm->disable_ocCheckBox->isChecked();
+    presetBuffer.enable_oc = presetForm->enable_ocCheckBox->isChecked();
+
+    /*new 0.11.0*/
+    presetBuffer.coall = presetForm->coallSpinBox->value();
+    presetBuffer.coallChecked = presetForm->coallCheckBox->isChecked();
+    presetBuffer.coper = presetForm->coperSpinBox->value();
+    presetBuffer.coperChecked = presetForm->coperCheckBox->isChecked();
+    presetBuffer.cogfx = presetForm->cogfxSpinBox->value();
+    presetBuffer.cogfxChecked = presetForm->cogfxCheckBox->isChecked();
 
     messageToServiceStr messageToService;
     messageToService.savePreset = save;
@@ -867,51 +1038,72 @@ void CtrlGui::saveSettings(){
 
     //Hide not supported variables
     Ui::CtrlGuiAPUForm *presetForm = nullptr;
-    hideShow *var = conf->hideShowWarnPresetVariable(
+    hideShow var = conf->hideShowWarnPresetVariable(
                 settings->hideNotSupportedVariables
                 ? settings->apuFamilyIdx : -1);
     for(qsizetype i = 0;i < presetFormList->count();i++){
         presetForm = presetFormList->at(i);
 
-        presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
-        presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
-        presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
-        presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
-        presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
-        presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
-        presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+        presetForm->tempLimitWidget->setVisible(var.shwTctlTemp);
+        presetForm->apuSkinWidget->setVisible(var.shwApuSkinTemp);
+        presetForm->stampLimitWidget->setVisible(var.shwStapmLimit);
+        presetForm->fastLimitWidget->setVisible(var.shwFastLimit);
+        presetForm->slowLimitWidget->setVisible(var.shwSlowLimit);
+        presetForm->slowTimeWidget->setVisible(var.shwSlowTime);
+        presetForm->fastTimeWidget->setVisible(var.shwStapmTime);
 
-        presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
-        presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+        presetForm->vrmCurrentWidget->setVisible(var.shwVrmCurrent);
+        presetForm->vrmMaxWidget->setVisible(var.shwVrmMaxCurrent);
 
-        presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
-        presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+        presetForm->minFclkWidget->setVisible(var.shwMinFclkFrequency);
+        presetForm->maxFclkWidget->setVisible(var.shwMaxFclkFrequency);
 
-        presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
-        presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
-        presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
-        presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
-        presetForm->minVcnWidget->setVisible(var->shwMinVcn);
-        presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+        presetForm->minGfxclkWidget->setVisible(var.shwMinGfxclk);
+        presetForm->maxGfxclkWidget->setVisible(var.shwMaxGfxclk);
+        presetForm->minSocclkWidget->setVisible(var.shwMinSocclkFrequency);
+        presetForm->maxSocclkWidget->setVisible(var.shwMaxSocclkFrequency);
+        presetForm->minVcnWidget->setVisible(var.shwMinVcn);
+        presetForm->maxVcnWidget->setVisible(var.shwMaxVcn);
 
-        presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
-        presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+        presetForm->smuMaxPerformanceCheckBox->setVisible(var.shwMaxPerformance);
+        presetForm->smuPowerSavingCheckBox->setVisible(var.shwPowerSaving);
 
         //NEW VARS
-        presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
-        presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+        presetForm->vrmSocCurrentWidget->setVisible(var.shwVrmSocCurrent);
+        presetForm->vrmSocMaxWidget->setVisible(var.shwVrmSocMaxCurrent);
 
-        presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
-        presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+        presetForm->psi0CurrentWidget->setVisible(var.shwPsi0Current);
+        presetForm->psi0SocCurrentWidget->setVisible(var.shwPsi0SocCurrent);
 
-        presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
-        presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+        presetForm->maxLclkWidget->setVisible(var.shwMaxLclk);
+        presetForm->minLclkWidget->setVisible(var.shwMinLclk);
 
-        presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+        presetForm->prochotDeassertionRampWidget->setVisible(var.shwProchotDeassertionRamp);
 
-        presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
-        presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
-        presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+        presetForm->dgpuSkinTempLimitWidget->setVisible(var.shwDgpuSkinTemp);
+        presetForm->apuSlowLimitWidget->setVisible(var.shwApuSlowLimit);
+        presetForm->skinTempPowerLimitWidget->setVisible(var.shwSkinTempLimit);
+
+        /*new 0.8.3*/
+        presetForm->gfx_clkWidget->setVisible(var.show_gfx_clk);
+
+        /*new 0.8.4*/
+        presetForm->vrmgfx_currentWidget->setVisible(var.show_vrmgfx_current);
+        presetForm->vrmcvip_currentWidget->setVisible(var.show_vrmcvip_current);
+        presetForm->vrmgfxmax_currentWidget->setVisible(var.show_vrmgfxmax_current);
+        presetForm->psi3cpu_currentWidget->setVisible(var.show_psi3cpu_current);
+        presetForm->psi3gfx_currentWidget->setVisible(var.show_psi3gfx_current);
+
+        /*new 0.10.0*/
+        presetForm->oc_clkWidget->setVisible(var.show_oc_clk);
+        presetForm->per_core_oc_clkWidget->setVisible(var.show_per_core_oc_clk);
+        presetForm->oc_voltWidget->setVisible(var.show_oc_volt);
+        presetForm->enableOcWidget->setVisible(var.show_enable_oc);
+
+        /*new 0.11.0*/
+        presetForm->coallWidget->setVisible(var.show_coall);
+        presetForm->coperWidget->setVisible(var.show_coper);
+        presetForm->cogfxWidget->setVisible(var.show_cogfx);
 
         //Show Armour Plugin
         presetForm->armourGroupBox->setVisible(settings->showArmourPlugin);
@@ -977,51 +1169,72 @@ void CtrlGui::readSettings(){
 
     //Hide not supported variables
     Ui::CtrlGuiAPUForm *presetForm = nullptr;
-    hideShow *var = conf->hideShowWarnPresetVariable(
+    hideShow var = conf->hideShowWarnPresetVariable(
                 settings->hideNotSupportedVariables
                 ? settings->apuFamilyIdx : -1);
     for(qsizetype i = 0;i < presetFormList->count();i++){
         presetForm = presetFormList->at(i);
 
-        presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
-        presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
-        presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
-        presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
-        presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
-        presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
-        presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+        presetForm->tempLimitWidget->setVisible(var.shwTctlTemp);
+        presetForm->apuSkinWidget->setVisible(var.shwApuSkinTemp);
+        presetForm->stampLimitWidget->setVisible(var.shwStapmLimit);
+        presetForm->fastLimitWidget->setVisible(var.shwFastLimit);
+        presetForm->slowLimitWidget->setVisible(var.shwSlowLimit);
+        presetForm->slowTimeWidget->setVisible(var.shwSlowTime);
+        presetForm->fastTimeWidget->setVisible(var.shwStapmTime);
 
-        presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
-        presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+        presetForm->vrmCurrentWidget->setVisible(var.shwVrmCurrent);
+        presetForm->vrmMaxWidget->setVisible(var.shwVrmMaxCurrent);
 
-        presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
-        presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+        presetForm->minFclkWidget->setVisible(var.shwMinFclkFrequency);
+        presetForm->maxFclkWidget->setVisible(var.shwMaxFclkFrequency);
 
-        presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
-        presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
-        presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
-        presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
-        presetForm->minVcnWidget->setVisible(var->shwMinVcn);
-        presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+        presetForm->minGfxclkWidget->setVisible(var.shwMinGfxclk);
+        presetForm->maxGfxclkWidget->setVisible(var.shwMaxGfxclk);
+        presetForm->minSocclkWidget->setVisible(var.shwMinSocclkFrequency);
+        presetForm->maxSocclkWidget->setVisible(var.shwMaxSocclkFrequency);
+        presetForm->minVcnWidget->setVisible(var.shwMinVcn);
+        presetForm->maxVcnWidget->setVisible(var.shwMaxVcn);
 
-        presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
-        presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+        presetForm->smuMaxPerformanceCheckBox->setVisible(var.shwMaxPerformance);
+        presetForm->smuPowerSavingCheckBox->setVisible(var.shwPowerSaving);
 
         //NEW VARS
-        presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
-        presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+        presetForm->vrmSocCurrentWidget->setVisible(var.shwVrmSocCurrent);
+        presetForm->vrmSocMaxWidget->setVisible(var.shwVrmSocMaxCurrent);
 
-        presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
-        presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+        presetForm->psi0CurrentWidget->setVisible(var.shwPsi0Current);
+        presetForm->psi0SocCurrentWidget->setVisible(var.shwPsi0SocCurrent);
 
-        presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
-        presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+        presetForm->maxLclkWidget->setVisible(var.shwMaxLclk);
+        presetForm->minLclkWidget->setVisible(var.shwMinLclk);
 
-        presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+        presetForm->prochotDeassertionRampWidget->setVisible(var.shwProchotDeassertionRamp);
 
-        presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
-        presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
-        presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+        presetForm->dgpuSkinTempLimitWidget->setVisible(var.shwDgpuSkinTemp);
+        presetForm->apuSlowLimitWidget->setVisible(var.shwApuSlowLimit);
+        presetForm->skinTempPowerLimitWidget->setVisible(var.shwSkinTempLimit);
+
+        /*new 0.8.3*/
+        presetForm->gfx_clkWidget->setVisible(var.show_gfx_clk);
+
+        /*new 0.8.4*/
+        presetForm->vrmgfx_currentWidget->setVisible(var.show_vrmgfx_current);
+        presetForm->vrmcvip_currentWidget->setVisible(var.show_vrmcvip_current);
+        presetForm->vrmgfxmax_currentWidget->setVisible(var.show_vrmgfxmax_current);
+        presetForm->psi3cpu_currentWidget->setVisible(var.show_psi3cpu_current);
+        presetForm->psi3gfx_currentWidget->setVisible(var.show_psi3gfx_current);
+
+        /*new 0.10.0*/
+        presetForm->oc_clkWidget->setVisible(var.show_oc_clk);
+        presetForm->per_core_oc_clkWidget->setVisible(var.show_per_core_oc_clk);
+        presetForm->oc_voltWidget->setVisible(var.show_oc_volt);
+        presetForm->enableOcWidget->setVisible(var.show_enable_oc);
+
+        /*new 0.11.0*/
+        presetForm->coallWidget->setVisible(var.show_coall);
+        presetForm->coperWidget->setVisible(var.show_coper);
+        presetForm->cogfxWidget->setVisible(var.show_cogfx);
 
         //Show Armour Plugin
         presetForm->armourGroupBox->setVisible(settings->showArmourPlugin);
@@ -1273,48 +1486,48 @@ void CtrlGui::presetPlusPushButtonClicked(){
     Hide/Show elements by settings
     */
     settingsStr *settings = conf->getSettingsBuffer();
-    hideShow *var = conf->hideShowWarnPresetVariable(
+    hideShow var = conf->hideShowWarnPresetVariable(
                 settings->hideNotSupportedVariables
                 ? settings->apuFamilyIdx : -1);
 
-    presetForm->tempLimitWidget->setVisible(var->shwTctlTemp);
-    presetForm->apuSkinWidget->setVisible(var->shwApuSkinTemp);
-    presetForm->stampLimitWidget->setVisible(var->shwStapmLimit);
-    presetForm->fastLimitWidget->setVisible(var->shwFastLimit);
-    presetForm->slowLimitWidget->setVisible(var->shwSlowLimit);
-    presetForm->slowTimeWidget->setVisible(var->shwSlowTime);
-    presetForm->fastTimeWidget->setVisible(var->shwStapmTime);
+    presetForm->tempLimitWidget->setVisible(var.shwTctlTemp);
+    presetForm->apuSkinWidget->setVisible(var.shwApuSkinTemp);
+    presetForm->stampLimitWidget->setVisible(var.shwStapmLimit);
+    presetForm->fastLimitWidget->setVisible(var.shwFastLimit);
+    presetForm->slowLimitWidget->setVisible(var.shwSlowLimit);
+    presetForm->slowTimeWidget->setVisible(var.shwSlowTime);
+    presetForm->fastTimeWidget->setVisible(var.shwStapmTime);
 
-    presetForm->vrmCurrentWidget->setVisible(var->shwVrmCurrent);
-    presetForm->vrmMaxWidget->setVisible(var->shwVrmMaxCurrent);
+    presetForm->vrmCurrentWidget->setVisible(var.shwVrmCurrent);
+    presetForm->vrmMaxWidget->setVisible(var.shwVrmMaxCurrent);
 
-    presetForm->minFclkWidget->setVisible(var->shwMinFclkFrequency);
-    presetForm->maxFclkWidget->setVisible(var->shwMaxFclkFrequency);
+    presetForm->minFclkWidget->setVisible(var.shwMinFclkFrequency);
+    presetForm->maxFclkWidget->setVisible(var.shwMaxFclkFrequency);
 
-    presetForm->minGfxclkWidget->setVisible(var->shwMinGfxclk);
-    presetForm->maxGfxclkWidget->setVisible(var->shwMaxGfxclk);
-    presetForm->minSocclkWidget->setVisible(var->shwMinSocclkFrequency);
-    presetForm->maxSocclkWidget->setVisible(var->shwMaxSocclkFrequency);
-    presetForm->minVcnWidget->setVisible(var->shwMinVcn);
-    presetForm->maxVcnWidget->setVisible(var->shwMaxVcn);
+    presetForm->minGfxclkWidget->setVisible(var.shwMinGfxclk);
+    presetForm->maxGfxclkWidget->setVisible(var.shwMaxGfxclk);
+    presetForm->minSocclkWidget->setVisible(var.shwMinSocclkFrequency);
+    presetForm->maxSocclkWidget->setVisible(var.shwMaxSocclkFrequency);
+    presetForm->minVcnWidget->setVisible(var.shwMinVcn);
+    presetForm->maxVcnWidget->setVisible(var.shwMaxVcn);
 
-    presetForm->smuMaxPerformanceCheckBox->setVisible(var->shwMaxPerformance);
-    presetForm->smuPowerSavingCheckBox->setVisible(var->shwPowerSaving);
+    presetForm->smuMaxPerformanceCheckBox->setVisible(var.shwMaxPerformance);
+    presetForm->smuPowerSavingCheckBox->setVisible(var.shwPowerSaving);
 
-    presetForm->vrmSocCurrentWidget->setVisible(var->shwVrmSocCurrent);
-    presetForm->vrmSocMaxWidget->setVisible(var->shwVrmSocMaxCurrent);
+    presetForm->vrmSocCurrentWidget->setVisible(var.shwVrmSocCurrent);
+    presetForm->vrmSocMaxWidget->setVisible(var.shwVrmSocMaxCurrent);
 
-    presetForm->psi0CurrentWidget->setVisible(var->shwPsi0Current);
-    presetForm->psi0SocCurrentWidget->setVisible(var->shwPsi0SocCurrent);
+    presetForm->psi0CurrentWidget->setVisible(var.shwPsi0Current);
+    presetForm->psi0SocCurrentWidget->setVisible(var.shwPsi0SocCurrent);
 
-    presetForm->maxLclkWidget->setVisible(var->shwMaxLclk);
-    presetForm->minLclkWidget->setVisible(var->shwMinLclk);
+    presetForm->maxLclkWidget->setVisible(var.shwMaxLclk);
+    presetForm->minLclkWidget->setVisible(var.shwMinLclk);
 
-    presetForm->prochotDeassertionRampWidget->setVisible(var->shwProchotDeassertionRamp);
+    presetForm->prochotDeassertionRampWidget->setVisible(var.shwProchotDeassertionRamp);
 
-    presetForm->dgpuSkinTempLimitWidget->setVisible(var->shwDgpuSkinTemp);
-    presetForm->apuSlowLimitWidget->setVisible(var->shwApuSlowLimit);
-    presetForm->skinTempPowerLimitWidget->setVisible(var->shwSkinTempLimit);
+    presetForm->dgpuSkinTempLimitWidget->setVisible(var.shwDgpuSkinTemp);
+    presetForm->apuSlowLimitWidget->setVisible(var.shwApuSlowLimit);
+    presetForm->skinTempPowerLimitWidget->setVisible(var.shwSkinTempLimit);
     /*
     Hide/ShowShow Armour Plugin
     */
@@ -1568,6 +1781,31 @@ void CtrlGui::recieveMessageToGui(messageToGuiStr messageToGui){
         ui_infoWidget->slow_time->setText(QString::number(messageToGui.pmTable.slow_time) + " Sec.");
         ui_infoWidget->psi0_current->setText(QString::number(messageToGui.pmTable.psi0_current) + " A");
         ui_infoWidget->psi0soc_current->setText(QString::number(messageToGui.pmTable.psi0soc_current) + " A");
+        //new v0.8.2
+        ui_infoWidget->cclk_setpoint->setText(QString::number(messageToGui.pmTable.cclk_setpoint) + " N/A");
+        ui_infoWidget->cclk_busy_value->setText(QString::number(messageToGui.pmTable.cclk_busy_value) + " N/A");
+
+        ui_infoWidget->core_clk_0->setText(QString::number(messageToGui.pmTable.core_clk_0) + " N/A");
+        ui_infoWidget->core_volt_0->setText(QString::number(messageToGui.pmTable.core_volt_0) + " N/A");
+        ui_infoWidget->core_power_0->setText(QString::number(messageToGui.pmTable.core_power_0) + " N/A");
+        ui_infoWidget->core_temp_0->setText(QString::number(messageToGui.pmTable.core_temp_0) + " N/A");
+        //new v0.10.0
+        ui_infoWidget->l3_clk->setText(QString::number(messageToGui.pmTable.l3_clk) + " N/A");
+        ui_infoWidget->l3_logic->setText(QString::number(messageToGui.pmTable.l3_logic) + " N/A");
+        ui_infoWidget->l3_vddm->setText(QString::number(messageToGui.pmTable.l3_vddm) + " N/A");
+        ui_infoWidget->l3_temp->setText(QString::number(messageToGui.pmTable.l3_temp) + " N/A");
+
+        ui_infoWidget->gfx_clk->setText(QString::number(messageToGui.pmTable.gfx_clk) + " N/A");
+        ui_infoWidget->gfx_temp->setText(QString::number(messageToGui.pmTable.gfx_temp) + " N/A");
+        ui_infoWidget->gfx_volt->setText(QString::number(messageToGui.pmTable.gfx_volt) + " N/A");
+
+        ui_infoWidget->mem_clk->setText(QString::number(messageToGui.pmTable.mem_clk) + " N/A");
+        ui_infoWidget->fclk->setText(QString::number(messageToGui.pmTable.fclk) + " N/A");
+
+        ui_infoWidget->soc_power->setText(QString::number(messageToGui.pmTable.soc_power) + " N/A");
+        ui_infoWidget->soc_volt->setText(QString::number(messageToGui.pmTable.soc_volt) + " N/A");
+
+        ui_infoWidget->socket_power->setText(QString::number(messageToGui.pmTable.socket_power) + " N/A");
     }
 
     if(currentPresetId != -1){

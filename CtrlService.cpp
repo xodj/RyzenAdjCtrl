@@ -65,25 +65,43 @@ void CtrlService::initPmTable(){
     refresh_table(adjEntryPoint);
 
     switch(get_cpu_family(adjEntryPoint)){
-    case 0:
+    case FAM_RAVEN:
         charFromString("Raven", pmTable.ryzenFamily);
         break;
-    case 1:
+    case FAM_PICASSO:
         charFromString("Picasso", pmTable.ryzenFamily);
         break;
-    case 2:
+    case FAM_RENOIR:
         charFromString("Renoir", pmTable.ryzenFamily);
         break;
-    case 3:
+    case FAM_CEZANNE:
         charFromString("Cezanne", pmTable.ryzenFamily);
         break;
-    case 4:
+    case FAM_DALI:
         charFromString("Dali", pmTable.ryzenFamily);
         break;
-    case 5:
+    case FAM_LUCIENNE:
         charFromString("Lucienne", pmTable.ryzenFamily);
         break;
-    default:
+    case FAM_VANGOGH:
+        charFromString("Vangogh", pmTable.ryzenFamily);
+        break;
+    case FAM_REMBRANDT:
+        charFromString("Rembrant", pmTable.ryzenFamily);
+        break;
+    case FAM_MENDOCINO:
+        charFromString("Mendocino", pmTable.ryzenFamily);
+        break;
+    case FAM_PHOENIX:
+        charFromString("Phoenix", pmTable.ryzenFamily);
+        break;
+    case FAM_HAWKPOINT:
+        charFromString("Hawkpoint", pmTable.ryzenFamily);
+        break;
+    case FAM_STRIXPOINT:
+        charFromString("Strixpoint", pmTable.ryzenFamily);
+        break;
+    default: // Unknown
         break;
     }
     pmTable.biosVersion = get_bios_if_ver(adjEntryPoint);
@@ -295,7 +313,6 @@ void CtrlService::loadPreset(presetStr *preset){
         if(preset->smuMaxPerfomance)
             set_max_performance(adjEntryPoint);
 
-        //NEW VARS
         if(preset->vrmSocCurrentChecked)
             set_vrmsoc_current(adjEntryPoint, preset->vrmSocCurrent * 1000);
         if(preset->vrmSocMaxChecked)
@@ -320,6 +337,39 @@ void CtrlService::loadPreset(presetStr *preset){
             set_apu_slow_limit(adjEntryPoint, preset->apuSlowLimit * 1000);
         if(preset->skinTempPowerLimitChecked)
             set_skin_temp_power_limit(adjEntryPoint, preset->skinTempPowerLimit);
+        //new 0.8.3
+        if(preset->gfx_clkChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->gfx_clk);
+        //new 0.8.4
+        if(preset->vrmgfx_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->vrmgfx_current);
+        if(preset->vrmcvip_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->vrmcvip_current);
+        if(preset->vrmgfxmax_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->vrmgfxmax_current);
+        if(preset->psi3cpu_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->psi3cpu_current);
+        if(preset->psi3gfx_currentChecked)
+            set_skin_temp_power_limit(adjEntryPoint, preset->psi3gfx_current);
+        //new 0.10.0
+        if(preset->oc_clkChecked)
+            set_oc_clk(adjEntryPoint, preset->oc_clk);
+        if(preset->per_core_oc_clkChecked)
+            set_per_core_oc_clk(adjEntryPoint, preset->per_core_oc_clk);
+        if(preset->oc_voltChecked)
+            set_oc_volt(adjEntryPoint, preset->oc_volt);
+
+        if(preset->disable_oc)
+            set_disable_oc(adjEntryPoint);
+        if(preset->enable_oc)
+            set_enable_oc(adjEntryPoint);
+        //new 0.11.0
+        if(preset->coallChecked)
+            set_coall(adjEntryPoint, preset->coall);
+        if(preset->coperChecked)
+            set_coper(adjEntryPoint, preset->coper);
+        if(preset->cogfxChecked)
+            set_cogfx(adjEntryPoint, preset->cogfx);
     } else
         qDebug()<<"Ctrl Service - Try to load nullptr (deleted) preset!";
 }
@@ -371,9 +421,33 @@ void CtrlService::takeCurrentInfo() {
     pmTable.dgpu_skin_temp_value = get_dgpu_skin_temp_value(adjEntryPoint);
     pmTable.stapm_time = get_stapm_time(adjEntryPoint);
     pmTable.slow_time = get_slow_time(adjEntryPoint);
-    //NEW VARS
     pmTable.psi0_current = get_psi0_current(adjEntryPoint);
     pmTable.psi0soc_current = get_psi0soc_current(adjEntryPoint);
+    //new v0.8.2
+    pmTable.cclk_setpoint = get_cclk_setpoint(adjEntryPoint);
+    pmTable.cclk_busy_value = get_cclk_busy_value(adjEntryPoint);
+    //new vars by core
+    pmTable.core_clk_0 = get_core_clk(adjEntryPoint, 0);
+    pmTable.core_volt_0 = get_core_volt(adjEntryPoint, 0);
+    pmTable.core_power_0 = get_core_power(adjEntryPoint, 0);
+    pmTable.core_temp_0 = get_core_temp(adjEntryPoint, 0);
+    //new v0.10.0
+    pmTable.l3_clk = get_l3_clk(adjEntryPoint);
+    pmTable.l3_logic = get_l3_logic(adjEntryPoint);
+    pmTable.l3_vddm = get_l3_vddm(adjEntryPoint);
+    pmTable.l3_temp = get_l3_temp(adjEntryPoint);
+
+    pmTable.gfx_clk = get_gfx_clk(adjEntryPoint);
+    pmTable.gfx_temp = get_gfx_temp(adjEntryPoint);
+    pmTable.gfx_volt = get_gfx_volt(adjEntryPoint);
+
+    pmTable.mem_clk = get_mem_clk(adjEntryPoint);
+    pmTable.fclk = get_fclk(adjEntryPoint);
+
+    pmTable.soc_power = get_soc_power(adjEntryPoint);
+    pmTable.soc_volt = get_soc_volt(adjEntryPoint);
+
+    pmTable.socket_power = get_socket_power(adjEntryPoint);
 
     sendCurrentInfoToGui();
 }

@@ -8,71 +8,9 @@
 #ifdef WIN32
 #include <QSharedMemory>
 #include <QTimer>
-
-#define buffer_size 512
-#define refresh_time 10
+#elif BUILD_SERVICE
+#include <QtDBus/QtDBus>
 #endif
-struct messageToServiceStr{
-    bool exit = false;
-    bool getSettings = false;
-    bool saveSettings = false;
-    settingsStr settings;
-    bool savePreset = false;
-    bool applyPreset = false;
-    bool deletePreset = false;
-    presetStr preset;
-    bool ryzenAdjInfo = false;
-    int ryzenAdjInfoTimeout = 0;
-};
-
-struct PMTable{
-    char ryzenFamily[16] = {'U','n','k','n','o','w','n','\0'};
-    int biosVersion = 0;
-    uint32_t pmTableVersion = 0;
-    int ryzenAdjVersion = 0;
-    int ryzenAdjMajorVersion = 0;
-    int ryzenAdjMinorVersion = 0;
-
-    float stapm_limit = 0.f;
-    float stapm_value = 0.f;
-    float fast_limit = 0.f;
-    float fast_value = 0.f;
-    float slow_limit = 0.f;
-    float slow_value = 0.f;
-    float apu_slow_limit = 0.f;
-    float apu_slow_value = 0.f;
-    float vrm_current = 0.f;
-    float vrm_current_value = 0.f;
-    float vrmsoc_current = 0.f;
-    float vrmsoc_current_value = 0.f;
-    float vrmmax_current = 0.f;
-    float vrmmax_current_value = 0.f;
-    float vrmsocmax_current = 0.f;
-    float vrmsocmax_current_value = 0.f;
-    float tctl_temp = 0.f;
-    float tctl_temp_value = 0.f;
-    float apu_skin_temp_limit = 0.f;
-    float apu_skin_temp_value = 0.f;
-    float dgpu_skin_temp_limit = 0.f;
-    float dgpu_skin_temp_value = 0.f;
-    float stapm_time = 0.f;
-    float slow_time = 0.f;
-    float psi0_current = 0.f;
-    float psi0soc_current = 0.f;
-};
-
-struct messageToGuiStr{
-    int currentPresetId = -1;
-    bool presetSaved = false;
-    bool pmUpdated = false;
-    PMTable pmTable;
-};
-
-struct settingsToGuiStr{
-    settingsStr settings;
-    presetStr preset;
-    bool lastPreset = false;
-};
 
 #if defined(BUILD_SERVICE) && defined(WIN32)
 class CtrlBus : public QObject
@@ -198,11 +136,11 @@ public:
             qDebug()<<"Ctrl Bus - Can't create bufferToService!";
         if(!bufferToServiceFlag->create(sizeof(bool)))
             qDebug()<<"Ctrl Bus - Can't create bufferToServiceFlag!";
-        if(!bufferToGui->create(buffer_size))
+        if(!bufferToGui->create(sizeof(messageToGuiStr)))
             qDebug()<<"Ctrl Bus - Can't create bufferToGui!";
         if(!bufferToGuiFlag->create(sizeof(bool)))
             qDebug()<<"Ctrl Bus - Can't create bufferToGuiFlag!";
-        if(!bufferSettingsToGui->create(buffer_size))
+        if(!bufferSettingsToGui->create(sizeof(settingsToGuiStr)))
             qDebug()<<"Ctrl Bus - Can't create bufferToGui!";
         if(!bufferSettingsToGuiFlag->create(sizeof(bool)))
             qDebug()<<"Ctrl Bus - Can't create bufferToGuiFlag!";
@@ -210,7 +148,7 @@ public:
         refresh_timer = new QTimer;
         connect(refresh_timer, &QTimer::timeout,
                 this, &CtrlBus::getMessageFromGui);
-        refresh_timer->start(refresh_time);
+        refresh_timer->start(BUFFER_REFRESH_TIME_MS);
     }
 
     void sendMessageToGui(messageToGuiStr messageToGui){
@@ -288,7 +226,7 @@ public:
                 this, &CtrlBus::getMessageFromService);
         connect(refresh_timer, &QTimer::timeout,
                 this, &CtrlBus::guiAlreadyRunningCheck);
-        refresh_timer->start(refresh_time);
+        refresh_timer->start(BUFFER_REFRESH_TIME_MS);
     }
 
 signals:
@@ -442,7 +380,7 @@ public:
         refresh_timer = new QTimer;
         connect(refresh_timer, &QTimer::timeout,
                 this, &CtrlBus::guiAlreadyRunningCheck);
-        refresh_timer->start(refresh_time);
+        refresh_timer->start(BUFFER_REFRESH_TIME_MS);
     }
 
 signals:
@@ -473,15 +411,6 @@ private:
 };
 #endif //#if !defined(BUILD_SERVICE) && defined(WIN32)
 #if defined(BUILD_SERVICE) && !defined(WIN32)
-#include <QtDBus/QtDBus>
-
-#define INTERFACE_NAME "ru.ryzenctrl.service.ctrl"
-#define SERVICE_NAME "ru.ryzenctrl.service"
-#define GUI_NAME "ru.ryzenctrl.gui"
-#define OBJECT_NAME "/control"
-#define DBUS_CONFIG_FILE_NAME "ru.ryzenctrl.service.conf"
-#define DBUS_CONFIG_FILE_PATH "/etc/dbus-1/system.d/ru.ryzenctrl.service.conf"
-
 class CtrlBus : public QObject
 {
     Q_OBJECT

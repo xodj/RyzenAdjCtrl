@@ -12,21 +12,6 @@
 #include "CtrlBus.h"
 #include "CtrlConfig.h"
 
-#define logFileSizeTreshold 10000000
-#ifdef WIN32
-#define LOGFILE "Logs/RyzenCtrl.log"
-#define LOGFILESERVICE "Logs/RyzenCtrl - Service.log"
-#define LOGFILEGUI "Logs/RyzenCtrl - Gui.log"
-#define CONFIGDIR "Config"
-#define LOGDIR "Logs"
-#else
-#define LOGFILE "/var/tmp/RyzenCtrl.log"
-#define LOGFILESERVICE "/var/tmp/RyzenCtrl - Service.log"
-#define LOGFILEGUI "/tmp/RyzenCtrl - Gui.log"
-#define CONFIGDIR "/etc/RyzenCtrl/"
-#define LOGDIR "/var/tmp/"
-#endif
-
 QString fileName = LOGFILE;
 
 void messageHandler(QtMsgType, const QMessageLogContext &, const QString &msg) {
@@ -48,13 +33,13 @@ void checkLogsSize() {
         dir.mkpath(".");
 
     QFile log(LOGFILEGUI);
-    if(log.size() > logFileSizeTreshold)
+    if(log.size() > LOG_FILE_SIZE_TRESHOLD_BYTES)
         log.remove(LOGFILEGUI);
     log.setFileName(LOGFILESERVICE);
-    if(log.size() > logFileSizeTreshold)
+    if(log.size() > LOG_FILE_SIZE_TRESHOLD_BYTES)
         log.remove(LOGFILESERVICE);
     log.setFileName(LOGFILE);
-    if(log.size() > logFileSizeTreshold)
+    if(log.size() > LOG_FILE_SIZE_TRESHOLD_BYTES)
         log.remove(LOGFILE);
 
 }
@@ -159,21 +144,21 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(messageHandler);
 
 #ifdef WIN32
-    QString qSharedMemoryKey = sharedMemoryKey;
+    QString randomByte = SHARED_MEMORY_RANDOM_BYTE;
     QSharedMemory *bufferToService =
-            new QSharedMemory("bufferToService:" + qSharedMemoryKey);
+            new QSharedMemory("bufferToService:" + randomByte);
     QSharedMemory *bufferToServiceFlag =
-            new QSharedMemory("bufferToServiceFlag:" + qSharedMemoryKey);
+            new QSharedMemory("bufferToServiceFlag:" + randomByte);
     QSharedMemory *bufferToGui =
-            new QSharedMemory("bufferToGui:" + qSharedMemoryKey);
+            new QSharedMemory("bufferToGui:" + randomByte);
     QSharedMemory *bufferToGuiFlag =
-            new QSharedMemory("bufferToGuiFlag:" + qSharedMemoryKey);
+            new QSharedMemory("bufferToGuiFlag:" + randomByte);
     QSharedMemory *guiAlreadyRunning =
-            new QSharedMemory("guiAlreadyRunning:" + qSharedMemoryKey);
+            new QSharedMemory("guiAlreadyRunning:" + randomByte);
     QSharedMemory *bufferSettingsToGui =
-            new QSharedMemory("bufferSettingsToGui:" + qSharedMemoryKey);
+            new QSharedMemory("bufferSettingsToGui:" + randomByte);
     QSharedMemory *bufferSettingsToGuiFlag =
-            new QSharedMemory("bufferSettingsToGuiFlag:" + qSharedMemoryKey);
+            new QSharedMemory("bufferSettingsToGuiFlag:" + randomByte);
 
     CtrlBus *bus = new CtrlBus(bufferToService,
                                bufferToServiceFlag,
@@ -286,13 +271,10 @@ int main(int argc, char *argv[])
     if(!sudoersCheck())
         return 1;
 #ifdef WIN32
-    CtrlBus *bus =
-            new CtrlBus(
-                new QSharedMemory(
-                    "guiAlreadyRunning:"
-                    + QString(sharedMemoryKey)
-                    )
-                );
+    QSharedMemory *guiAlreadyRunning =
+            new QSharedMemory("guiAlreadyRunning:"
+                              + QString(randomByte));
+    CtrlBus *bus = new CtrlBus(guiAlreadyRunning));
 
     if(bus->isGUIRuning()){
         qDebug() << "Ctrl Main - Application Is Already Running.";

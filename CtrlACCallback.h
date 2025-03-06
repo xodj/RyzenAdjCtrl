@@ -4,19 +4,12 @@
 #include <QObject>
 #include <QTimer>
 #include <QDebug>
-
-enum ACState {
-    Battery = 0,
-    ACPower,
-    ACNone
-};
+#include "CtrlConfig.h"
 
 #ifdef WIN32
 #include <Windows.h>
-#define currentAc_refresh_time 333
 #else // WIN32
 #include <QFile>
-#define currentAc_refresh_time 1332
 #endif // WIN32
 
 class CtrlACCallback : public QObject
@@ -24,15 +17,15 @@ class CtrlACCallback : public QObject
     Q_OBJECT
 public:
     CtrlACCallback() {
-        currentAc_refresh_timer = new QTimer;
-        connect(currentAc_refresh_timer, &QTimer::timeout,
+        AC_STATE_REFRESH_TIMEr = new QTimer;
+        connect(AC_STATE_REFRESH_TIMEr, &QTimer::timeout,
                 this, &CtrlACCallback::checkCurrentACState);
-        currentAc_refresh_timer->start(currentAc_refresh_time);
+        AC_STATE_REFRESH_TIMEr->start(AC_STATE_REFRESH_TIME);
     }
     ~CtrlACCallback() {
-        disconnect(currentAc_refresh_timer, &QTimer::timeout,
+        disconnect(AC_STATE_REFRESH_TIMEr, &QTimer::timeout,
                    this, &CtrlACCallback::checkCurrentACState);
-        currentAc_refresh_timer->stop();
+        AC_STATE_REFRESH_TIMEr->stop();
     }
 
 signals:
@@ -59,7 +52,7 @@ private:
         }
 #endif // WIN32
     }
-    QTimer *currentAc_refresh_timer;
+    QTimer *AC_STATE_REFRESH_TIMEr;
 
 public slots:
     void emitCurrentACState(){
