@@ -8,7 +8,7 @@
 #ifdef WIN32
 #include <QSharedMemory>
 #include <QTimer>
-#elif BUILD_SERVICE
+#elif defined(BUILD_SERVICE)
 #include <QtDBus/QtDBus>
 #endif
 
